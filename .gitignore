@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+appsettings.Local.json
+appsettings.Production.json
+.env
+.env.*
+secrets.json
+*.pfx
+*.p12
+*.key
+*.pem
+artifacts/

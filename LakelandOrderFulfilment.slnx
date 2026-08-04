@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lakeland.OrderFulfilment.Api/Lakeland.OrderFulfilment.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lakeland.OrderFulfilment.Tests/Lakeland.OrderFulfilment.Tests.csproj" />
+  </Folder>
+</Solution>

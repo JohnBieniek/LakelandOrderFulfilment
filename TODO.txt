@@ -1,0 +1,96 @@
+LAKELAND ART COMMERCE - NEXT STEPS
+
+1. Protect the GitHub repository
+   - Enable secret scanning, push protection, Dependabot, CodeQL, branch protection, and required test checks.
+   - Add CI for restore, build, test, dependency audit, and Gitleaks.
+   - Never paste real keys into source, appsettings, tests, issues, logs, or sample webhook data.
+
+2. Create separate environments and hosting
+   - Maintain Local, Portfolio, and Production environments with separate credentials, databases, storage, identities, domains, and webhooks.
+   - Register an Azure account or equivalent cloud provider.
+   - Create hosting, managed PostgreSQL or SQL Server, private object storage, Key Vault, and a managed application identity.
+   - Keep production resource values and infrastructure access outside this public repository.
+
+3. Configure local and production secrets
+   - In the API project run: dotnet user-secrets init
+   - Add keys with dotnet user-secrets set; never place values in committed appsettings files.
+   - Use managed identity plus Key Vault in production. The committed appsettings.example.json contains names only.
+
+4. Register with Stripe
+   - Create a Stripe business account and complete verification.
+   - Begin in test mode and choose hosted Checkout or Payment Element so card details never reach this API.
+   - Configure tax behavior and create signed webhooks for completed/failed payments, refunds, and disputes.
+   - Store test keys in user-secrets and live keys in Key Vault.
+   - Use Stripe CLI test events, including duplicates. Fulfillment must start only from a verified webhook.
+
+5. Register with Prodigi (the only fine-art POD route; no Gelato fallback)
+   - Create a Prodigi account and obtain sandbox credentials.
+   - Order samples for paper, color, frames, canvas, packaging, and shipping regions.
+   - Approve specific products and save internal-to-Prodigi mappings in the database.
+   - Implement quote, submit, cancel, status, and webhook translation in ProdigiFulfillmentProvider.
+   - Never expose its key, raw catalog, or print-master URL to the browser.
+
+6. Register with Printful
+   - Create a Printful account and Manual Order/API store.
+   - Obtain test credentials and confirm the currently recommended stable API version.
+   - Sample shirts, stickers, mugs, sizes, colors, packaging, and print methods.
+   - Save approved internal-to-Printful variant mappings in the database.
+   - Implement quote, submit, cancel, status, and webhook translation in PrintfulFulfillmentProvider.
+
+7. Register with EasyPost
+   - Create an EasyPost account and test API key.
+   - Configure the studio ship-from address privately.
+   - Define parcels, rate shopping, label purchase, tracking webhooks, and explicit insurance for originals.
+   - Keep its API key only in user-secrets/Key Vault.
+
+8. Replace in-memory storage
+   - Model artworks, products, variants, artwork-products, provider mappings, orders, order lines, fulfillment groups, inventory reservations, webhook inbox, and outbox.
+   - Add migrations and database optimistic concurrency for unique originals.
+   - Enforce a unique key on Provider + ExternalEventId.
+   - Add reservation expiration cleanup and durable failure history.
+
+9. Build private image storage
+   - Keep display images, print masters, and provider derivatives separate.
+   - Record SHA-256, dimensions, DPI, color profile, file type, filename, storage key, upload date, and print approval.
+   - Serve display images through a CDN, keep masters private, and issue providers short-lived signed URLs.
+
+10. Complete catalog publishing and pricing
+    - Add admin upload, resolution/aspect checks, preview crops, allowed-product selection, approval, mapping, and publishing.
+    - Do not automatically place every artwork on every product.
+    - Snapshot retail price, provider manufacturing cost, allocated shipping, margin, and currency on every order line.
+
+11. Complete checkout and payment orchestration
+    - Accept variant IDs and quantities only; load authoritative prices server-side.
+    - Quote shipping/tax and create the Stripe session on the server.
+    - Confirm original reservations only after verified payment; release them after failure or expiration.
+    - Add a configurable POD review window before irreversible production submission.
+
+12. Implement secure asynchronous workflows
+    - Verify each webhook signature from the raw body before accepting it.
+    - Persist the inbox event, return quickly, then process with a background worker.
+    - Add an outbox so payment confirmation and fulfillment job creation commit atomically.
+    - Add retries, dead letters, alerts, and scheduled reconciliation for stuck provider orders.
+
+13. Add identity and authorization
+    - Register an identity provider and configure JWT validation.
+    - Enforce customer ownership on every order read/change.
+    - Add separate Administrator, FulfillmentManager, and FinanceAdministrator policies.
+    - Keep Scalar disabled or administrator-protected in production.
+
+14. Build customer and staff operations
+    - Customer: one order with separate fulfillment timelines, estimates, and tracking numbers.
+    - Studio staff: original packing queue, EasyPost rate/label selection, and insurance.
+    - Fulfillment staff: POD review, retry, cancel, reconciliation, and failure history.
+    - Finance staff: refunds and immutable margin reporting with separate authorization.
+
+15. Test before any live order
+    - Add provider sandbox integration tests using synthetic artwork, customers, and addresses.
+    - Test simultaneous original purchases, duplicate/out-of-order webhooks, provider downtime, payment replay, expiration, partial cancellation, and missed-event reconciliation.
+    - Run accessibility, load, dependency, secret, and authorization tests.
+    - Demonstrate a portfolio sandbox order with one original, one Prodigi print, and one Printful shirt without real charges or production.
+
+16. Launch production carefully
+    - Complete tax, privacy, returns, terms, shipping, insurance, and provider business verification with qualified advisers.
+    - Configure private production DNS details, TLS, monitoring, backups, retention, rate limits, alerts, and incident response.
+    - Switch sandbox to live credentials through Key Vault configuration only; do not change source.
+    - Place and inspect controlled live test orders before opening the storefront.
