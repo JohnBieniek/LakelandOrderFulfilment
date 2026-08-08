@@ -57,6 +57,7 @@ jobs:
             --resource-group "$RESOURCE_GROUP" \
             --name "$CONTAINER_APP" \
             --image "$REGISTRY.azurecr.io/lakeland-api:$IMAGE_TAG" \
+            --set-env-vars Database__ApplyMigrations=true \
             --output none
 
       - name: Verify health endpoint
