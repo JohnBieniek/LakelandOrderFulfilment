@@ -1,0 +1,10 @@
+.git
+.github
+.vs
+.vscode
+**/bin
+**/obj
+artifacts
+*.user
+*.suo
+.azure-login*

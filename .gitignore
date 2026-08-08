@@ -15,3 +15,5 @@ secrets.json
 *.key
 *.pem
 artifacts/
+.azure-login*
+.azure-browser-login*
