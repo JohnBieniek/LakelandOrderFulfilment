@@ -1,76 +1,194 @@
-using System.Collections.Concurrent;
+using System.Data;
 using Lakeland.OrderFulfilment.Api.Domain;
+using Lakeland.OrderFulfilment.Api.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lakeland.OrderFulfilment.Api.Services;
 
-public sealed class CommerceStore
+public sealed class CommerceStore(CommerceDbContext db)
 {
-    private readonly ConcurrentDictionary<Guid, CustomerOrder> orders = new();
-    private readonly ConcurrentDictionary<Guid, OriginalArtworkInventory> inventory = new();
+    public async Task<IReadOnlyList<Artwork>> GetArtworksAsync(CancellationToken cancellationToken) =>
+        await db.Artworks.AsNoTracking().OrderBy(x => x.Title)
+            .Select(x => new Artwork(x.Id, x.Title, x.Artist, x.OriginalAvailable, x.DisplayAssetId))
+            .ToListAsync(cancellationToken);
 
-    public CommerceStore()
+    public async Task<IReadOnlyList<ProductCatalogEntry>> GetProductsAsync(CancellationToken cancellationToken)
     {
-        var artId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-        Artworks = [new Artwork(artId, "Sample Lake Study", "Portfolio Artist", true, "display/sample-lake-study.webp")];
-        Products = [
-            new Product(Guid.Parse("11111111-1111-1111-1111-111111111111"), "Original artwork", "One-of-one artwork fulfilled by the studio."),
-            new Product(Guid.Parse("22222222-2222-2222-2222-222222222222"), "Fine-art print", "Archival reproduction fulfilled by Prodigi."),
-            new Product(Guid.Parse("33333333-3333-3333-3333-333333333333"), "Art T-shirt", "Apparel fulfilled by Printful.")];
-        Variants = [
-            new ProductVariant(Guid.Parse("11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Products[0].Id, "ORIGINAL-SAMPLE-LAKE", "Original", 1200m, "USD", FulfillmentProviderCode.Internal, "internal", artId),
-            new ProductVariant(Guid.Parse("22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Products[1].Id, "PRINT-SAMPLE-LAKE-8X10", "8 x 10", 38m, "USD", FulfillmentProviderCode.Prodigi, "CONFIGURE_PRODIGI_MAPPING"),
-            new ProductVariant(Guid.Parse("33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Products[2].Id, "SHIRT-SAMPLE-LAKE-M", "Medium", 32m, "USD", FulfillmentProviderCode.Printful, "CONFIGURE_PRINTFUL_MAPPING")];
-        inventory[artId] = new OriginalArtworkInventory(artId);
+        var products = await db.Products.AsNoTracking().OrderBy(x => x.Name).ToListAsync(cancellationToken);
+        var variants = await db.ProductVariants.AsNoTracking().OrderBy(x => x.Sku).ToListAsync(cancellationToken);
+        return products.Select(product => new ProductCatalogEntry(
+            new Product(product.Id, product.Name, product.Description),
+            variants.Where(x => x.ProductId == product.Id).Select(MapVariant).ToArray())).ToArray();
     }
 
-    public IReadOnlyList<Artwork> Artworks { get; }
-    public IReadOnlyList<Product> Products { get; }
-    public IReadOnlyList<ProductVariant> Variants { get; }
-    public ProductVariant? FindVariant(Guid id) => Variants.FirstOrDefault(x => x.Id == id);
-    public OriginalArtworkInventory? FindInventory(Guid artworkId) => inventory.GetValueOrDefault(artworkId);
-    public void Save(CustomerOrder order) => orders[order.Id] = order;
-    public CustomerOrder? FindOrder(Guid id) => orders.GetValueOrDefault(id);
+    public async Task<CustomerOrder?> FindOrderAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var order = await db.Orders.AsNoTracking()
+            .Include(x => x.Fulfillments)
+            .ThenInclude(x => x.Lines)
+            .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return order is null ? null : MapOrder(order);
+    }
+
+    internal static ProductVariant MapVariant(ProductVariantEntity x) =>
+        new(x.Id, x.ProductId, x.Sku, x.Name, x.RetailPrice, x.Currency, x.Provider, x.ProviderProductId, x.OriginalArtworkId);
+
+    internal static CustomerOrder MapOrder(OrderEntity order) => new(
+        order.Id,
+        order.CustomerId,
+        order.Status,
+        order.Total,
+        order.Currency,
+        new ShippingAddress(order.ShippingName, order.AddressLine1, order.AddressLine2, order.City, order.Region, order.PostalCode, order.CountryCode),
+        order.Fulfillments.OrderBy(x => x.Provider).Select(fulfillment => new FulfillmentGroup(
+            fulfillment.Id,
+            fulfillment.Provider,
+            fulfillment.Status,
+            fulfillment.Lines.OrderBy(x => x.Sku).Select(line => new OrderLine(
+                line.Id, line.ProductVariantId, line.Sku, line.Quantity, line.RetailPrice, line.ProviderCost,
+                line.AllocatedShippingCost, line.EstimatedGrossMargin, line.Currency, line.Provider)).ToArray(),
+            fulfillment.ProviderOrderId,
+            fulfillment.TrackingNumber,
+            fulfillment.LastError)).ToArray(),
+        order.CreatedAt);
 }
 
-public sealed class OrderService(CommerceStore store, TimeProvider timeProvider)
+public sealed record ProductCatalogEntry(Product Product, IReadOnlyList<ProductVariant> Variants);
+
+public sealed class InventoryConflictException(string message, Exception? innerException = null) : Exception(message, innerException);
+
+public sealed class OrderService(CommerceDbContext db, TimeProvider timeProvider)
 {
-    public CustomerOrder Create(CreateOrderRequest request)
+    public async Task<CustomerOrder> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         if (request.Items.Count == 0) throw new ArgumentException("At least one item is required.");
+
+        var requestedIds = request.Items.Select(x => x.ProductVariantId).Distinct().ToArray();
+        var variants = await db.ProductVariants.Where(x => requestedIds.Contains(x.Id)).ToDictionaryAsync(x => x.Id, cancellationToken);
+        var now = timeProvider.GetUtcNow();
         var orderId = Guid.NewGuid();
-        var lines = new List<OrderLine>();
-        var reservations = new List<(OriginalArtworkInventory Inventory, Guid ReservationId)>();
+        var order = new OrderEntity
+        {
+            Id = orderId,
+            CustomerId = request.CustomerId,
+            Status = OrderStatus.PendingPayment,
+            Total = 0,
+            Currency = "USD",
+            ShippingName = request.ShippingAddress.Name,
+            AddressLine1 = request.ShippingAddress.AddressLine1,
+            AddressLine2 = request.ShippingAddress.AddressLine2,
+            City = request.ShippingAddress.City,
+            Region = request.ShippingAddress.Region,
+            PostalCode = request.ShippingAddress.PostalCode,
+            CountryCode = request.ShippingAddress.CountryCode,
+            CreatedAt = now
+        };
+
+        await using var transaction = db.Database.IsRelational()
+            ? await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken)
+            : null;
+
         try
         {
+            var linesByProvider = new Dictionary<FulfillmentProviderCode, List<OrderLineEntity>>();
             foreach (var item in request.Items)
             {
                 if (item.Quantity < 1 || item.Quantity > 25) throw new ArgumentException("Quantity must be between 1 and 25.");
-                var variant = store.FindVariant(item.ProductVariantId) ?? throw new KeyNotFoundException($"Variant {item.ProductVariantId} was not found.");
+                if (!variants.TryGetValue(item.ProductVariantId, out var variant))
+                    throw new KeyNotFoundException($"Variant {item.ProductVariantId} was not found.");
+
                 if (variant.OriginalArtworkId is Guid artworkId)
                 {
                     if (item.Quantity != 1) throw new ArgumentException("Original artwork quantity must be one.");
-                    var original = store.FindInventory(artworkId) ?? throw new InvalidOperationException("Original artwork inventory is missing.");
-                    if (!original.TryReserve(orderId, timeProvider.GetUtcNow(), TimeSpan.FromMinutes(20))) throw new InvalidOperationException("The original artwork is no longer available.");
-                    reservations.Add((original, orderId));
+                    var inventory = await db.OriginalInventory.SingleOrDefaultAsync(x => x.ArtworkId == artworkId, cancellationToken)
+                        ?? throw new InvalidOperationException("Original artwork inventory is missing.");
+                    if (inventory.Status == ArtworkAvailability.Reserved && inventory.ReservedUntil <= now)
+                    {
+                        inventory.Status = ArtworkAvailability.Available;
+                        inventory.ReservationId = null;
+                        inventory.ReservedUntil = null;
+                    }
+                    if (inventory.Status != ArtworkAvailability.Available)
+                        throw new InventoryConflictException("The original artwork is no longer available.");
+                    inventory.Status = ArtworkAvailability.Reserved;
+                    inventory.ReservationId = orderId;
+                    inventory.ReservedUntil = now.AddMinutes(20);
                 }
-                lines.Add(new OrderLine(Guid.NewGuid(), variant.Id, variant.Sku, item.Quantity, variant.RetailPrice, 0, 0, variant.RetailPrice, variant.Currency, variant.Provider));
+
+                if (!linesByProvider.TryGetValue(variant.Provider, out var providerLines))
+                    linesByProvider[variant.Provider] = providerLines = [];
+                providerLines.Add(new OrderLineEntity
+                {
+                    Id = Guid.NewGuid(),
+                    ProductVariantId = variant.Id,
+                    Sku = variant.Sku,
+                    Quantity = item.Quantity,
+                    RetailPrice = variant.RetailPrice,
+                    ProviderCost = 0,
+                    AllocatedShippingCost = 0,
+                    EstimatedGrossMargin = variant.RetailPrice,
+                    Currency = variant.Currency,
+                    Provider = variant.Provider
+                });
+                order.Total += variant.RetailPrice * item.Quantity;
             }
-            var groups = lines.GroupBy(x => x.Provider).Select(group => new FulfillmentGroup(Guid.NewGuid(), group.Key, FulfillmentStatus.PendingSubmission, group.ToArray())).ToArray();
-            var order = new CustomerOrder(orderId, request.CustomerId, OrderStatus.PendingPayment, lines.Sum(x => x.RetailPrice * x.Quantity), "USD", request.ShippingAddress, groups, timeProvider.GetUtcNow());
-            store.Save(order);
-            return order;
+
+            foreach (var group in linesByProvider)
+            {
+                var fulfillment = new FulfillmentEntity
+                {
+                    Id = Guid.NewGuid(),
+                    Provider = group.Key,
+                    Status = FulfillmentStatus.PendingSubmission,
+                    Lines = group.Value
+                };
+                order.Fulfillments.Add(fulfillment);
+            }
+
+            db.Orders.Add(order);
+            await db.SaveChangesAsync(cancellationToken);
+            if (transaction is not null) await transaction.CommitAsync(cancellationToken);
+            return CommerceStore.MapOrder(order);
+        }
+        catch (DbUpdateConcurrencyException exception)
+        {
+            if (transaction is not null) await transaction.RollbackAsync(cancellationToken);
+            throw new InventoryConflictException("The original artwork was reserved by another order.", exception);
         }
         catch
         {
-            foreach (var reservation in reservations) reservation.Inventory.Release(reservation.ReservationId);
+            if (transaction is not null) await transaction.RollbackAsync(cancellationToken);
             throw;
         }
     }
 }
 
-public sealed record WebhookReceipt(string Provider, string ExternalEventId, string EventType, DateTimeOffset ReceivedAt);
-public sealed class WebhookInbox
+public sealed class WebhookInbox(CommerceDbContext db)
 {
-    private readonly ConcurrentDictionary<string, WebhookReceipt> events = new(StringComparer.OrdinalIgnoreCase);
-    public bool TryAccept(string provider, string externalEventId, string eventType, DateTimeOffset receivedAt) => events.TryAdd($"{provider}:{externalEventId}", new WebhookReceipt(provider, externalEventId, eventType, receivedAt));
+    public async Task<bool> TryAcceptAsync(string provider, string externalEventId, string eventType, DateTimeOffset receivedAt, CancellationToken cancellationToken)
+    {
+        var normalizedProvider = provider.ToLowerInvariant();
+        if (await db.WebhookReceipts.AsNoTracking().AnyAsync(
+                x => x.Provider == normalizedProvider && x.ExternalEventId == externalEventId, cancellationToken))
+            return false;
+
+        db.WebhookReceipts.Add(new WebhookReceiptEntity
+        {
+            Id = Guid.NewGuid(),
+            Provider = normalizedProvider,
+            ExternalEventId = externalEventId,
+            EventType = eventType,
+            ReceivedAt = receivedAt
+        });
+        try
+        {
+            await db.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (DbUpdateException)
+        {
+            db.ChangeTracker.Clear();
+            return false;
+        }
+    }
 }

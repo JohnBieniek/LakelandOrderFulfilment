@@ -362,6 +362,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = if (deployConta
               name: 'Database__Password'
               secretRef: 'database-password'
             }
+            {
+              name: 'Database__ApplyMigrations'
+              value: 'true'
+            }
           ]
           resources: {
             cpu: json('0.5')

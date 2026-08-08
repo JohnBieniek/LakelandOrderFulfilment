@@ -31,6 +31,9 @@ jobs:
       - name: Restore
         run: dotnet restore LakelandOrderFulfilment.slnx
 
+      - name: Restore local tools
+        run: dotnet tool restore
+
       - name: Audit dependencies
         run: dotnet list LakelandOrderFulfilment.slnx package --vulnerable --include-transitive
 
@@ -39,3 +42,11 @@ jobs:
 
       - name: Test
         run: dotnet test LakelandOrderFulfilment.slnx --configuration Release --no-build --verbosity normal
+
+      - name: Verify database model has a migration
+        run: >-
+          dotnet tool run dotnet-ef migrations has-pending-model-changes
+          --project src/Lakeland.OrderFulfilment.Api/Lakeland.OrderFulfilment.Api.csproj
+          --startup-project src/Lakeland.OrderFulfilment.Api/Lakeland.OrderFulfilment.Api.csproj
+          --configuration Release
+          --no-build

@@ -44,10 +44,10 @@ LAKELAND ART COMMERCE - NEXT STEPS
    - Keep its API key only in user-secrets/Key Vault. PARTIAL - both secret stores are ready; an EasyPost key has not been configured.
 
 8. Replace in-memory storage - PARTIAL
-   - Model artworks, products, variants, artwork-products, provider mappings, orders, order lines, fulfillment groups, inventory reservations, webhook inbox, and outbox. PARTIAL - private production PostgreSQL 16 is provisioned, but the API still uses CommerceStore in memory.
-   - Add migrations and database optimistic concurrency for unique originals.
-   - Enforce a unique key on Provider + ExternalEventId.
-   - Add reservation expiration cleanup and durable failure history.
+   - Model artworks, products, variants, artwork-products, provider mappings, orders, order lines, fulfillment groups, inventory reservations, webhook inbox, and outbox. PARTIAL - the core catalog, provider mapping, order, fulfillment, inventory, webhook inbox, outbox, and failure entities now use PostgreSQL; the richer artwork-product publishing relationship remains.
+   - Add migrations and database optimistic concurrency for unique originals. DONE - the initial PostgreSQL migration uses the native xmin row version and serializable order transactions.
+   - Enforce a unique key on Provider + ExternalEventId. DONE - the migration creates a unique composite webhook-inbox index; fulfillment provider order IDs are also unique per provider.
+   - Add reservation expiration cleanup and durable failure history. PARTIAL - expired reservations are released when a new order attempts the original, and durable failure storage is modeled; scheduled cleanup and failure-writing workflows remain.
 
 9. Build private image storage - PARTIAL
    - Keep display images, print masters, and provider derivatives separate. DONE - three separate private Blob containers are provisioned.
