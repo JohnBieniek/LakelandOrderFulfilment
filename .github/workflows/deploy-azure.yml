@@ -61,7 +61,7 @@ jobs:
             --output none
 
       - name: Verify health endpoint
-        uses: azure/cli@v2
+        uses: azure/cli@v3
         with:
           inlineScript: |
             set -euo pipefail
