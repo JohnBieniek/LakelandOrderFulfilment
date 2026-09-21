@@ -1,5 +1,14 @@
 LAKELAND ART COMMERCE - NEXT STEPS
 
+DEVELOP BETA (2026-09-21)
+   - Home, contact, gallery, products, artist filtering/sorting, display-only fan art, persistent cart, and dispatch estimates implemented.
+   - Original painting, made-to-order clay, and Printful mug examples are labeled as sample listings.
+   - Stripe TEST Checkout, signed payment/expiry webhooks, original reservations, and payment outbox implemented; preview mode keeps payments disabled.
+   - Printful token is present in local user-secrets; read-only API verification returned a store but no published sync products. Publish the mug into that store.
+   - Azure deployment blocked: subscription is disabled/read-only; existing database is Disabled. Re-enable subscription before publishing.
+   - Need real artwork/artist names, approved prices and lead times, Stripe test configuration, and a separate beta database.
+   - See docs/beta.md and scripts/Deploy-Beta.ps1 for setup and develop auto-deployment.
+
 1. Protect the GitHub repository - DONE
    - Enable secret scanning, push protection, Dependabot, CodeQL, branch protection, and required test checks. DONE
    - Add CI for restore, build, test, dependency audit, and Gitleaks. DONE
@@ -23,19 +32,21 @@ LAKELAND ART COMMERCE - NEXT STEPS
    - Store test keys in user-secrets and live keys in Key Vault. PARTIAL - both secret stores are ready; Stripe keys have not been configured.
    - Use Stripe CLI test events, including duplicates. Fulfillment must start only from a verified webhook.
 
-5. Register with Prodigi (the only fine-art POD route) - PARTIAL
-   - Create a Prodigi account and obtain sandbox credentials. DONE
-   - Order samples for paper, color, frames, canvas, packaging, and shipping regions.
-   - Approve specific products and save internal-to-Prodigi mappings in the database.
-   - Implement quote, submit, cancel, status, and webhook translation in ProdigiFulfillmentProvider.
-   - Never expose its key, raw catalog, or print-master URL to the browser.
+5. Retire Prodigi - PARTIAL
+   - Remove the active adapter, registration, configuration placeholder, and webhook route. DONE
+   - Route the sample print to Printful with an unapproved placeholder mapping. DONE
+   - Preserve historical orders; reject new orders using remaining retired-provider variants. DONE
+   - Review existing Prodigi orders and custom catalog mappings before cutover; do not relabel historical orders.
+   - Revoke unused Prodigi credentials and remove their secret-store entries after reviewing outstanding orders.
 
-6. Register with Printful ON HOLD
-   - Create a Printful account and Manual Order/API store.
-   - Obtain test credentials and confirm the currently recommended stable API version.
-   - Sample shirts, stickers, mugs, sizes, colors, packaging, and print methods.
+6. Register with Printful (sole POD provider) - IN PROGRESS
+   - Follow docs/printful-onboarding.md for setup and the read-only connection check.
+   - Create a Printful account and Manual Order/API store (Stores > Connect via API).
+   - Create a private token scoped to that store; save it in user-secrets/Key Vault.
+   - Approve print, frame, canvas, apparel, and merchandise quality, variants, regions, and artwork files.
    - Save approved internal-to-Printful variant mappings in the database.
-   - Implement quote, submit, cancel, status, and webhook translation in PrintfulFulfillmentProvider.
+   - Implement quote, draft submit, cancel, status, and verified webhook translation in PrintfulFulfillmentProvider.
+   - Test with unconfirmed draft orders; production confirmation remains disabled.
 
 7. Register with EasyPost - PARTIAL
    - Create an EasyPost account and test API key.
@@ -87,7 +98,7 @@ LAKELAND ART COMMERCE - NEXT STEPS
     - Add provider sandbox integration tests using synthetic artwork, customers, and addresses.
     - Test simultaneous original purchases, duplicate/out-of-order webhooks, provider downtime, payment replay, expiration, partial cancellation, and missed-event reconciliation.
     - Run accessibility, load, dependency, secret, and authorization tests. PARTIAL - dependency audit, Gitleaks, CodeQL, build, and unit tests run in required CI; accessibility, load, and authorization coverage remain.
-    - Demonstrate a portfolio sandbox order with one original, one Prodigi print, and one Printful shirt without real charges or production.
+    - Demonstrate a portfolio order with mocked fulfillment or unconfirmed Printful drafts with one original, one Printful print, and one Printful shirt without real charges or production.
 
 16. Launch production carefully - PARTIAL
     - Complete tax, privacy, returns, terms, shipping, insurance, and provider business verification with qualified advisers.

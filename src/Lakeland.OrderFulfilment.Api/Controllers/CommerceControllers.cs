@@ -53,7 +53,7 @@ public sealed class WebhooksController(WebhookInbox inbox, TimeProvider timeProv
     public async Task<IActionResult> Receive(string provider, WebhookEnvelope envelope, CancellationToken cancellationToken)
     {
         if (environment.IsProduction() || !configuration.GetValue<bool>("WebhookSecurity:EnableUnsignedDevelopmentWebhooks")) return NotFound();
-        if (!new[] { "stripe", "prodigi", "printful", "easypost" }.Contains(provider, StringComparer.OrdinalIgnoreCase)) return NotFound();
+        if (!new[] { "stripe", "printful", "easypost" }.Contains(provider, StringComparer.OrdinalIgnoreCase)) return NotFound();
         if (string.IsNullOrWhiteSpace(envelope.ExternalEventId)) return BadRequest();
         return await inbox.TryAcceptAsync(provider, envelope.ExternalEventId, envelope.EventType, timeProvider.GetUtcNow(), cancellationToken)
             ? Accepted()

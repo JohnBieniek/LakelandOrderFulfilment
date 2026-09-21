@@ -1,6 +1,7 @@
 namespace Lakeland.OrderFulfilment.Api.Domain;
 
-public enum FulfillmentProviderCode { Internal, Prodigi, Printful }
+// Prodigi is retained only to deserialize historical orders; no active adapter exists.
+public enum FulfillmentProviderCode { Internal = 0, Prodigi = 1, Printful = 2 }
 public enum OrderStatus { PendingPayment, Paid, PartiallyInProduction, PartiallyShipped, Completed, PartiallyCanceled, Canceled }
 public enum FulfillmentStatus { PendingSubmission, Submitted, Accepted, InProduction, Shipped, Delivered, Failed, Canceled }
 public enum ArtworkAvailability { Available, Reserved, Sold, Packing, Shipped, Delivered, Returned }

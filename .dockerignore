@@ -8,3 +8,10 @@ artifacts
 *.user
 *.suo
 .azure-login*
+node_modules
+test-results
+playwright-report
+**/.env*
+**/secrets*.json
+**/*.secrets.json
+**/appsettings.*.Local.json

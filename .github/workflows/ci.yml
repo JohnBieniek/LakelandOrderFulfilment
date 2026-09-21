@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, develop]
   pull_request:
-    branches: [master]
+    branches: [master, develop]
 
 permissions:
   contents: read
@@ -50,3 +50,66 @@ jobs:
           --startup-project src/Lakeland.OrderFulfilment.Api/Lakeland.OrderFulfilment.Api.csproj
           --configuration Release
           --no-build
+
+      - name: Set up Node for browser tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install browser test dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Test the storefront in Chromium
+        run: npm run test:e2e
+
+      - name: Save beta screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-browser-previews
+          path: |
+            artifacts/*.png
+            test-results/
+
+  deploy-beta:
+    name: Deploy develop beta
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop' && vars.BETA_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: development
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: azure-beta
+      cancel-in-progress: false
+    env:
+      RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+      REGISTRY: ${{ vars.AZURE_CONTAINER_REGISTRY }}
+      CONTAINER_APP: ca-lakeland-beta
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build and publish beta container
+        run: |
+          set -euo pipefail
+          az acr login --name "$REGISTRY"
+          image="$REGISTRY.azurecr.io/lakeland-beta:$GITHUB_SHA"
+          docker build --tag "$image" .
+          docker push "$image"
+          az containerapp update --resource-group "$RESOURCE_GROUP" --name "$CONTAINER_APP" --image "$image" --output none
+      - name: Verify beta
+        run: |
+          set -euo pipefail
+          host=$(az containerapp show --resource-group "$RESOURCE_GROUP" --name "$CONTAINER_APP" --query properties.configuration.ingress.fqdn -o tsv)
+          curl --fail --retry 12 --retry-delay 10 --retry-all-errors "https://$host/health"
+          curl --fail --retry 6 --retry-delay 5 --retry-all-errors "https://$host/api/shop/catalog"
+          echo "Beta: https://$host" >> "$GITHUB_STEP_SUMMARY"

@@ -3,6 +3,7 @@ using System;
 using Lakeland.OrderFulfilment.Api.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lakeland.OrderFulfilment.Api.Persistence.Migrations
 {
     [DbContext(typeof(CommerceDbContext))]
-    partial class CommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260921132120_SwitchPrintCatalogToPrintful")]
+    partial class SwitchPrintCatalogToPrintful
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -458,40 +461,6 @@ namespace Lakeland.OrderFulfilment.Api.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Lakeland.OrderFulfilment.Api.Persistence.StorefrontCheckoutEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CartHash")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<DateTimeOffset>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("OwnerHash")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("SessionUrl")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SessionId")
-                        .IsUnique();
-
-                    b.ToTable("storefront_checkouts", (string)null);
-                });
-
             modelBuilder.Entity("Lakeland.OrderFulfilment.Api.Persistence.WebhookReceiptEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -574,15 +543,6 @@ namespace Lakeland.OrderFulfilment.Api.Persistence.Migrations
                     b.HasOne("Lakeland.OrderFulfilment.Api.Persistence.ProductEntity", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Lakeland.OrderFulfilment.Api.Persistence.StorefrontCheckoutEntity", b =>
-                {
-                    b.HasOne("Lakeland.OrderFulfilment.Api.Persistence.OrderEntity", null)
-                        .WithOne()
-                        .HasForeignKey("Lakeland.OrderFulfilment.Api.Persistence.StorefrontCheckoutEntity", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

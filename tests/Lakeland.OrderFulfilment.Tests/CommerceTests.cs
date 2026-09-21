@@ -24,10 +24,25 @@ public sealed class CommerceTests
         var reloaded = await store.FindOrderAsync(order.Id, CancellationToken.None);
 
         Assert.NotNull(reloaded);
-        Assert.Equal(3, reloaded.Fulfillments.Count);
+        Assert.Equal(2, reloaded.Fulfillments.Count);
+        Assert.Equal(2, reloaded.Fulfillments.Single(x => x.Provider == FulfillmentProviderCode.Printful).Lines.Count);
         Assert.Equal(
-            new[] { FulfillmentProviderCode.Internal, FulfillmentProviderCode.Prodigi, FulfillmentProviderCode.Printful },
+            new[] { FulfillmentProviderCode.Internal, FulfillmentProviderCode.Printful },
             reloaded.Fulfillments.Select(x => x.Provider).Order().ToArray());
+    }
+
+    [Fact]
+    public async Task Retired_provider_variant_cannot_create_a_new_order()
+    {
+        await using var db = await CreateDatabaseAsync();
+        var print = await db.ProductVariants.SingleAsync(x => x.Sku == "PRINT-SAMPLE-LAKE-8X10");
+        print.Provider = FulfillmentProviderCode.Prodigi;
+        await db.SaveChangesAsync();
+        var service = new OrderService(db, TimeProvider.System);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.CreateAsync(
+            new CreateOrderRequest(Guid.NewGuid(), [new(print.Id, 1)], Address), CancellationToken.None));
+        Assert.Empty(await db.Orders.ToListAsync());
     }
 
     [Fact]

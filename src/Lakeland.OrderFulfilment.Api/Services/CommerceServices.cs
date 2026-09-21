@@ -97,6 +97,9 @@ public sealed class OrderService(CommerceDbContext db, TimeProvider timeProvider
                 if (!variants.TryGetValue(item.ProductVariantId, out var variant))
                     throw new KeyNotFoundException($"Variant {item.ProductVariantId} was not found.");
 
+                if (variant.Provider is not (FulfillmentProviderCode.Internal or FulfillmentProviderCode.Printful))
+                    throw new InvalidOperationException("This product uses a retired fulfillment provider and needs an approved Printful mapping.");
+
                 if (variant.OriginalArtworkId is Guid artworkId)
                 {
                     if (item.Quantity != 1) throw new ArgumentException("Original artwork quantity must be one.");

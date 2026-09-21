@@ -5,11 +5,22 @@
 .idea/
 *.user
 *.suo
+# Local configuration and credentials (at any directory depth).
+# Keep real tokens in .NET user-secrets, which lives outside this repository.
 appsettings.Local.json
+appsettings.*.Local.json
 appsettings.Production.json
 .env
 .env.*
 secrets.json
+secrets.*.json
+*.secrets.json
+.secrets/
+secrets/
+# Accidental local exports of Printful credentials.
+printful-token*
+printful.token*
+printful_token*
 *.pfx
 *.p12
 *.key
@@ -17,3 +28,6 @@ secrets.json
 artifacts/
 .azure-login*
 .azure-browser-login*
+node_modules/
+playwright-report/
+test-results/

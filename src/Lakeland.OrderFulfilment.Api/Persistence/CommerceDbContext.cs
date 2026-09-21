@@ -15,6 +15,7 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
     public DbSet<WebhookReceiptEntity> WebhookReceipts => Set<WebhookReceiptEntity>();
     public DbSet<OutboxMessageEntity> OutboxMessages => Set<OutboxMessageEntity>();
     public DbSet<FailureHistoryEntity> FailureHistory => Set<FailureHistoryEntity>();
+    public DbSet<StorefrontCheckoutEntity> StorefrontCheckouts => Set<StorefrontCheckoutEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,6 +116,16 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
         failure.Property(x => x.Error).HasMaxLength(4000);
 
         SeedCatalog(modelBuilder);
+
+        var checkout = modelBuilder.Entity<StorefrontCheckoutEntity>();
+        checkout.ToTable("storefront_checkouts");
+        checkout.HasKey(x => x.Id);
+        checkout.Property(x => x.OwnerHash).HasMaxLength(64);
+        checkout.Property(x => x.CartHash).HasMaxLength(64);
+        checkout.Property(x => x.SessionId).HasMaxLength(200);
+        checkout.Property(x => x.SessionUrl).HasMaxLength(2000);
+        checkout.HasIndex(x => x.SessionId).IsUnique();
+        checkout.HasOne<OrderEntity>().WithOne().HasForeignKey<StorefrontCheckoutEntity>(x => x.Id).OnDelete(DeleteBehavior.Restrict);
     }
 
     private static void SeedCatalog(ModelBuilder modelBuilder)
@@ -131,14 +142,24 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
         });
         modelBuilder.Entity<ProductEntity>().HasData(
             new ProductEntity { Id = originalProductId, Name = "Original artwork", Description = "One-of-one artwork fulfilled by the studio." },
-            new ProductEntity { Id = printProductId, Name = "Fine-art print", Description = "Archival reproduction fulfilled by Prodigi." },
+            new ProductEntity { Id = printProductId, Name = "Fine-art print", Description = "Art reproduction fulfilled by Printful; product approval pending." },
             new ProductEntity { Id = shirtProductId, Name = "Art T-shirt", Description = "Apparel fulfilled by Printful." });
         modelBuilder.Entity<ProductVariantEntity>().HasData(
             new ProductVariantEntity { Id = Guid.Parse("11111111-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), ProductId = originalProductId, Sku = "ORIGINAL-SAMPLE-LAKE", Name = "Original", RetailPrice = 1200m, Currency = "USD", Provider = FulfillmentProviderCode.Internal, ProviderProductId = "internal", OriginalArtworkId = artworkId },
-            new ProductVariantEntity { Id = Guid.Parse("22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), ProductId = printProductId, Sku = "PRINT-SAMPLE-LAKE-8X10", Name = "8 x 10", RetailPrice = 38m, Currency = "USD", Provider = FulfillmentProviderCode.Prodigi, ProviderProductId = "CONFIGURE_PRODIGI_MAPPING" },
+            new ProductVariantEntity { Id = Guid.Parse("22222222-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), ProductId = printProductId, Sku = "PRINT-SAMPLE-LAKE-8X10", Name = "8 x 10", RetailPrice = 38m, Currency = "USD", Provider = FulfillmentProviderCode.Printful, ProviderProductId = "CONFIGURE_PRINTFUL_MAPPING" },
             new ProductVariantEntity { Id = Guid.Parse("33333333-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), ProductId = shirtProductId, Sku = "SHIRT-SAMPLE-LAKE-M", Name = "Medium", RetailPrice = 32m, Currency = "USD", Provider = FulfillmentProviderCode.Printful, ProviderProductId = "CONFIGURE_PRINTFUL_MAPPING" });
         modelBuilder.Entity<OriginalInventoryEntity>().HasData(new OriginalInventoryEntity { ArtworkId = artworkId, Status = ArtworkAvailability.Available });
     }
+}
+
+public sealed class StorefrontCheckoutEntity
+{
+    public Guid Id { get; set; }
+    public required string OwnerHash { get; set; }
+    public required string CartHash { get; set; }
+    public string? SessionId { get; set; }
+    public string? SessionUrl { get; set; }
+    public DateTimeOffset ExpiresAt { get; set; }
 }
 
 public sealed class ArtworkEntity

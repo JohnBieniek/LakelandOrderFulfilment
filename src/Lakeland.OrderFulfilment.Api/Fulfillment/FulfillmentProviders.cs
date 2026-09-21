@@ -33,16 +33,10 @@ public abstract class ConfiguredHttpFulfillmentProvider(HttpClient httpClient, I
     public abstract FulfillmentProviderCode ProviderCode { get; }
     protected abstract string TokenConfigurationKey { get; }
     protected string RequiredToken() => Configuration[TokenConfigurationKey] ?? throw new InvalidOperationException($"{TokenConfigurationKey} must be supplied by environment variables, user-secrets, or a production secret vault.");
-    public virtual Task<FulfillmentQuote> GetQuoteAsync(FulfillmentQuoteRequest request, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Provider request mapping is intentionally disabled until sandbox credentials and approved product mappings are configured."); }
+    public virtual Task<FulfillmentQuote> GetQuoteAsync(FulfillmentQuoteRequest request, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Provider request mapping is intentionally disabled until account credentials and approved product mappings are configured."); }
     public virtual Task<FulfillmentSubmission> SubmitAsync(FulfillmentRequest request, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Live submission is intentionally disabled until provider onboarding is complete."); }
-    public virtual Task<FulfillmentStatus> GetStatusAsync(string id, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Provider status mapping is pending sandbox onboarding."); }
-    public virtual Task<CancelFulfillmentResult> CancelAsync(string id, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Provider cancellation mapping is pending sandbox onboarding."); }
-}
-
-public sealed class ProdigiFulfillmentProvider(HttpClient client, IConfiguration configuration) : ConfiguredHttpFulfillmentProvider(client, configuration)
-{
-    public override FulfillmentProviderCode ProviderCode => FulfillmentProviderCode.Prodigi;
-    protected override string TokenConfigurationKey => "Providers:Prodigi:ApiKey";
+    public virtual Task<FulfillmentStatus> GetStatusAsync(string id, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Provider status mapping is pending account onboarding."); }
+    public virtual Task<CancelFulfillmentResult> CancelAsync(string id, CancellationToken token) { _ = RequiredToken(); throw new NotSupportedException("Provider cancellation mapping is pending account onboarding."); }
 }
 
 public sealed class PrintfulFulfillmentProvider(HttpClient client, IConfiguration configuration) : ConfiguredHttpFulfillmentProvider(client, configuration)
