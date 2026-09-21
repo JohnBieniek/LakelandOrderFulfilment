@@ -65,6 +65,9 @@ jobs:
       - name: Test the storefront in Chromium
         run: npm run test:e2e
 
+      - name: Test contact delivery validation
+        run: npm run test:contact
+
       - name: Build and type-check Cloudflare beta
         run: |
           npm run build:cloudflare

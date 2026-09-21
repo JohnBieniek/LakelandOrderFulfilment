@@ -1,4 +1,5 @@
 import catalog from './catalog.generated.json';
+import { submitContact } from './contact';
 
 const pageRoutes = new Set(['/contact', '/gallery', '/products', '/cart', '/checkout/success']);
 const securityHeaders = {
@@ -46,6 +47,7 @@ function json(body: unknown, status = 200): Response {
 export default {
   async fetch(request, env): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === '/api/contact') return submitContact(request, env);
     if (url.pathname === '/api/shop/checkout' && request.method === 'POST')
       return json({ error: 'Checkout is not enabled in this preview. Your cart is saved on this device.' }, 503);
     if (request.method !== 'GET' && request.method !== 'HEAD')

@@ -178,12 +178,40 @@ function bindFilters() {
   main.querySelectorAll('[data-section]').forEach(button => button.addEventListener('click', () => change('section', button.dataset.section)));
 }
 function renderContact() {
-  main.innerHTML = `<div class="wrap">${intro('Let’s make a connection', 'Hello, art lover.', 'A question about a piece? An idea for a clay sculpture? Or just a hello? We’d love to hear from you.')}<div class="contact-layout"><div class="contact-details"><span class="eyebrow">A note to the studio</span><a href="mailto:contact@lakelandfinearts.com">contact@lakelandfinearts.com</a><h3>Something made for you.</h3><p>Our clay sculptures are made to order. If you have a particular character, color, or little detail in mind, let’s talk about what’s possible.</p><h3>About your order.</h3><p>Original paintings and clay pieces are packed by our studio. Print-on-demand pieces are made and shipped by Printful, so mixed orders may arrive in separate packages.</p><h3>Here during the beta.</h3><p>We’re still setting things up. Tell us what you love, what feels confusing, or what you’d like to see next.</p></div><form class="contact-form" id="contact-form"><h2>Send a little hello.</h2><div class="field"><label for="contact-name">Your name</label><input id="contact-name" name="name" autocomplete="name" maxlength="100" required placeholder="Name"></div><div class="field"><label for="contact-email">Email address</label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="200" required placeholder="you@example.com"></div><div class="field"><label for="contact-subject">What’s on your mind?</label><select id="contact-subject" name="subject"><option>A question about the artwork</option>A made-to-order clay sculpture</option>An order or shipping question</option>Beta feedback</option>Just saying hello</option></select></div><div class="field"><label for="contact-message">Your message</label><textarea id="contact-message" name="message" maxlength="3000" required placeholder="Tell us a little about it…"></textarea></div><button type="submit" class="button">Open your email app <span aria-hidden="true">↗</span></button><p class="form-note">This opens a draft in your email app. Review it and send it there. This website does not submit or store your message.</p><p id="contact-status" class="form-note" role="status"></p></form></div></div>`;
-  document.querySelector('#contact-form').addEventListener('submit', event => {
-    event.preventDefault(); const data = new FormData(event.target);
-    const body = `${data.get('message')}\n\nFrom: ${data.get('name')}\nEmail: ${data.get('email')}`;
-    window.location.href = `mailto:contact@lakelandfinearts.com?subject=${encodeURIComponent(data.get('subject'))}&body=${encodeURIComponent(body)}`;
-    document.querySelector('#contact-status').textContent = 'Your email app should open a draft. If it doesn’t, email contact@lakelandfinearts.com directly.';
+  main.innerHTML = `<div class="wrap">${intro('Let’s make a connection', 'Hello, art lover.', 'A question about a piece? An idea for a clay sculpture? Or just a hello? We’d love to hear from you.')}<div class="contact-layout"><div class="contact-details"><span class="eyebrow">A note to the studio</span><a href="mailto:contact@lakelandfinearts.com">contact@lakelandfinearts.com</a><h3>Something made for you.</h3><p>Our clay sculptures are made to order. If you have a particular character, color, or little detail in mind, let’s talk about what’s possible.</p><h3>About your order.</h3><p>Original paintings and clay pieces are packed by our studio. Print-on-demand pieces are made and shipped by Printful, so mixed orders may arrive in separate packages.</p><h3>Here during the beta.</h3><p>We’re still setting things up. Tell us what you love, what feels confusing, or what you’d like to see next.</p></div><form class="contact-form" id="contact-form"><h2>Send a little hello.</h2><div class="field"><label for="contact-name">Your name</label><input id="contact-name" name="name" autocomplete="name" maxlength="100" required placeholder="Name"></div><div class="field"><label for="contact-email">Email address</label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="you@example.com"></div><div class="field"><label for="contact-message">Your message</label><textarea id="contact-message" name="message" maxlength="3000" required placeholder="Tell us a little about it…"></textarea></div><button type="submit" class="button">Send message</button><p class="form-note">All fields are required. Your message will be emailed to contact-form@lakelandfinearts.com.</p><p id="contact-status" class="form-note" role="status" tabindex="-1"></p></form></div></div>`;
+  const form = document.querySelector('#contact-form');
+  const fields = [...form.querySelectorAll('input, textarea')];
+  fields.forEach(field => field.addEventListener('input', () => field.setCustomValidity('')));
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const button = form.querySelector('button[type="submit"]');
+    if (button.disabled) return;
+    fields.forEach(field => field.setCustomValidity(field.value.trim() ? '' : 'Please complete this field.'));
+    if (!form.reportValidity()) return;
+    const status = form.querySelector('#contact-status');
+    const data = Object.fromEntries(new FormData(form));
+    button.disabled = true; button.textContent = 'Sending...';
+    fields.forEach(field => { field.disabled = true; });
+    form.setAttribute('aria-busy', 'true');
+    status.textContent = 'Sending your message...';
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'We could not send your message. Please try again later or email contact-form@lakelandfinearts.com directly.');
+      if (!result.message) throw new Error('We could not confirm delivery. Please try again later.');
+      form.reset();
+      status.textContent = result.message;
+    } catch (error) {
+      status.textContent = error instanceof TypeError ? 'Connection problem. Your text is still here. Please try again when you are connected.' : error.message;
+    } finally {
+      button.disabled = false; button.textContent = 'Send message';
+      fields.forEach(field => { field.disabled = false; });
+      form.removeAttribute('aria-busy');
+      status.focus({ preventScroll: true });
+    }
   });
 }
 function renderCart() {

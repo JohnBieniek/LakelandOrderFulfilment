@@ -8,7 +8,7 @@ The `develop` branch contains the responsive storefront. The public beta is host
 - A separate gallery-only fan art section. Fan art has no product mapping and cannot pass server-side checkout validation.
 - Sample originals, made-to-order clay sculptures, and a print-on-demand mug, with per-product estimated dispatch dates.
 - A persistent browser cart, quantities, removals, and one-per-order original limits.
-- Contact form opens an email draft to the studio; it does not claim to send messages.
+- Cloudflare contact endpoint sends required name, email, and message fields to contact-form@lakelandfinearts.com using a restricted email binding. Destination verification is required; see [contact form setup](contact-form.md).
 - Stripe-hosted **test** Checkout integration with server-owned prices, guest-cookie order ownership, idempotent requests, original reservations, signed webhooks, replay protection, and transactional payment/outbox persistence.
 - Cloudflare Workers hosting, with the same static assets and a catalog exported from the .NET source. Shipping estimates are calculated per request. The .NET payment backend is retained in the repository but does not run in the Cloudflare preview Worker.
 

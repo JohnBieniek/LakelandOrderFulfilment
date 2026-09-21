@@ -59,9 +59,39 @@ test('direct page routes and contact form are usable', async ({ page, request })
   await page.goto('/contact');
   await expect(page.getByLabel('Your name')).toBeVisible();
   await expect(page.getByLabel('Email address')).toHaveAttribute('type', 'email');
-  await expect(page.getByRole('button', { name: 'Open your email app' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send message' })).toBeVisible();
+  for (const label of ['Your name', 'Email address', 'Your message'])
+    await expect(page.getByLabel(label, { exact: true })).toHaveAttribute('required', '');
+  await expect(page.locator('#contact-subject')).toHaveCount(0);
   expect((await request.get('/api/orders/11111111-1111-1111-1111-111111111111')).status()).toBe(404);
   expect((await request.post('/api/shop/checkout', { data: { requestId: '11111111-1111-1111-1111-111111111111', items: [] } })).status()).toBe(503);
+});
+
+test('contact form submits directly and retains text when delivery fails', async ({ page }) => {
+  const messages = [];
+  let fail = true;
+  await page.route('**/api/contact', async route => {
+    messages.push(route.request().postDataJSON());
+    await route.fulfill({ status: fail ? 503 : 200, contentType: 'application/json',
+      body: JSON.stringify(fail ? { error: 'Delivery temporarily unavailable.' } : { message: 'Thank you! Your message has been sent to our studio.' }) });
+  });
+  await page.goto('/contact');
+  const submit = page.getByRole('button', { name: 'Send message', exact: true });
+  await submit.click();
+  expect(messages).toHaveLength(0);
+  await page.getByLabel('Your name', { exact: true }).fill('Test visitor');
+  await page.getByLabel('Email address', { exact: true }).fill('visitor@example.com');
+  await page.getByLabel('Your message', { exact: true }).fill('I would like to ask about a sculpture.');
+  await submit.click();
+  await expect(page.locator('#contact-status')).toHaveText('Delivery temporarily unavailable.');
+  await expect(page.getByLabel('Your message', { exact: true })).toHaveValue('I would like to ask about a sculpture.');
+  expect(messages[0]).toEqual({ name: 'Test visitor', email: 'visitor@example.com', message: 'I would like to ask about a sculpture.' });
+  fail = false;
+  await submit.click();
+  await expect(page.locator('#contact-status')).toContainText('has been sent');
+  await expect(page.getByLabel('Your message', { exact: true })).toHaveValue('');
+  await expect(submit).toBeEnabled();
+  expect(page.url()).toContain('/contact');
 });
 
 test('capture desktop and mobile previews', async ({ page }) => {

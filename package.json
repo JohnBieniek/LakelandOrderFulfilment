@@ -2,6 +2,7 @@
   "name": "lakeland-storefront-beta",
   "private": true,
   "scripts": {
+    "test:contact": "node --experimental-strip-types --test tests/cloudflare/contact.test.mjs",
     "test:e2e": "playwright test",
     "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "check:cloudflare": "wrangler types cloudflare/worker-configuration.d.ts && tsc -p cloudflare/tsconfig.json",
