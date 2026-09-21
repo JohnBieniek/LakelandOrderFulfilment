@@ -49,6 +49,12 @@ A future browser administration page needs authenticated staff access and server
 
 ## Current local publishing commands
 
+The gallery groups alternate views into items using `scripts/group-artwork.mjs`. Its reviewed aliases join differently named views of the same work, and its descriptions provide context without inventing prices or availability. The 209 archive entries currently form 57 items with 204 distinct views. Byte-identical display views within an item appear only once. Different works inspired by the same character remain separate unless explicitly grouped.
+
+`art/gallery.json` remains the protected-image inventory; `art/items.json` is the grouped catalog used by the site. Both reference only approved display copies. The build regenerates the grouped catalog and verifies that grouping loses no image hashes, mixes no fan-art classification, and exposes no unapproved view. Grouping does not modify or remove source files or display files.
+
+For future custom entries in the external `artwork.local.json`, use the same `itemId` on multiple views of one item, and add a `description`. Use a different `itemId` for separate items that happen to share a title. `python scripts/publish-artwork.py` regenerates both manifests; to edit grouping or descriptions for existing archive entries, update `scripts/group-artwork.mjs` and run `node scripts/group-artwork.mjs`.
+
 Install Pillow (`python -m pip install Pillow`) if needed, then run:
 
 ```powershell

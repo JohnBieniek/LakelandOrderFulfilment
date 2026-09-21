@@ -51,7 +51,7 @@ function intro(eyebrow, title, description) {
 }
 function renderHome() {
   const featured = catalog.gallery.find(w => w.title === 'Beekeeper and doctor') || catalog.gallery[0];
-  main.innerHTML = `<div class="wrap"><section class="hero"><div><span class="eyebrow">From our studio to your story</span><h1>Art that feels<br>like <em>you.</em></h1><p>Original paintings, handmade clay, and everyday objects with a little more soul. Made with care. Meant to be loved.</p><div class="hero-buttons"><a href="/products" class="button">Find your piece <span aria-hidden="true">↗</span></a><a class="text-link" href="/gallery">Wander the gallery</a></div><div class="hero-note">Independent artists. A personal touch.</div></div><div class="hero-art"><img src="${escape(featured?.image || "/art/lake.svg")}" alt="${escape(featured?.title || "Lake landscape")}" width="800" height="900" fetchpriority="high"><div class="hero-caption">${escape(featured?.title || "Lakeland Fine Arts")} &nbsp; / &nbsp; ${escape(featured?.artist || "Our studio")}</div></div></section>
+  main.innerHTML = `<div class="wrap"><section class="hero"><div><span class="eyebrow">From our studio to your story</span><h1>Art that feels<br>like <em>you.</em></h1><p>Original paintings, handmade clay, and everyday objects with a little more soul. Made with care. Meant to be loved.</p><div class="hero-buttons"><a href="/products" class="button">Find your piece <span aria-hidden="true">↗</span></a><a class="text-link" href="/gallery">Wander the gallery</a></div><div class="hero-note">Independent artists. A personal touch.</div></div><div class="hero-art"><button class="art-open" data-open-work="${escape(featured?.id || "")}" aria-label="Enlarge ${escape(featured?.title || "artwork")}"><img src="${escape(featured?.image || "/art/lake.svg")}" alt="${escape(featured?.title || "Lake landscape")}" width="800" height="900" fetchpriority="high"></button><div class="hero-caption">${escape(featured?.title || "Lakeland Fine Arts")} &nbsp; / &nbsp; ${escape(featured?.artist || "Our studio")}</div></div></section>
     <div class="values"><div class="value">${icons.original}<div>Truly original<small>One-of-a-kind paintings</small></div></div><div class="value">${icons.clay}<div>Made by hand<small>Clay pieces, crafted for you</small></div></div><div class="value">${icons.printful}<div>Art for every day<small>Printed just when you order</small></div></div></div>
     <section><div class="section-heading"><div><span class="eyebrow">Something to connect with</span><h2>Find your kind of art.</h2></div><a href="/products" class="text-link">Explore all products ↗</a></div><div class="collection-grid">
     ${[['original', 'lake', 'Original paintings', 'The only one, for your one-of-a-kind space.'], ['clay', 'sculpture', 'Handmade clay', 'A little character. A lot of care.'], ['printful', 'mug', 'Art for the everyday', 'Your daily rituals, a little more inspired.']].map(([kind, image, title, copy]) => `<a class="collection" href="/products?kind=${kind}"><div class="image-wrap"><img src="/art/${image}.svg" alt="${title} illustrative preview" loading="lazy" width="800" height="900"></div><div><div class="collection-title"><h3>${title}</h3><span aria-hidden="true">↗</span></div><p>${copy}</p></div></a>`).join('')}</div></section>
@@ -76,7 +76,7 @@ function sorted(items) {
   });
 }
 function productCard(p) {
-  return `<article class="product-card" id="product-${p.id}"><div class="product-image"><img src="${p.image}" alt="${escape(p.name)} — illustrative sample" loading="lazy" width="800" height="900"><span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · Sample listing</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p><div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
+  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · Sample listing</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p><div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
 }
 function renderProducts() {
   const kind = new URLSearchParams(location.search).get('kind') || '';
@@ -84,9 +84,85 @@ function renderProducts() {
   main.innerHTML = `<div class="wrap">${intro('The collection', 'Art to make your own.', 'Something for your walls, something for your shelves, something for your everyday. Find the piece that speaks to you.')}<div class="notice">You’re exploring our beta. Artwork, artist labels, prices, and lead times are samples. No real purchases or shipments are available yet.</div><div class="filters"><div class="tabs" aria-label="Product types">${[['', 'All pieces'], ['original', 'Original paintings'], ['clay', 'Handmade clay'], ['printful', 'Print on demand']].map(([value, label]) => `<button class="tab ${kind === value ? 'selected' : ''}" data-kind="${value}" aria-pressed="${kind === value}">${label}</button>`).join('')}</div>${filterFields()}</div><p class="results-count" aria-live="polite">${items.length} ${items.length === 1 ? 'piece' : 'pieces'} to discover</p>${items.length ? `<div class="product-grid">${items.map(productCard).join('')}</div>` : '<div class="empty"><h2>No pieces found.</h2><p>Try another artist or explore all product types.</p><a class="button light" href="/products">Clear filters</a></div>'}<p class="shipping-note">A note on shipping: these are estimated <strong>dispatch dates</strong>, not arrival dates. Weekends are excluded; holidays, studio capacity, and destination may change timing. Clay is made after you order. Printful items ship separately. Final shipping rates and taxes are still being configured.</p></div>`;
   bindFilters();
 }
-function galleryCard(work) {
-  return `<article class="gallery-card"><a href="${escape(work.image)}" target="_blank" rel="noopener" aria-label="View ${escape(work.title)}"><img src="${escape(work.image)}" alt="${escape(work.title)}" loading="lazy" width="${work.width || 800}" height="${work.height || 900}"></a><div class="artist">${escape(work.artist)}</div><h3>${escape(work.title)}</h3><p class="medium">${escape(work.medium)}</p>${work.fanArt ? '<span class="fan-tag">For appreciation. Not for sale.</span>' : '<span class="medium">Studio archive ? Gallery only</span>'}</article>`;
+const viewIndices = new Map();
+const viewsFor = work => work.images?.length ? work.images : [{ image: work.image, width: 800, height: 900, label: 'View 1' }];
+const findWork = id => catalog.gallery.find(w => w.id === id) || catalog.products.find(p => p.id === id);
+const chevron = direction => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${direction < 0 ? 'M15 5 8 12l7 7' : 'm9 5 7 7-7 7'}"/></svg>`;
+function artworkImage(work) {
+  const views = viewsFor(work), index = viewIndices.get(work.id) || 0, view = views[index];
+  const title = work.title || work.name;
+  return `<div class="art-carousel" data-carousel="${escape(work.id)}"><button class="art-open" data-open-work="${escape(work.id)}" aria-label="Enlarge ${escape(title)}"><img src="${escape(view.image)}" alt="${escape(title)} \u00b7 ${escape(view.label)}" loading="lazy" width="${view.width}" height="${view.height}"></button>${views.length > 1 ? `<button class="art-arrow previous" data-cycle="-1" data-work="${escape(work.id)}" aria-label="Previous view of ${escape(title)}">${chevron(-1)}</button><button class="art-arrow next" data-cycle="1" data-work="${escape(work.id)}" aria-label="Next view of ${escape(title)}">${chevron(1)}</button><span class="art-view-count" aria-live="polite">${index + 1} / ${views.length}</span>` : ''}</div>`;
 }
+function galleryCard(work) {
+  return `<article class="gallery-card">${artworkImage(work)}<div class="artist">${escape(work.artist)}</div><h3>${escape(work.title)}</h3><p class="medium">${escape(work.medium)}</p>${work.fanArt ? '<span class="fan-tag">For appreciation. Not for sale.</span>' : '<span class="medium">Studio archive &middot; Gallery only</span>'}</article>`;
+}
+const viewer = document.createElement('dialog');
+viewer.className = 'art-viewer';
+viewer.setAttribute('aria-labelledby', 'viewer-title');
+viewer.setAttribute('aria-describedby', 'viewer-description');
+document.body.append(viewer);
+let viewedWork = null;
+function syncCards(work) {
+  const views = viewsFor(work), index = viewIndices.get(work.id) || 0, view = views[index];
+  document.querySelectorAll('[data-carousel]').forEach(card => {
+    if (card.dataset.carousel !== work.id) return;
+    const img = card.querySelector('img');
+    img.src = view.image; img.alt = `${work.title || work.name} \u00b7 ${view.label}`;
+    img.width = view.width; img.height = view.height;
+    const count = card.querySelector('.art-view-count');
+    if (count) count.textContent = `${index + 1} / ${views.length}`;
+  });
+}
+function showView(index) {
+  const views = viewsFor(viewedWork);
+  index = (index + views.length) % views.length;
+  viewIndices.set(viewedWork.id, index);
+  const image = viewer.querySelector('.viewer-image');
+  image.src = views[index].image;
+  image.alt = `${viewedWork.title || viewedWork.name} \u00b7 ${views[index].label}`;
+  viewer.querySelector('.viewer-counter').textContent = `${index + 1} / ${views.length} \u00b7 ${views[index].label}`;
+  viewer.querySelectorAll('[data-thumbnail]').forEach((button, i) => {
+    button.setAttribute('aria-pressed', String(i === index));
+  });
+  syncCards(viewedWork);
+}
+function openArtwork(work) {
+  if (!work) return;
+  viewedWork = work;
+  const views = viewsFor(work), title = work.title || work.name;
+  viewer.innerHTML = `<div class="viewer-toolbar"><span>Artwork details</span><button class="viewer-close" aria-label="Close artwork viewer" autofocus>Close &times;</button></div><div class="viewer-layout"><div class="viewer-media"><div class="viewer-stage"><img class="viewer-image" alt="">${views.length > 1 ? `<button class="art-arrow previous" data-view-step="-1" aria-label="Previous image">${chevron(-1)}</button><button class="art-arrow next" data-view-step="1" aria-label="Next image">${chevron(1)}</button>` : ''}</div><p class="viewer-counter" role="status"></p><div class="viewer-thumbnails" aria-label="Available views">${views.map((view, i) => `<button data-thumbnail="${i}" aria-label="Show view ${i + 1}: ${escape(view.label)}" aria-pressed="false"><img src="${escape(view.image)}" alt="" loading="lazy"><span>${i + 1}</span></button>`).join('')}</div></div><aside class="viewer-details"><span class="eyebrow">${escape(work.artist)}</span><h2 id="viewer-title">${escape(title)}</h2><p class="medium">${escape(work.medium || work.details || '')}</p><p id="viewer-description">${escape(work.description || `${title} from the studio archive.`)}</p>${work.fanArt ? '<span class="fan-tag">Fan art &middot; Not for sale</span>' : work.isSample ? '<p class="medium">Sample listing &middot; No real purchases yet</p>' : '<p class="medium">Studio archive &middot; Gallery only</p>'}</aside></div>`;
+  showView(viewIndices.get(work.id) || 0);
+  viewer.showModal();
+  document.body.classList.add('viewer-open');
+}
+viewer.addEventListener('close', () => { document.body.classList.remove('viewer-open'); viewedWork = null; });
+viewer.addEventListener('click', event => {
+  if (event.target.closest('.viewer-close')) { viewer.close(); return; }
+  const step = event.target.closest('[data-view-step]');
+  if (step) showView((viewIndices.get(viewedWork.id) || 0) + Number(step.dataset.viewStep));
+  const thumb = event.target.closest('[data-thumbnail]');
+  if (thumb) showView(Number(thumb.dataset.thumbnail));
+  if (event.target === viewer) {
+    const box = viewer.getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) viewer.close();
+  }
+});
+viewer.addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    showView((viewIndices.get(viewedWork.id) || 0) + (event.key === 'ArrowLeft' ? -1 : 1));
+  }
+});
+document.addEventListener('click', event => {
+  const cycle = event.target.closest('[data-cycle]');
+  if (cycle) {
+    const work = findWork(cycle.dataset.work), views = viewsFor(work);
+    viewIndices.set(work.id, ((viewIndices.get(work.id) || 0) + Number(cycle.dataset.cycle) + views.length) % views.length);
+    syncCards(work); return;
+  }
+  const opener = event.target.closest('[data-open-work]');
+  if (opener) openArtwork(findWork(opener.dataset.openWork));
+});
 function renderGallery() {
   const selection = new URLSearchParams(location.search).get('section') || '';
   const works = sorted(catalog.gallery);
@@ -158,6 +234,7 @@ async function renderSuccess() {
 }
 function render() {
   clearTimeout(successTimer);
+  if (viewer.open) viewer.close();
   document.querySelectorAll('[data-nav]').forEach(link => { const active = link.dataset.nav === location.pathname; link.classList.toggle('active', active); if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); });
   const titles = { '/': 'Art, made personal.', '/products': 'The collection', '/gallery': 'The gallery', '/contact': 'Say hello', '/cart': 'Your cart', '/checkout/success': 'Test checkout' };
   document.title = `${titles[location.pathname] || 'Welcome'} · Lakeland Fine Arts`;
@@ -175,7 +252,7 @@ document.querySelector('#year').textContent = new Date().getFullYear();
 try {
   const response = await fetch('/api/shop/catalog'); if (!response.ok) throw new Error('The studio is temporarily unavailable. Please try again shortly.');
   catalog = await response.json();
-  const artResponse = await fetch('/art/gallery.json');
+  const artResponse = await fetch('/art/items.json');
   if (!artResponse.ok) throw new Error('The artwork gallery is temporarily unavailable. Please try again shortly.');
   catalog.gallery = await artResponse.json();
   cart = cart.filter(item => item && typeof item.id === 'string' && Number.isInteger(item.quantity) && item.quantity > 0 && productFor(item.id)).map(item => ({ id: item.id, quantity: Math.min(item.quantity, productFor(item.id).maxQuantity) }));

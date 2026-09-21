@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const project = 'src/Lakeland.OrderFulfilment.Api';
+execFileSync(process.execPath, ['scripts/group-artwork.mjs'], { cwd: root, stdio: 'inherit' });
 execFileSync(process.execPath, ['scripts/check-artwork.mjs'], { cwd: root, stdio: 'inherit' });
 execFileSync('dotnet', ['build', project, '--configuration', 'Release', '--nologo'], { cwd: root, stdio: 'inherit' });
 const exported = execFileSync('dotnet', [`${project}/bin/Release/net10.0/Lakeland.OrderFulfilment.Api.dll`, '--export-beta-catalog'], { cwd: root, encoding: 'utf8' });

@@ -28,7 +28,7 @@ test('products filter by artist and category and sort by price', async ({ page }
 
 test('fan art is display-only and artist filters apply', async ({ page }) => {
   await page.goto('/gallery?section=fan');
-  const works = await (await page.request.get('/art/gallery.json')).json();
+  const works = await (await page.request.get('/art/items.json')).json();
   await expect(page.locator('.fan-section .gallery-card')).toHaveCount(works.filter(w => w.fanArt).length);
   await expect(page.locator('.fan-section [data-add]')).toHaveCount(0);
   await expect(page.locator('.fan-section a[href*="products"]')).toHaveCount(0);
@@ -80,8 +80,8 @@ test('capture desktop and mobile previews', async ({ page }) => {
 
 
 test('real gallery serves approved display copies without original links', async ({ page, request }) => {
-  const works = await (await request.get('/art/gallery.json')).json();
-  expect(works.length).toBeGreaterThan(100);
+  const works = await (await request.get('/art/items.json')).json();
+  expect(works.length).toBeGreaterThan(40);
   expect(works.filter(w => !w.watermarked).every(w => w.medium === 'Sculpture')).toBeTruthy();
   expect(works.every(w => w.width <= 1200 && w.height <= 1200 && w.productId === null)).toBeTruthy();
   expect(JSON.stringify(works)).not.toMatch(/sourceSha256|source_uri|sourceWidth|private-source/);
@@ -93,4 +93,53 @@ test('real gallery serves approved display copies without original links', async
   for (const file of ['/art/private-source-manifest.json', '/art/Beekeeper%20and%20doctor%20clean.png', '/print-originals/test.png']) {
     expect((await request.get(file)).status()).toBe(404);
   }
+});
+
+test('alternate views consolidate into cards and open an accessible large viewer', async ({ page, request }) => {
+  const items = await (await request.get('/art/items.json')).json();
+  const mug = items.find(w => w.title === 'Beekeeper and doctor mug');
+  expect(items.filter(w => w.title === mug.title)).toHaveLength(1);
+  expect(mug.images.length).toBeGreaterThan(3);
+  await page.goto('/gallery');
+  await expect(page.locator('.gallery-card')).toHaveCount(items.length);
+  const card = page.locator('.gallery-card').filter({ has: page.getByRole('heading', { name: mug.title, exact: true }) });
+  const next = card.getByRole('button', { name: `Next view of ${mug.title}` });
+  await card.hover();
+  await expect(next).toHaveCSS('opacity', '1');
+  await next.click();
+  await expect(card.locator('img')).toHaveAttribute('src', mug.images[1].image);
+  const opener = card.getByRole('button', { name: `Enlarge ${mug.title}` });
+  await opener.click();
+  const dialog = page.getByRole('dialog', { name: mug.title });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', mug.images[1].image);
+  await expect(dialog.locator('#viewer-description')).toHaveText(mug.description);
+  await expect(dialog.locator('[data-thumbnail]')).toHaveCount(mug.images.length);
+  await dialog.locator('[data-thumbnail="2"]').click();
+  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', mug.images[2].image);
+  await page.keyboard.press('ArrowLeft');
+  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', mug.images[1].image);
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(opener).toBeFocused();
+  await opener.click();
+  await dialog.getByRole('button', { name: 'Close artwork viewer' }).click();
+  await expect(dialog).not.toBeVisible();
+});
+
+test('viewer handles single images and mobile layouts', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/gallery?artist=John%20Bieniek');
+  await expect(page.locator('.gallery-card .art-arrow')).toHaveCount(0);
+  await page.locator('.gallery-card .art-open').click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Next image', exact: true })).toHaveCount(0);
+  expect(await dialog.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBeTruthy();
+  await page.screenshot({ path: 'artifacts/art-viewer-mobile.png', fullPage: false });
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/gallery');
+  await page.locator('.gallery-card .art-open').first().click();
+  await page.screenshot({ path: 'artifacts/art-viewer-desktop.png', fullPage: false });
 });

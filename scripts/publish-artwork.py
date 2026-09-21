@@ -10,6 +10,7 @@ import csv
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
@@ -102,10 +103,14 @@ def prepare(source):
             medium=entry['medium'],fanArt=entry.get('fanArt',False),productId=None,
             image='/art/display/'+name,width=im.width,height=im.height,
             watermarked=marked,isSample=False,displaySha256=display_hash))
+        for field in ['itemId', 'description']:
+            if entry.get(field):
+                gallery[-1][field] = entry[field]
         audit.append(dict(source=entry['file'],sourceSha256=digest,sourceWidth=original_size[0],
             sourceHeight=original_size[1],display='/art/display/'+name,watermarked=marked,printReady=False))
         assert hashlib.sha256(file.read_bytes()).hexdigest()==digest
     (PUBLIC/'art/gallery.json').write_text(json.dumps(gallery,indent=2)+'\n',encoding='utf-8')
+    subprocess.run(['node', str(ROOT/'scripts/group-artwork.mjs')], check=True)
     private = ROOT/'artifacts/art-publishing'
     private.mkdir(parents=True,exist_ok=True)
     (private/'private-source-manifest.json').write_text(json.dumps(dict(files=audit,excluded=excluded),indent=2),encoding='utf-8')

@@ -26,4 +26,23 @@ function walk(dir) {
   }
 }
 walk(root);
+const items = JSON.parse(readFileSync(path.join(root, 'art/items.json'), 'utf8'));
+const itemIds = new Set();
+const included = new Set();
+for (const item of items) {
+  if (itemIds.has(item.id) || !item.description || !item.images?.length || item.productId !== null)
+    throw Error('Invalid grouped artwork');
+  itemIds.add(item.id);
+  const hashes = new Set();
+  for (const view of item.images) {
+    const source = approved.get(view.image);
+    if (!source || source.displaySha256 !== view.displaySha256 || source.fanArt !== item.fanArt
+        || source.watermarked !== view.watermarked || source.width !== view.width || source.height !== view.height)
+      throw Error('Grouped view is not an approved display copy');
+    if (hashes.has(view.displaySha256)) throw Error('Duplicate view within an item');
+    hashes.add(view.displaySha256);
+    included.add(view.displaySha256);
+  }
+}
+if (gallery.some(view => !included.has(view.displaySha256))) throw Error('An artwork view was lost during grouping');
 console.log(`Verified ${gallery.length} approved display copies; no unmanaged media in public assets.`);
