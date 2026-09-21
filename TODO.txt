@@ -5,9 +5,12 @@ DEVELOP BETA (2026-09-21)
    - Original painting, made-to-order clay, and Printful mug examples are labeled as sample listings.
    - Stripe TEST Checkout, signed payment/expiry webhooks, original reservations, and payment outbox implemented; preview mode keeps payments disabled.
    - Printful token is present in local user-secrets; read-only API verification returned a store but no published sync products. Publish the mug into that store.
-   - Azure deployment blocked: subscription is disabled/read-only; existing database is Disabled. Re-enable subscription before publishing.
+   - Beta deployed to Cloudflare Workers: https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev
+   - Cloudflare preview uses the .NET catalog export and same UI. Checkout remains disabled; payment backend hosting/durable storage still needed.
+   - GitHub Cloudflare deployment job is prepared; automatic deploys need a scoped Cloudflare API token in the development environment.
+   - Azure is no longer the beta host; subscription remains disabled/read-only.
    - Need real artwork/artist names, approved prices and lead times, Stripe test configuration, and a separate beta database.
-   - See docs/beta.md and scripts/Deploy-Beta.ps1 for setup and develop auto-deployment.
+   - See docs/beta.md for Cloudflare deployment and remaining setup.
 
 1. Protect the GitHub repository - DONE
    - Enable secret scanning, push protection, Dependabot, CodeQL, branch protection, and required test checks. DONE

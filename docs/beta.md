@@ -1,6 +1,6 @@
 # Develop storefront beta
 
-The `develop` branch contains the responsive storefront served by the existing .NET application. Pages are `/`, `/gallery`, `/products`, `/contact`, `/cart`, and `/checkout/success`.
+The `develop` branch contains the responsive storefront. The public beta is hosted on **Cloudflare Workers** at https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev. Pages are `/`, `/gallery`, `/products`, `/contact`, `/cart`, and `/checkout/success`.
 
 ## What works
 
@@ -10,7 +10,7 @@ The `develop` branch contains the responsive storefront served by the existing .
 - A persistent browser cart, quantities, removals, and one-per-order original limits.
 - Contact form opens an email draft to the studio; it does not claim to send messages.
 - Stripe-hosted **test** Checkout integration with server-owned prices, guest-cookie order ownership, idempotent requests, original reservations, signed webhooks, replay protection, and transactional payment/outbox persistence.
-- An isolated beta Azure Container App template and a `develop` deployment job after CI passes. The production deployment is restricted to `master`.
+- Cloudflare Workers hosting, with the same static assets and a catalog exported from the .NET source. Shipping estimates are calculated per request. The .NET payment backend is retained in the repository but does not run in the Cloudflare preview Worker.
 
 ## Run locally
 
@@ -23,7 +23,26 @@ dotnet run --project src/Lakeland.OrderFulfilment.Api --no-launch-profile --urls
 
 All artwork images are repository-owned illustrative SVG placeholders. Names, artist labels, prices, sizes, and shipping estimates are examples, not approved merchandise. The only intended Printful launch category is the mug. The connected Printful store returned no published sync products during setup; publish the mug into the API store and supply its approved sync variant mapping before real fulfillment.
 
-## Publishing
+## Publishing to Cloudflare
+
+```powershell
+npm ci
+npm run deploy:cloudflare
+```
+
+Wrangler uses your local Cloudflare login. `build:cloudflare` builds the .NET project and exports only its public sample catalog without loading secrets, starting the server, or connecting to a database. The Worker serves that catalog and the existing `wwwroot` assets; no Azure resources are involved. Checkout returns 503 and all other private/order/payment endpoints return 404 in the preview.
+
+The deployed preview has no order database and cannot charge cards or submit Printful orders. Hosting or porting the payment backend and configuring durable storage are required before connecting payments. Adding a Stripe secret to this Worker alone does not enable checkout.
+
+CI tests both .NET and Cloudflare hosting. Automatic Cloudflare deployment is prepared but requires a dedicated deployment token, rather than copying a personal OAuth session into GitHub:
+
+1. In GitHub's `development` environment, set variable `CLOUDFLARE_ACCOUNT_ID` and secret `CLOUDFLARE_API_TOKEN` (a Cloudflare Workers deployment token scoped to the intended account).
+2. Restrict that GitHub environment to branch `develop`.
+3. Set repository variable `CLOUDFLARE_BETA_DEPLOY_ENABLED=true`. Pushes to `develop` then deploy only after CI passes. Until configured, use the authenticated local deployment command above.
+
+To run browser tests against the Worker locally, build first, set `$env:TEST_HOST = 'cloudflare'`, and run `npm run test:e2e`. To test the live deployment, set `$env:BASE_URL = 'https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev'` instead.
+
+## Earlier Azure deployment option
 
 Deployment was attempted on September 21, 2026. Azure returned `ReadOnlyDisabledSubscription`: the subscription must be re-enabled before publishing. The existing PostgreSQL server also reports `Disabled`. No beta cloud resource or database migration was applied.
 
@@ -33,7 +52,7 @@ After restoring the subscription, run the following from a clean, committed `dev
 ./scripts/Deploy-Beta.ps1 -ResourceGroup '<existing-resource-group>' -RegistryName '<existing-registry>' -ContainerEnvironmentName '<existing-container-environment>'
 ```
 
-The script builds the committed image, deploys `ca-lakeland-beta`, creates separate runtime/deployment identities, and configures GitHub's `development` environment to accept only `develop`. Deployment permissions cover the beta app, registry, and beta runtime identity. It then sets repository variable `BETA_DEPLOY_ENABLED=true`. Until setup succeeds, CI runs but the cloud deploy job skips. Future pushes to `develop` deploy after tests pass. The beta scales to zero when idle.
+This optional script builds the committed image, deploys `ca-lakeland-beta`, and creates separate runtime/deployment identities. It is retained for reference, but CI now targets Cloudflare and does not automatically deploy to Azure. The Azure resources are not used by the public beta.
 
 ## Connect Stripe test payments
 

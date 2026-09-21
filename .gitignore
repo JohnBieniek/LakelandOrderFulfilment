@@ -31,3 +31,8 @@ artifacts/
 node_modules/
 playwright-report/
 test-results/
+.wrangler/
+.dev.vars
+.dev.vars.*
+cloudflare/catalog.generated.json
+cloudflare/worker-configuration.d.ts

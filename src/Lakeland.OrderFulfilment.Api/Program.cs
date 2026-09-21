@@ -7,6 +7,15 @@ using Scalar.AspNetCore;
 using Lakeland.OrderFulfilment.Api.Storefront;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using System.Text.Json;
+
+// Export the public preview catalog without starting a server, loading secrets, or connecting to a database.
+if (args.Contains("--export-beta-catalog", StringComparer.Ordinal))
+{
+    var catalog = new StorefrontCatalog(TimeProvider.System);
+    Console.WriteLine(JsonSerializer.Serialize(new { catalog.Products, catalog.Gallery }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 

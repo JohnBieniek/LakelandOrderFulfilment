@@ -2,6 +2,8 @@
 
 Lakeland Fine Arts storefront and .NET commerce backend. The `develop` branch contains the beta home, gallery, products, contact, and cart pages. See [beta setup and deployment](docs/beta.md) for the preview, Stripe test setup, and current launch requirements.
 
+**Public beta:** https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev (Cloudflare Workers, sample catalog, checkout disabled).
+
 ## Fulfillment routes
 
 - Original artwork: internal studio fulfillment with exclusive timed reservation.
@@ -31,7 +33,7 @@ In Development, open `/scalar/v1` for the interactive API and `/openapi/v1.json`
 
 ## Current scope
 
-The beta includes artist filtering/sorting, gallery-only fan art, a browser cart, dispatch estimates, and test-only Stripe payment orchestration. Illustrations and catalog values are explicitly labeled samples. Preview mode disables checkout. Live provider submission remains disabled pending approved catalog mappings and operational workflows. Azure publishing is currently blocked by a disabled, read-only subscription.
+The beta includes artist filtering/sorting, gallery-only fan art, a browser cart, dispatch estimates, and test-only Stripe payment orchestration in the .NET backend. Illustrations and catalog values are explicitly labeled samples. The public Cloudflare Worker serves the preview and keeps checkout disabled; it does not run the .NET payment backend. Live payments and provider submission require backend hosting, durable storage, credentials, approved catalog mappings, and operational workflows. The beta no longer depends on Azure.
 
 See [Printful onboarding](docs/printful-onboarding.md) for the account setup and migration checklist.
 

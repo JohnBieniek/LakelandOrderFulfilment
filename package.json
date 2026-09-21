@@ -2,9 +2,15 @@
   "name": "lakeland-storefront-beta",
   "private": true,
   "scripts": {
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
+    "check:cloudflare": "wrangler types cloudflare/worker-configuration.d.ts && tsc -p cloudflare/tsconfig.json",
+    "deploy:cloudflare": "npm run build:cloudflare && npm run check:cloudflare && wrangler deploy"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0"
+    "@cloudflare/workers-types": "^5.20260921.1",
+    "@playwright/test": "^1.63.0",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.136.0"
   }
 }

@@ -15,3 +15,5 @@ playwright-report
 **/secrets*.json
 **/*.secrets.json
 **/appsettings.*.Local.json
+.wrangler
+**/.dev.vars*
