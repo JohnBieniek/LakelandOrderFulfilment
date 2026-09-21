@@ -28,11 +28,12 @@ test('products filter by artist and category and sort by price', async ({ page }
 
 test('fan art is display-only and artist filters apply', async ({ page }) => {
   await page.goto('/gallery?section=fan');
-  await expect(page.locator('.fan-section .gallery-card')).toHaveCount(2);
+  const works = await (await page.request.get('/art/gallery.json')).json();
+  await expect(page.locator('.fan-section .gallery-card')).toHaveCount(works.filter(w => w.fanArt).length);
   await expect(page.locator('.fan-section [data-add]')).toHaveCount(0);
   await expect(page.locator('.fan-section a[href*="products"]')).toHaveCount(0);
-  await page.getByLabel('Artist', { exact: true }).selectOption('Studio painter');
-  await expect(page.locator('.fan-section .gallery-card')).toHaveCount(1);
+  await page.getByLabel('Artist', { exact: true }).selectOption('Kay Pickett');
+  await expect(page.locator('.fan-section .gallery-card')).toHaveCount(works.filter(w => w.fanArt && w.artist === 'Kay Pickett').length);
 });
 
 test('mixed cart persists, limits originals to one, and supports quantity and removal', async ({ page }) => {
@@ -75,4 +76,21 @@ test('capture desktop and mobile previews', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.hero-art img')).toBeVisible();
   await page.screenshot({ path: 'artifacts/beta-home-mobile.png', fullPage: true });
+});
+
+
+test('real gallery serves approved display copies without original links', async ({ page, request }) => {
+  const works = await (await request.get('/art/gallery.json')).json();
+  expect(works.length).toBeGreaterThan(100);
+  expect(works.filter(w => !w.watermarked).every(w => w.medium === 'Sculpture')).toBeTruthy();
+  expect(works.every(w => w.width <= 1200 && w.height <= 1200 && w.productId === null)).toBeTruthy();
+  expect(JSON.stringify(works)).not.toMatch(/sourceSha256|source_uri|sourceWidth|private-source/);
+  await page.goto('/gallery?artist=John%20Bieniek');
+  await expect(page.locator('.gallery-card')).toHaveCount(1);
+  const image = page.locator('.gallery-card img');
+  await expect(image).toBeVisible();
+  await expect.poll(() => image.evaluate(el => el.complete && el.naturalWidth > 0)).toBeTruthy();
+  for (const file of ['/art/private-source-manifest.json', '/art/Beekeeper%20and%20doctor%20clean.png', '/print-originals/test.png']) {
+    expect((await request.get(file)).status()).toBe(404);
+  }
 });

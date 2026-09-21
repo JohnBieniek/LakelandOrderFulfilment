@@ -21,7 +21,7 @@ dotnet run --project src/Lakeland.OrderFulfilment.Api --no-launch-profile --urls
 
 `appsettings.Beta.json` enables preview mode: the catalog uses a disposable in-memory database, cart contents stay in the browser, and payment/order creation is disabled. No production database or Printful credential is used. **Do not turn off preview mode without a separate working PostgreSQL database and Stripe test configuration.**
 
-All artwork images are repository-owned illustrative SVG placeholders. Names, artist labels, prices, sizes, and shipping estimates are examples, not approved merchandise. The only intended Printful launch category is the mug. The connected Printful store returned no published sync products during setup; publish the mug into the API store and supply its approved sync variant mapping before real fulfillment.
+The gallery now displays protected copies of the studio archive, with artist filtering and a separate fan art section. Print originals stay outside the repository. See [artwork publishing](artwork-security.md). Shop listings remain illustrative SVG placeholders. Names, artist labels, prices, sizes, and shipping estimates are examples, not approved merchandise. The only intended Printful launch category is the mug. The connected Printful store returned no published sync products during setup; publish the mug into the API store and supply its approved sync variant mapping before real fulfillment.
 
 ## Publishing to Cloudflare
 

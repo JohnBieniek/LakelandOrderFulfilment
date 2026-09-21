@@ -36,3 +36,17 @@ test-results/
 .dev.vars.*
 cloudflare/catalog.generated.json
 cloudflare/worker-configuration.d.ts
+# Private artwork and generated publishing files. Keep originals outside this repo.
+private-art/
+print-originals/
+Private print library/
+Lakeland art/
+artwork-staging/
+artwork.local.json
+artwork.*.local.json
+*.psd
+*.psb
+*.kra
+*.procreate
+*.tif
+*.tiff
