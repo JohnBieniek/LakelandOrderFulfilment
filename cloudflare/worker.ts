@@ -1,5 +1,8 @@
 import catalog from './catalog.generated.json';
 import { submitContact } from './contact';
+import { paymentRequest, reservedProducts, setOwnerCookie } from './payments';
+import type { PaymentEnvironment } from './payments';
+import { readiness } from './payment-providers';
 
 const pageRoutes = new Set(['/contact', '/gallery', '/products', '/cart', '/checkout/success']);
 const securityHeaders = {
@@ -48,12 +51,17 @@ export default {
   async fetch(request, env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === '/api/contact') return submitContact(request, env);
-    if (url.pathname === '/api/shop/checkout' && request.method === 'POST')
-      return json({ error: 'Checkout is not enabled in this preview. Your cart is saved on this device.' }, 503);
+    if (url.pathname.startsWith('/api/shop/') && url.pathname !== '/api/shop/catalog')
+      return paymentRequest(request, env, catalog.products);
     if (request.method !== 'GET' && request.method !== 'HEAD')
       return json({ error: 'Method not allowed.' }, 405);
     if (url.pathname === '/health') return json({ status: 'healthy', mode: 'beta-preview', hosting: 'cloudflare' });
-    if (url.pathname === '/api/shop/catalog') return json(previewCatalog());
+    if (url.pathname === '/api/shop/catalog') {
+      const preview = previewCatalog(), providers = readiness(env), reserved = await reservedProducts(env);
+      preview.checkoutReady = providers.stripe || providers.paypal;
+      preview.products.forEach(p => { p.available = !reserved.has(p.id); });
+      return setOwnerCookie(request, json({ ...preview, paymentProviders: providers }));
+    }
     if (url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404);
     // Fetch the canonical root asset without triggering the asset service's /index.html -> / redirect.
     if (pageRoutes.has(url.pathname)) url.pathname = '/';
@@ -62,4 +70,4 @@ export default {
     for (const [name, value] of Object.entries(securityHeaders)) secured.headers.set(name, value);
     return secured;
   }
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler<PaymentEnvironment>;

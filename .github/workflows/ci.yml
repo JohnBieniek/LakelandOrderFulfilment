@@ -68,11 +68,15 @@ jobs:
       - name: Test contact delivery validation
         run: npm run test:contact
 
+      - name: Test payment validation and sandbox order ledger
+        run: npm run test:payments
+
       - name: Build and type-check Cloudflare beta
         run: |
           npm run build:cloudflare
           npm run check:cloudflare
           npx wrangler deploy --dry-run
+          npx wrangler d1 migrations apply lakeland-payments-beta --local
 
       - name: Test the Cloudflare Worker in Chromium
         env:
@@ -112,7 +116,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish the tested beta
-        run: npm run deploy:cloudflare
+        run: |
+          npx wrangler d1 migrations apply lakeland-payments-beta --remote
+          npm run deploy:cloudflare
       - name: Verify public beta
         run: |
           curl --fail --retry 6 --retry-delay 5 --retry-all-errors "https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev/health"

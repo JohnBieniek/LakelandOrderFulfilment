@@ -216,44 +216,68 @@ function renderContact() {
 }
 function renderCart() {
   const items = cartItems();
+  const providers = catalog.paymentProviders || { stripe: catalog.checkoutReady, paypal: false };
   const canceled = new URLSearchParams(location.search).get('checkout') === 'canceled';
-  main.innerHTML = `<div class="wrap">${intro('Your little collection', 'The good things you found.', 'A painting to treasure. A sculpture made for you. A little art for every day.')} ${canceled ? '<div class="notice">You returned from checkout. Your cart is still here. An original may remain reserved until its checkout session expires.</div>' : ''}${!items.length ? '<div class="empty"><h2>Your cart is waiting for a little art.</h2><p>Take a look around and see what speaks to you.</p><a class="button" href="/products">Explore the collection ↗</a></div>' : `<div class="cart-layout"><section aria-label="Cart items">${items.map(({ product: p, quantity }) => `<article class="cart-item"><img src="${p.image}" alt="${escape(p.name)} sample"><div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price * quantity)}</span></div><p>${escape(p.artist)} · ${kindName(p.kind)}</p><p>Estimated ship date: ${estimate(p)}</p><p>${escape(p.estimate.description)}</p><div class="cart-controls"><div class="quantity"><button data-change="${p.id}" data-amount="-1" aria-label="Decrease quantity of ${escape(p.name)}">−</button><span aria-label="Quantity ${quantity}">${quantity}</span><button data-change="${p.id}" data-amount="1" ${quantity >= p.maxQuantity ? 'disabled' : ''} aria-label="Increase quantity of ${escape(p.name)}">+</button></div><button class="remove" data-remove="${p.id}">Remove</button>${p.maxQuantity === 1 ? '<span class="product-meta">One of a kind</span>' : ''}</div></div></article>`).join('')}<p class="shipping-note">Ship dates are estimates, not delivery guarantees. Studio-made and Printful items may ship separately. Adding an original to your cart does not reserve it; reservation starts at checkout.</p><a class="text-link" href="/products">← Keep exploring</a></section><aside class="cart-summary"><h2>Your order</h2><div class="total-row"><span>Items (${items.reduce((sum, i) => sum + i.quantity, 0)})</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><div class="total-row"><span>Shipping & tax</span><span>Not charged in beta</span></div><div class="total-row main"><span>Test subtotal</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><button class="button" id="checkout-button" ${catalog.checkoutReady ? '' : 'disabled'}>${catalog.checkoutReady ? 'Continue to Stripe test checkout ↗' : 'Test checkout coming soon'}</button><p>${catalog.checkoutReady ? 'Use Stripe test card details only. No actual charge or shipment will occur.' : 'Stripe test payments are not connected yet. Your cart stays saved on this device while we finish setting up.'}</p><p>All listings and prices are beta samples. Final shipping rates, taxes, and production lead times will be confirmed before launch.</p><p class="payment-note">Secure hosted payment by Stripe</p><p id="checkout-error" role="alert"></p></aside></div>`}</div>`;
+  main.innerHTML = `<div class="wrap">${intro('Your little collection', 'The good things you found.', 'A painting to treasure. A sculpture made for you. A little art for every day.')} ${canceled ? '<div class="notice">You returned from checkout. Your cart is still here. An original may remain reserved until its checkout session expires.</div>' : ''}${!items.length ? '<div class="empty"><h2>Your cart is waiting for a little art.</h2><p>Take a look around and see what speaks to you.</p><a class="button" href="/products">Explore the collection ↗</a></div>' : `<div class="cart-layout"><section aria-label="Cart items">${items.map(({ product: p, quantity }) => `<article class="cart-item"><img src="${p.image}" alt="${escape(p.name)} sample"><div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price * quantity)}</span></div><p>${escape(p.artist)} · ${kindName(p.kind)}</p><p>Estimated ship date: ${estimate(p)}</p><p>${escape(p.estimate.description)}</p><div class="cart-controls"><div class="quantity"><button data-change="${p.id}" data-amount="-1" aria-label="Decrease quantity of ${escape(p.name)}">−</button><span aria-label="Quantity ${quantity}">${quantity}</span><button data-change="${p.id}" data-amount="1" ${quantity >= p.maxQuantity ? 'disabled' : ''} aria-label="Increase quantity of ${escape(p.name)}">+</button></div><button class="remove" data-remove="${p.id}">Remove</button>${p.maxQuantity === 1 ? '<span class="product-meta">One of a kind</span>' : ''}</div></div></article>`).join('')}<p class="shipping-note">Ship dates are estimates, not delivery guarantees. Studio-made and Printful items may ship separately. Adding an original to your cart does not reserve it; reservation starts at checkout.</p><a class="text-link" href="/products">← Keep exploring</a></section><aside class="cart-summary"><h2>Your order</h2><div class="total-row"><span>Items (${items.reduce((sum, i) => sum + i.quantity, 0)})</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><div class="total-row"><span>Shipping & tax</span><span>Not charged in beta</span></div><div class="total-row main"><span>Test subtotal</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><button class="button" id="checkout-button" ${providers.stripe ? '' : 'disabled'}>${providers.stripe ? 'Continue to Stripe test checkout ↗' : 'Test checkout coming soon'}</button><button class="button light" id="paypal-checkout-button" ${providers.paypal ? '' : 'disabled'}>${providers.paypal ? 'Continue to PayPal sandbox' : 'PayPal sandbox coming soon'}</button><p>Beta test only: use Stripe test cards or a PayPal sandbox buyer account. No real charges or shipments.</p><p>All listings and prices are beta samples. Final shipping rates, taxes, and production lead times will be confirmed before launch.</p><p class="payment-note">Secure hosted checkout with Stripe or PayPal</p><p id="checkout-error" role="alert"></p></aside></div>`}</div>`;
   main.querySelectorAll('[data-change]').forEach(button => button.addEventListener('click', () => changeCart(button.dataset.change, Number(button.dataset.amount))));
   main.querySelectorAll('[data-remove]').forEach(button => button.addEventListener('click', () => changeCart(button.dataset.remove, -25)));
-  document.querySelector('#checkout-button')?.addEventListener('click', startCheckout);
+  document.querySelector('#checkout-button')?.addEventListener('click', () => startCheckout('stripe'));
+  document.querySelector('#paypal-checkout-button')?.addEventListener('click', () => startCheckout('paypal'));
 }
-async function startCheckout() {
-  const button = document.querySelector('#checkout-button'); button.disabled = true; button.textContent = 'Opening secure checkout…';
-  let requestId = read('lakeland-checkout-request', null);
-  if (!requestId) { requestId = crypto.randomUUID(); save('lakeland-checkout-request', requestId); }
+async function startCheckout(provider) {
+  const buttons = [...document.querySelectorAll('#checkout-button, #paypal-checkout-button')];
+  const states = buttons.map(button => button.disabled);
+  buttons.forEach(button => { button.disabled = true; });
+  const snapshot = JSON.stringify(cart);
+  const key = 'lakeland-checkout-' + provider;
+  let record = read(key, null);
+  if (!record || record.snapshot !== snapshot) { record = { requestId: crypto.randomUUID(), snapshot }; save(key, record); }
   try {
-    const response = await fetch('/api/shop/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lakeland-Cart': '1' }, body: JSON.stringify({ requestId, items: cart.map(i => ({ productVariantId: i.id, quantity: i.quantity })) }) });
+    const response = await fetch('/api/shop/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lakeland-Cart': '1' }, body: JSON.stringify({ provider, requestId: record.requestId, items: cart.map(i => ({ productVariantId: i.id, quantity: i.quantity })) }) });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.error || (response.status === 429 ? 'Please wait a minute before trying checkout again.' : 'Checkout is temporarily unavailable. Your cart is saved.'));
+    if (!response.ok) throw new Error(result.error || 'Checkout is temporarily unavailable. Your cart is saved.');
     const redirect = new URL(result.url);
-    if (redirect.protocol !== 'https:' || redirect.hostname !== 'checkout.stripe.com') throw new Error('Checkout returned an unexpected address. Please contact the studio.');
+    const host = provider === 'stripe' ? 'checkout.stripe.com' : 'www.sandbox.paypal.com';
+    if (redirect.protocol !== 'https:' || redirect.hostname !== host || redirect.port || redirect.username || redirect.password) throw new Error('Checkout returned an unexpected address. Please contact the studio.');
     window.location.assign(redirect.href);
-  } catch (error) { document.querySelector('#checkout-error').textContent = error.message; button.disabled = false; button.textContent = 'Try checkout again ↗'; }
+  } catch (error) {
+    const node = document.querySelector('#checkout-error');
+    if (node) node.textContent = error.message;
+    buttons.forEach((button, index) => { button.disabled = states[index]; });
+  }
 }
 async function renderSuccess() {
-  main.innerHTML = `<div class="wrap"><div class="success"><div class="symbol">✳</div><span class="eyebrow">Stripe test checkout</span><h1>One moment, art lover.</h1><p id="payment-status" role="status">Checking for payment confirmation…</p><a class="button light" href="/products">Back to the collection</a><p class="form-note">This is a beta test. No products will be made or shipped.</p></div></div>`;
-  const sessionId = new URLSearchParams(location.search).get('session_id');
+  const params = new URLSearchParams(location.search);
+  const provider = params.get('provider') === 'paypal' ? 'paypal' : 'stripe';
+  const label = provider === 'paypal' ? 'PayPal sandbox' : 'Stripe test checkout';
+  main.innerHTML = `<div class="wrap"><div class="success"><div class="symbol">?</div><span class="eyebrow">${label}</span><h1>One moment, art lover.</h1><p id="payment-status" role="status">Checking for payment confirmation?</p><a class="button light" href="/products">Back to the collection</a><p class="form-note">This is a beta test. No products will be made or shipped.</p></div></div>`;
+  const orderId = params.get('order_id'), sessionId = params.get('session_id');
   let attempts = 0;
+  if (provider === 'paypal' && orderId) {
+    try {
+      const response = await fetch('/api/shop/paypal/capture', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lakeland-Cart': '1' }, body: JSON.stringify({ orderId }) });
+      if (!response.ok) { const result = await response.json(); throw new Error(result.error || 'PayPal could not confirm payment. Your cart is saved.'); }
+    } catch (error) { const node = document.querySelector('#payment-status'); if (node) node.textContent = error.message; return; }
+  }
   async function poll() {
     if (location.pathname !== '/checkout/success') return;
     const node = document.querySelector('#payment-status'); if (!node) return;
-    if (!sessionId) { node.textContent = 'No checkout session was provided. You can return to your cart and try again.'; return; }
+    if (!orderId && !sessionId) { node.textContent = 'No checkout session was provided. You can return to your cart and try again.'; return; }
     try {
-      const response = await fetch('/api/shop/checkout/status?sessionId=' + encodeURIComponent(sessionId));
+      const query = orderId ? 'orderId=' + encodeURIComponent(orderId) : 'sessionId=' + encodeURIComponent(sessionId);
+      const response = await fetch('/api/shop/checkout/status?' + query);
       if (!response.ok) throw new Error('We cannot verify this checkout on this device yet. Please contact the studio if it persists.');
       const result = await response.json();
       if (result.status === 'Paid') {
         main.querySelector('h1').textContent = 'Thank you for trying the beta.';
-        node.textContent = 'Your test payment has been confirmed by Stripe. No real payment was taken and no products will be shipped.';
-        cart = []; updateCart(); save('lakeland-checkout-request', null); return;
+        node.textContent = 'Your test payment has been confirmed. No real payment was taken and no products will be shipped.';
+        const key = 'lakeland-checkout-' + provider, record = read(key, null);
+        if (record?.requestId === orderId && record.snapshot === JSON.stringify(cart)) { cart = []; updateCart(); }
+        if (record?.requestId === orderId) save(key, null);
+        return;
       }
-      if (result.status === 'Canceled') { node.textContent = 'This checkout has expired. Your cart is still saved.'; return; }
-      node.textContent = 'We’re waiting for Stripe’s payment confirmation. This page alone does not confirm payment.';
+      if (result.status === 'Canceled' || result.status === 'Review') { node.textContent = 'This checkout has ended or needs studio review. Your cart is still saved.'; return; }
+      node.textContent = 'We are waiting for payment confirmation. This page alone does not confirm payment.';
       if (++attempts < 15) successTimer = setTimeout(poll, 2000);
       else node.textContent += ' Please check again later or contact the studio.';
     } catch (error) { node.textContent = error.message; }

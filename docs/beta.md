@@ -9,8 +9,8 @@ The `develop` branch contains the responsive storefront. The public beta is host
 - Sample originals, made-to-order clay sculptures, and a print-on-demand mug, with per-product estimated dispatch dates.
 - A persistent browser cart, quantities, removals, and one-per-order original limits.
 - Cloudflare contact endpoint sends required name, email, and message fields to contact-form@lakelandfinearts.com using a restricted email binding. Destination verification is required; see [contact form setup](contact-form.md).
-- Stripe-hosted **test** Checkout integration with server-owned prices, guest-cookie order ownership, idempotent requests, original reservations, signed webhooks, replay protection, and transactional payment/outbox persistence.
-- Cloudflare Workers hosting, with the same static assets and a catalog exported from the .NET source. Shipping estimates are calculated per request. The .NET payment backend is retained in the repository but does not run in the Cloudflare preview Worker.
+- Cloudflare-native Stripe-hosted **test** Checkout and PayPal **sandbox** integration with server-owned prices, guest-cookie order ownership, idempotent requests, original reservations, signed webhooks, replay protection, and transactional payment/outbox persistence.
+- Cloudflare Workers hosting, with the same static assets and a catalog exported from the .NET source. Shipping estimates are calculated per request. The Worker runs its own payment backend backed by a separate D1 test-order ledger; the earlier .NET Stripe backend is retained separately.
 
 ## Run locally
 
@@ -27,12 +27,13 @@ The gallery now displays protected copies of the studio archive, with artist fil
 
 ```powershell
 npm ci
+npx.cmd wrangler d1 migrations apply lakeland-payments-beta --remote
 npm run deploy:cloudflare
 ```
 
-Wrangler uses your local Cloudflare login. `build:cloudflare` builds the .NET project and exports only its public sample catalog without loading secrets, starting the server, or connecting to a database. The Worker serves that catalog and the existing `wwwroot` assets; no Azure resources are involved. Checkout returns 503 and all other private/order/payment endpoints return 404 in the preview.
+Wrangler uses your local Cloudflare login. `build:cloudflare` builds the .NET project and exports only its public sample catalog without loading secrets, starting the server, or connecting to a database. The Worker serves that catalog and the existing `wwwroot` assets; no Azure resources are involved. Checkout stays disabled until test credentials and the test-payment gate are configured. Payment APIs run in the Worker; unrelated private .NET endpoints remain unavailable.
 
-The deployed preview has no order database and cannot charge cards or submit Printful orders. Hosting or porting the payment backend and configuring durable storage are required before connecting payments. Adding a Stripe secret to this Worker alone does not enable checkout.
+The deployed beta uses a separate D1 test-order database and cannot take real payments or submit Printful orders. See [Cloudflare payment account setup](payments-cloudflare.md) for Stripe and PayPal credentials, exact webhook URLs, and test verification steps.
 
 CI tests both .NET and Cloudflare hosting. Automatic Cloudflare deployment is prepared but requires a dedicated deployment token, rather than copying a personal OAuth session into GitHub:
 
@@ -40,7 +41,7 @@ CI tests both .NET and Cloudflare hosting. Automatic Cloudflare deployment is pr
 2. Restrict that GitHub environment to branch `develop`.
 3. Set repository variable `CLOUDFLARE_BETA_DEPLOY_ENABLED=true`. Pushes to `develop` then deploy only after CI passes. Until configured, use the authenticated local deployment command above.
 
-To run browser tests against the Worker locally, build first, set `$env:TEST_HOST = 'cloudflare'`, and run `npm run test:e2e`. To test the live deployment, set `$env:BASE_URL = 'https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev'` instead.
+To run browser tests against the Worker locally, build first, run `npx.cmd wrangler d1 migrations apply lakeland-payments-beta --local`, set `$env:TEST_HOST = 'cloudflare'`, and run `npm run test:e2e`. To test the live deployment, set `$env:BASE_URL = 'https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev'` instead.
 
 ## Earlier Azure deployment option
 
@@ -54,7 +55,9 @@ After restoring the subscription, run the following from a clean, committed `dev
 
 This optional script builds the committed image, deploys `ca-lakeland-beta`, and creates separate runtime/deployment identities. It is retained for reference, but CI now targets Cloudflare and does not automatically deploy to Azure. The Azure resources are not used by the public beta.
 
-## Connect Stripe test payments
+## Earlier .NET Stripe backend (not the Cloudflare deployment)
+
+For the public beta, use [Cloudflare Stripe and PayPal setup](payments-cloudflare.md). The following steps apply only when hosting the separate .NET backend.
 
 1. Provision a **separate beta PostgreSQL database**. Never point the beta at production data.
 2. Configure the existing `Database:*` settings or `ConnectionStrings:Commerce`, and set `Database:ApplyMigrations=true` for deployment. The new migration adds durable checkout records; beta startup seeds sample catalog records into this database.

@@ -2,6 +2,7 @@
   "name": "lakeland-storefront-beta",
   "private": true,
   "scripts": {
+    "test:payments": "node --experimental-strip-types --test tests/cloudflare/payments.test.mjs",
     "test:contact": "node --experimental-strip-types --test tests/cloudflare/contact.test.mjs",
     "test:e2e": "playwright test",
     "build:cloudflare": "node scripts/build-cloudflare.mjs",

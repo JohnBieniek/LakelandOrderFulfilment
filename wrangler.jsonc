@@ -6,10 +6,14 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": false,
+  "d1_databases": [
+    { "binding": "PAYMENTS_DB", "database_name": "lakeland-payments-beta", "database_id": "592e7c7a-5c59-4ae5-a9e3-688a1f1b5107", "migrations_dir": "cloudflare/migrations" }
+  ],
   "send_email": [
     { "name": "CONTACT_EMAIL", "destination_address": "contact-form@lakelandfinearts.com" }
   ],
   "ratelimits": [
+    { "name": "PAYMENT_RATE_LIMIT", "namespace_id": "2026092301", "simple": { "limit": 30, "period": 60 } },
     { "name": "CONTACT_RATE_LIMIT", "namespace_id": "1001", "simple": { "limit": 3, "period": 60 } },
     { "name": "CONTACT_GLOBAL_LIMIT", "namespace_id": "1002", "simple": { "limit": 20, "period": 60 } }
   ],
