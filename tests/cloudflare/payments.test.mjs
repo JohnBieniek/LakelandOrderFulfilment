@@ -111,6 +111,20 @@ test('provider failures keep the same durable order and reservation for retry', 
   assert.equal((await send(env,mock,request('checkout',cart()))).status,200);
   assert.equal(env.sqlite.prepare('SELECT COUNT(*) n FROM payment_orders').get().n,1);
 });
+test('provider HTTP calls preserve the global fetch receiver', async () => {
+  const env=environment(), mock=mockProvider();
+  const fetcher=function(url,init) { assert.equal(this,globalThis); return mock.fetcher(url,init); };
+  const response=await paymentRequest(request('checkout',cart('paypal')),env,products,fetcher);
+  assert.equal(response.status,200);
+  assert.equal(mock.calls.length,2);
+});
+test('provider redirects are returned manually and rejected without following them', async () => {
+  const env=environment(); let calls=0;
+  const fetcher=async(url,init)=>{calls++;assert.equal(init.redirect,'manual');return new Response(null,{status:302,headers:{Location:'https://untrusted.example/'}});};
+  const response=await paymentRequest(request('checkout',cart('paypal')),env,products,fetcher);
+  assert.equal(response.status,502);
+  assert.equal(calls,1);
+});
 test('authenticated status reconciliation records payment once and never downgrades paid orders', async () => {
   const env=environment(), mock=mockProvider();
   await send(env,mock,request('checkout',cart()));

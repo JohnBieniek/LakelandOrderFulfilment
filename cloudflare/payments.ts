@@ -147,7 +147,9 @@ export async function paymentRequest(request: Request, env: PaymentEnvironment, 
     return json({ error: 'Not found or method not allowed.' }, 404);
   } catch (error) {
     if (error instanceof PaymentError) return json({ error: error.message }, error.status);
-    console.error('Payment request failed', error instanceof Error ? error.name : 'UnknownError');
+    // Stack frames identify runtime failures without logging messages, credentials or request data.
+    console.error('Payment request failed', error instanceof Error ? error.name : 'UnknownError',
+      error instanceof Error ? error.stack?.split('\n').filter(line => /^\s+at /.test(line)).slice(0, 4) : []);
     return json({ error: 'Checkout is temporarily unavailable. Your cart is saved.' }, 503);
   }
 }

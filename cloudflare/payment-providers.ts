@@ -42,7 +42,8 @@ export async function boundedText(message: Request | Response, limit: number): P
 }
 type JsonObject = Record<string, any>; // Provider JSON is validated at the trust boundary below.
 async function api(url: string, init: RequestInit, fetcher: typeof fetch): Promise<JsonObject> {
-  const response = await fetcher(url, { ...init, signal: AbortSignal.timeout(15000), redirect: 'error' });
+  // Return redirects for rejection below; never forward credentials to a redirect target.
+  const response = await fetcher.call(globalThis, url, { ...init, signal: AbortSignal.timeout(15000), redirect: 'manual' });
   const text = await boundedText(response, 262144);
   if (!response.ok) throw new PaymentError('The payment provider could not complete this request. Please retry the same checkout.');
   try { return JSON.parse(text); } catch { throw new PaymentError('Invalid payment provider response.'); }
