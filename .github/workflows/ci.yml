@@ -71,6 +71,9 @@ jobs:
       - name: Test payment validation and sandbox order ledger
         run: npm run test:payments
 
+      - name: Test private Printful mug ordering tool
+        run: npm run test:printful
+
       - name: Build and type-check Cloudflare beta
         run: |
           npm run build:cloudflare

@@ -2,6 +2,8 @@
   "name": "lakeland-storefront-beta",
   "private": true,
   "scripts": {
+    "printful:inspect": "node scripts/printful-mug.mjs inspect",
+    "test:printful": "node --test tests/printful-mug.test.mjs",
     "test:payments": "node --experimental-strip-types --test tests/cloudflare/payments.test.mjs",
     "test:contact": "node --experimental-strip-types --test tests/cloudflare/contact.test.mjs",
     "test:e2e": "playwright test",

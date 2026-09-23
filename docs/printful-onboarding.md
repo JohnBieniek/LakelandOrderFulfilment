@@ -1,7 +1,32 @@
 # Printful onboarding and cutover
 
 Printful is the sole active print-on-demand provider. Originals remain studio-fulfilled.
-The adapter is still a disabled integration boundary: account setup alone does not enable order submission.
+The public storefront fulfillment adapter remains disabled. A private local tool can now inspect published products, quote one mug, and create an unconfirmed draft using the existing .NET user-secret. It does not confirm orders or connect beta test payments to real production.
+
+## Order the first mug
+
+Connection checked on September 23, 2026: the existing token reaches store **18691434**, which Printful currently names **Personal orders**. It has order/product read and write scopes. The store contains **zero published products**. Product-template access returns HTTP 403 with this token; the mug design therefore cannot yet be retrieved. No order was created by this check.
+
+1. In Printful, open **My products → Product templates**, select the mug, and **Publish / Add to store** for the intended API store. Check the store ID, since the name differs from the expected Lakeland Fine Arts name. If that destination is unavailable, resolve the store selection before creating a new product; do not recreate the artwork from the watermarked gallery copy.
+2. Run `npm.cmd run printful:inspect`. It reads the existing `Providers:Printful:ApiToken` user-secret (or `Providers__Printful__ApiToken` environment variable) without displaying it. It lists store products and their **sync variant IDs**, not private artwork URLs.
+3. Select the desired mug design and size. Save the recipient locally in the ignored `artifacts/mug-recipient.json`, using `name`, `address1`, optional `address2`, `city`, `state_code`, `country_code`, `zip`, and optional `email` / `phone`. Use uppercase two-letter US state and country codes. Do not commit addresses.
+4. Request the quantity-one estimate, replacing the example ID with the chosen sync variant ID:
+
+   ```powershell
+   node scripts/printful-mug.mjs quote 123456789 artifacts/mug-recipient.json
+   ```
+
+5. After reviewing the quote, prepare a draft with a unique stable reference. **Reuse the same reference on retries**:
+
+   ```powershell
+   node scripts/printful-mug.mjs draft 123456789 artifacts/mug-recipient.json lakeland-mug-first-sample-20260923
+   ```
+
+The tool submits `confirm=false` and recovers an existing order by external ID before attempting a new draft. It rejects mismatched existing orders and non-mug or unready print-file mappings. Review the exact design, address, shipping and final cost in Printful before paying there. This is a regular quantity-one order estimate; it does not promise eligibility for Printful's discounted sample-order program.
+
+Run `npm.cmd run test:printful` for the mocked integration checks. Live quote/draft validation is still pending a published mug and recipient address. No Cloudflare deployment or payment-provider setup is needed to order this first mug through the private tool.
+
+Sources: [Printful product templates and publishing](https://help.printful.com/hc/en-us/articles/360014010300-What-s-a-product-template-and-how-does-it-work), [Printful Orders API](https://developers.printful.com/docs/#tag/Orders-API).
 
 ## Account setup
 
