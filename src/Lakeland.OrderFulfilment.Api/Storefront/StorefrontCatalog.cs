@@ -28,11 +28,11 @@ public sealed class StorefrontCatalog(TimeProvider clock)
         new(Guid.Parse("b5555555-5555-4555-8555-555555555555"), "Little woodland spirit", "Studio sculptor", "clay", 65,
             "/art/woodland.svg", "A playful little sculpture for a shelf, a desk, or a favorite corner.", "Made to order · Hand-built clay · Approx. 4 in tall", 15, 25),
         new(Guid.Parse("b7777777-7777-4777-8777-777777777777"), "Beekeeper and Doctor Mug / 11 oz", "Kay Pickett", "printful", 9.50m,
-            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-11-oz-cutting-board-229fc426acbf.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 11 oz / Printed by Printful / Beta dispatch estimate", 4, 8, false),
+            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-11-oz-cutting-board-229fc426acbf.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 11 oz / Printed by Printful", 4, 8, false),
         new(Guid.Parse("b8888888-8888-4888-8888-888888888888"), "Beekeeper and Doctor Mug / 15 oz", "Kay Pickett", "printful", 12.50m,
-            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-15-oz-cookies-5f988a52672c.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 15 oz / Printed by Printful / Beta dispatch estimate", 4, 8, false),
+            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-15-oz-cookies-5f988a52672c.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 15 oz / Printed by Printful", 4, 8, false),
         new(Guid.Parse("b9999999-9999-4999-8999-999999999999"), "Beekeeper and Doctor Mug / 20 oz", "Kay Pickett", "printful", 15.00m,
-            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-20-oz-cutting-board-7b768cd1ce32.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 20 oz / Printed by Printful / Beta dispatch estimate", 4, 8, false)
+            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-20-oz-cutting-board-7b768cd1ce32.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 20 oz / Printed by Printful", 4, 8, false)
     ];
 
     public IReadOnlyList<GalleryWork> Gallery => Products.Where(p => p.Kind != "printful")
