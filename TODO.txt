@@ -12,7 +12,7 @@ DEVELOP BETA (updated 2026-09-27)
    - Real gallery display copies and an accessible multi-image viewer are implemented; shop listings still need approved artwork/product mappings, prices, and lead times.
    - Contact form sends through Cloudflare with required-field validation. Local polish adds required-field markers and accessible, distinct success/error feedback while preserving text on delivery failure.
    - Private Printful mug inspection, quote, and unconfirmed draft tools are implemented. Correct store and published variants verified on 2026-09-27; six tool tests passed. Live quote/draft validation and order-write permissions remain unverified.
-   - PayPal sandbox credentials are deployed and checkout is enabled: verified unpaid sandbox checkout creation on 2026-09-27. All 13 automated payment tests passed. Buyer approval/capture, real sandbox webhook delivery, and paid-ledger verification remain. Stripe is not enabled. D1 beta storage is implemented; production payment and fulfillment workflows remain.
+   - PayPal sandbox credentials are deployed and checkout is enabled: verified unpaid sandbox checkout creation on 2026-09-27. All 13 automated payment tests passed. Buyer approval/capture, a verified PAYMENT.CAPTURE.COMPLETED webhook, and exactly one paid-ledger outbox record verified on 2026-09-27. Stripe is not enabled. D1 beta storage is implemented; production payment and fulfillment workflows remain.
    - See docs/beta.md for Cloudflare deployment and remaining setup.
    - See docs/payments-cloudflare.md for payment configuration and docs/printful-onboarding.md for the first mug workflow.
 
@@ -25,7 +25,7 @@ US SHIPPING (2026-09-27)
 IMMEDIATE NEXT STEPS
    - Contact-form polish verified: 10 storefront browser tests and 6 contact-handler tests passed on 2026-09-27. Deploy through the normal beta workflow.
    - Choose the published mug size and provide a recipient locally, then review a quote and prepare an unconfirmed draft with appropriate token permissions.
-   - Complete a PayPal sandbox buyer checkout; validate verified webhook delivery, duplicate delivery, and exactly one D1 payment outbox record. Configure Stripe test credentials separately if desired.
+   - PayPal sandbox buyer checkout and verified webhook completed with exactly one payment outbox record. Live webhook redelivery remains to validate; automated replay tests pass. Configure Stripe test credentials separately if desired.
    - Approve shop artwork/product mappings, retail prices, and lead times before enabling real purchases.
    - Reconcile historical Azure infrastructure checklist entries below with the current Cloudflare beta; they do not describe active beta hosting.
 

@@ -52,7 +52,8 @@ test('mixed cart persists, limits originals to one, and supports quantity and re
   await expect(page.locator('#cart-count')).toHaveText('4');
   await page.reload();
   await expect(page.locator('#cart-count')).toHaveText('4');
-  await expect(page.getByRole('button', { name: 'Test checkout coming soon' })).toBeDisabled();
+  await expect(page.locator('#checkout-button, #paypal-checkout-button')).toHaveCount(0);
+  await expect(page.locator('.cart-summary')).toContainText('Test checkout is not available yet.');
   await page.locator('.cart-item').filter({ hasText: 'The quiet companion' }).getByRole('button', { name: 'Remove' }).click();
   await expect(page.locator('.cart-item')).toHaveCount(2);
 });

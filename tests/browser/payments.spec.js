@@ -85,6 +85,8 @@ test('US shipping is reviewed before PayPal and address/cart edits invalidate th
   });
   await shippingCart(page);
   await expect(page.locator('#paypal-checkout-button')).toBeDisabled();
+  await expect(page.locator('#checkout-button')).toHaveCount(0);
+  await expect(page.locator('.payment-note')).toHaveText('Secure hosted checkout with PayPal');
   await expect(page.locator('#shipping-form')).toContainText('United States only');
   await page.getByRole('button',{name:'Calculate shipping',exact:true}).click();
   await expect(page.locator('#shipping-cost')).toHaveText('$6.69');
