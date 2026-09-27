@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Adventure time princess bubblegum': 'Adventure Time Princess Bubblegum',
   'Totoro and mei under galaxy sky': 'Totoro and Mei under galaxy sky',
   'The beekeeper and the doctor': 'Beekeeper and doctor',
   'The tallest needle felt giraffes exhibit': 'Needle felt giraffes',
@@ -42,7 +43,7 @@ const descriptions = {
   'Custom baby portrait with reference': 'A painted baby portrait shown next to the original reference photograph.',
   'Eat the earth watercolor': 'A watercolor portrait of a blonde figure with a small globe at her lips, titled Eat the Earth in the source post.',
   'Studio ghibli character collage': 'A colorful collage bringing together characters and scenes inspired by Studio Ghibli films.',
-  'Adventure time princess bubblegum': 'A pink-toned painting inspired by Princess Bubblegum from Adventure Time. Includes a framed presentation and an artwork view.',
+  'Adventure Time Princess Bubblegum': 'A pink-toned painting inspired by Princess Bubblegum from Adventure Time. Includes a framed presentation and an artwork view.',
   'Screaming sun mountain landscape': 'A wide mountain landscape with a expressive yellow sun rising between pale peaks beneath a purple sky.',
   'Jon and aiden painted name plaques': 'Two dark painted name plaques with hand-lettered names, Jon and Aiden.',
   'Pink haired woman abstract background': 'A pink-haired figure in profile beside a flowing, marbled field of blues, greens, and pinks.',

@@ -1674,8 +1674,8 @@
     "label": "View 1"
   },
   {
-    "id": "work-7b08933ffca7b82e",
-    "title": "Adventure time princess bubblegum",
+    "id": "work-4b4199c003bd7268",
+    "title": "Adventure Time Princess Bubblegum",
     "artist": "Kay Pickett",
     "medium": "Fan art",
     "fanArt": true,
@@ -1689,7 +1689,7 @@
         "height": 683,
         "watermarked": true,
         "displaySha256": "31df710097acef034efa3912108a916521af04bc73a4d179e6b602d8863e1f47",
-        "label": "View 1"
+        "label": "Adventure time princess bubblegum"
       },
       {
         "image": "/art/display/adventure-time-princess-bubblegum-8c21b56603b8.webp",
@@ -1697,7 +1697,7 @@
         "height": 811,
         "watermarked": true,
         "displaySha256": "8c21b56603b8afc2f818062f3a29af52172e0ab3ad86611d2426a32c25693055",
-        "label": "View 2"
+        "label": "Adventure time princess bubblegum"
       }
     ],
     "image": "/art/display/adventure-time-princess-bubblegum-31df710097ac.webp",
@@ -1705,7 +1705,7 @@
     "height": 683,
     "watermarked": true,
     "displaySha256": "31df710097acef034efa3912108a916521af04bc73a4d179e6b602d8863e1f47",
-    "label": "View 1"
+    "label": "Adventure time princess bubblegum"
   },
   {
     "id": "work-3cc40aa9d9488e8b",
