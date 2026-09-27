@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Totoro and mei under galaxy sky': 'Totoro and Mei under galaxy sky',
   'The beekeeper and the doctor': 'Beekeeper and doctor',
   'The tallest needle felt giraffes exhibit': 'Needle felt giraffes',
   'Antlered forest spirit original': 'Antlered forest spirit',
@@ -69,7 +70,7 @@ const descriptions = {
   'Galaxy hair woman profile': 'A woman in profile with flowing hair filled with the colors and stars of a galaxy.',
   'Woodland animals pond acrylic on wood': 'A woodland scene with animals gathered around a pond. The source post describes acrylic on wood with an epoxy-resin finish.',
   'Princess mononoke san': 'A painted portrait of San from Princess Mononoke, with her red mask and pale fur against a woodland landscape.',
-  'Totoro and mei under galaxy sky': 'Totoro and Mei rest beneath a richly colored, star-filled sky.',
+  'Totoro and Mei under galaxy sky': 'Totoro and Mei rest beneath a richly colored, star-filled sky.',
   'Rick and morty character collage': 'A dense character collage inspired by Rick and Morty, shown in artwork and framed presentation views.'
 };
 const groups = new Map();
