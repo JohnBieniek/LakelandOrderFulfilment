@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 const root = fileURLToPath(new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/', import.meta.url));
 const gallery = JSON.parse(readFileSync(path.join(root, 'art/gallery.json'), 'utf8'));
+// Reviewed partner branding is separate from artwork; require an exact checksum.
+const brandAssets = new Map([['/brand/whimsy-logo.png', '2a8865d6973a901ee8a9854944ed4484bdf174508db5bf9d5147fb097d65174d']]);
 const approved = new Map(gallery.map(w => [w.image, w]));
 for (const work of gallery) {
   if (!/^\/art\/display\/[a-z0-9-]+\.webp$/.test(work.image)) throw Error('Invalid artwork path');
@@ -20,6 +22,10 @@ function walk(dir) {
     if (item.isSymbolicLink()) throw Error('Public assets must not contain symlinks');
     if (item.isDirectory()) { walk(full); continue; }
     const rel = '/' + path.relative(root,full).split(path.sep).join('/');
+    if (brandAssets.has(rel)) {
+      if (createHash('sha256').update(readFileSync(full)).digest('hex') !== brandAssets.get(rel)) throw Error('Partner logo checksum mismatch');
+      continue;
+    }
     if (/\.(png|jpe?g|webp|gif|avif|bmp|tiff?|psd|psb|kra|procreate|zip|mp4|mov)$/i.test(item.name) && !approved.has(rel))
       throw Error('Unapproved media in public assets: '+rel);
     if (!approved.has(rel) && /original|master|private|manifest|secret|\.env/i.test(item.name)) throw Error('Possible private file in public assets: '+rel);

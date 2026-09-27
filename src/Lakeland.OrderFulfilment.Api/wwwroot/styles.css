@@ -59,3 +59,6 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 .footer-bottom a{overflow-wrap:anywhere}
 
 .page-intro.page-intro-wide,.page-intro-wide p{max-width:none}
+
+.website-partner{text-align:center;border-top:1px solid var(--line);margin-top:28px;padding:28px 0 8px;color:var(--muted)}
+.website-partner p{margin-bottom:12px}.whimsy-logo{display:block;width:min(280px,72vw);margin:0 auto}.whimsy-logo img{width:100%;height:auto;object-fit:contain}.whimsy-link{display:block;width:fit-content;margin:10px auto 0;text-decoration:underline;text-underline-offset:4px}
