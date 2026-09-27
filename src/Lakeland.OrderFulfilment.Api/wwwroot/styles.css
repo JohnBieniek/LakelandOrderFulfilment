@@ -53,3 +53,7 @@ body.viewer-open{overflow:hidden}
 #viewer-description{font-size:14px;line-height:1.8;margin-top:24px}
 @media(hover:none){.art-carousel .art-arrow{opacity:1}}
 @media(max-width:700px){.viewer-layout{grid-template-columns:1fr;padding:12px;gap:8px}.viewer-stage .viewer-image{height:48dvh}.viewer-details{padding:14px 6px 22px}.viewer-toolbar{padding:10px 14px}.viewer-details h2{font-size:27px}.art-arrow{width:34px;height:40px}.art-arrow.previous{left:6px}.art-arrow.next{right:6px}}
+
+/* Consistent, readable footer typography. */
+footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bottom{font-size:14pt}
+.footer-bottom a{overflow-wrap:anywhere}
