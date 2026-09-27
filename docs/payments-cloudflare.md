@@ -4,6 +4,20 @@ The Worker implements Stripe hosted Checkout and PayPal hosted sandbox approval/
 
 Checkout stays disabled until the credentials below are stored in Cloudflare and `PAYMENTS_ENABLED` is `test`. .NET user-secrets are local to the .NET application; Cloudflare cannot read them. Never put payment keys in source, frontend JavaScript, chat, command arguments, or `wrangler.jsonc`.
 
+## US mug shipping (sandbox)
+
+The deployed Worker uses `SHIPPING_MODE=printful-us`. New checkouts require a server-stored shipping quote and currently use PayPal sandbox only. Stripe remains unavailable in this mode until its address/quote flow is implemented; the legacy payment code is retained for existing tests and orders.
+
+- Customers enter a US address (50 states and DC; territories and military addresses are not yet supported). Addresses are retained only in page memory in the browser, not localStorage.
+- `POST /api/shop/shipping/quote` validates the cart and address, requests Printful standard USD shipping for the mapped 11, 15, and 20 oz mugs, and stores a 15-minute quote bound to the browser owner and server-priced cart. Mixed studio carts and quantities over 25 are rejected.
+- Set `PRINTFUL_API_TOKEN` as a Worker secret using `npx.cmd wrangler secret put PRINTFUL_API_TOKEN`. Use the token for Lakeland Fine Arts store 18787964. The shipping handler calls only `/shipping/rates`; it never submits an order.
+- Migration `0002_shipping_quotes.sql` adds quote storage and shipping snapshots to the sandbox ledger. Apply it before deploying this version.
+- Checkout ignores browser-supplied prices and shipping amounts. PayPal receives the saved address with `SET_PROVIDED_ADDRESS`, plus separate item and shipping amounts. Address mismatches are rejected before capture and during payment verification. Existing checkout retries reuse their saved shipping snapshot even after quote expiry.
+- Sales tax is explicitly **not configured**. The displayed total is a sandbox total before tax, not a tax-exemption determination. Michigan registration and address-based tax calculation remain launch requirements.
+- D1 now holds quote addresses and checkout address snapshots. Expired quote rows are purged on subsequent successful quote requests; order snapshots remain for reconciliation. A scheduled retention/purge policy is still required before production.
+
+Printful's [shipping-rate API](https://developers.printful.com/docs/#tag/Shipping-Rate-API) returns rates for the selected variants, quantities, and destination. Store shipping settings can affect whether shipping markups are included. No manufacturing costs or supplier-side tax are added to the customer shipping line.
+
 ## Account setup
 
 ### Stripe
@@ -72,7 +86,7 @@ Before deploying a fresh database, apply the additive schema with `npx.cmd wrang
 
 ## Beta limits and launch work
 
-- The shop still contains unapproved sample merchandise/prices. Shipping and taxes are not charged. Stripe collects a US shipping address; PayPal uses its buyer address. The beta ledger stores no address or card data and is not a production fulfillment order.
+- The shop includes published mug listings and other sample merchandise. PayPal sandbox totals include quoted US mug shipping; sales tax is not configured. The ledger stores shipping addresses but no card data, and is not a production fulfillment order.
 - An original is reserved atomically when checkout begins. Confirmed Stripe expiration releases it. Returning to the cart, local timeouts, or ambiguous provider failures do not release it, because a payment may still complete.
 - PayPal abandoned orders and provider-creation failures require manual reconciliation before releasing originals. Never delete a reservation based only on age. This beta has no scheduled reconciliation service or inventory administration UI.
 - Signed webhook retries and authenticated status checks recover payment confirmation. A late payment after cancellation goes to `Review`; it cannot trigger fulfillment. Refunds/disputes and post-payment operations are not implemented in this beta.

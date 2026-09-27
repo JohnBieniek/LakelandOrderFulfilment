@@ -21,7 +21,7 @@ test('fixed API client refuses confirmation, arbitrary origins, and unsupported 
   const api=client('private-fixture',async(url,init)=>{calls.push({url,init});return Response.json({code:200,result:[]});});
   await api('/stores');
   assert.equal(calls[0].url,'https://api.printful.com/stores');
-  assert.equal(calls[0].init.headers['X-PF-Store-Id'],'18691434');
+  assert.equal(calls[0].init.headers['X-PF-Store-Id'],'18787964');
   for (const path of ['/orders/1/confirm','/orders?confirm=true','https://example.com']) await assert.rejects(api(path,'POST'),/Unsupported/);
   await assert.rejects(api('/stores','DELETE'),/Unsupported/);
   assert.equal(calls.length,1);
@@ -56,7 +56,7 @@ test('invalid mappings, print files, addresses and references fail before order 
 });
 test('store inspection excludes private print file links',async()=>{
   const result=await inspect(async path=>{
-    if(path==='/stores') return {result:[{id:18691434,name:'Personal orders'}]};
+    if(path==='/stores') return {result:[{id:18787964,name:'Lakeland Fine Arts'}]};
     if(path.startsWith('/store/products?')) return {result:[{id:1,name:'Mug'}],paging:{total:1}};
     return {result:{sync_variants:[{id:123,name:'11 oz',synced:true,variant_id:456,files:[{url:'private-original'}]}]}};
   });

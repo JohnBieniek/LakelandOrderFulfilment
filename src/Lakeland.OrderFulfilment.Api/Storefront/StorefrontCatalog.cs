@@ -27,8 +27,12 @@ public sealed class StorefrontCatalog(TimeProvider clock)
             "/art/sculpture.svg", "A small, hand-built clay companion. Made especially for you, with its own gentle character.", "Made to order · Hand-built clay · Approx. 5 in tall", 15, 25),
         new(Guid.Parse("b5555555-5555-4555-8555-555555555555"), "Little woodland spirit", "Studio sculptor", "clay", 65,
             "/art/woodland.svg", "A playful little sculpture for a shelf, a desk, or a favorite corner.", "Made to order · Hand-built clay · Approx. 4 in tall", 15, 25),
-        new(Guid.Parse("b6666666-6666-4666-8666-666666666666"), "The everyday art mug", "Studio painter", "printful", 24,
-            "/art/mug.svg", "A little art for your everyday ritual. Printed on demand and sent directly by Printful.", "Print-on-demand mug · Actual design and size to be confirmed", 4, 8)
+        new(Guid.Parse("b7777777-7777-4777-8777-777777777777"), "Beekeeper and Doctor Mug / 11 oz", "Kay Pickett", "printful", 9.50m,
+            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-11-oz-cutting-board-3f5e982862d7.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 11 oz / Printed by Printful / Beta dispatch estimate", 4, 8, false),
+        new(Guid.Parse("b8888888-8888-4888-8888-888888888888"), "Beekeeper and Doctor Mug / 15 oz", "Kay Pickett", "printful", 12.50m,
+            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-15-oz-cookies-904d9102c111.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 15 oz / Printed by Printful / Beta dispatch estimate", 4, 8, false),
+        new(Guid.Parse("b9999999-9999-4999-8999-999999999999"), "Beekeeper and Doctor Mug / 20 oz", "Kay Pickett", "printful", 15.00m,
+            "/art/display/beekeeper-and-doctor-white-glossy-mug-white-20-oz-cutting-board-9e5eaf4eae55.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 20 oz / Printed by Printful / Beta dispatch estimate", 4, 8, false)
     ];
 
     public IReadOnlyList<GalleryWork> Gallery => Products.Where(p => p.Kind != "printful")

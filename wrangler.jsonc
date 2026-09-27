@@ -6,6 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": false,
+  "vars": { "SHIPPING_MODE": "printful-us" },
   "d1_databases": [
     { "binding": "PAYMENTS_DB", "database_name": "lakeland-payments-beta", "database_id": "592e7c7a-5c59-4ae5-a9e3-688a1f1b5107", "migrations_dir": "cloudflare/migrations" }
   ],

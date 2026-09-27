@@ -2,7 +2,7 @@
 
 Lakeland Fine Arts storefront and .NET commerce backend. The `develop` branch contains the beta home, gallery, products, contact, and cart pages. See [beta setup and deployment](docs/beta.md) for the preview, Stripe and PayPal test setup, and current launch requirements.
 
-**Public beta:** https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev (Cloudflare Workers, sample catalog, checkout disabled).
+**Public beta:** https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev (Cloudflare Workers, published mug listings and sample catalog, PayPal sandbox checkout).
 
 ## Fulfillment routes
 
@@ -33,7 +33,7 @@ In Development, open `/scalar/v1` for the interactive API and `/openapi/v1.json`
 
 ## Current scope
 
-The beta includes artist filtering/sorting, gallery-only fan art, a browser cart, dispatch estimates, and test-only Stripe and PayPal payment orchestration in the Cloudflare Worker. Illustrations and catalog values are explicitly labeled samples. The public Cloudflare Worker keeps checkout disabled until test credentials are configured; its D1 database stores sandbox orders only. Live payments and provider submission still require a production payment path, approved catalog mappings, shipping/tax rules, and operational workflows. The beta no longer depends on Azure.
+The beta includes artist filtering/sorting, gallery-only fan art, a browser cart, dispatch estimates, and test-only Stripe and PayPal payment orchestration in the Cloudflare Worker. The Beekeeper and Doctor Mug uses published artwork, sizes, and retail prices; other shop listings are samples. The public Cloudflare Worker supports PayPal sandbox checkout with US-only Printful shipping quotes for mug-only carts. Its D1 database stores sandbox orders, shipping quotes, and checkout address snapshots. Sales tax is not configured; no real charges or shipments occur. Live payments and provider submission still require a production payment path, approved catalog mappings, shipping/tax rules, and operational workflows. The beta no longer depends on Azure.
 
 See [Printful onboarding](docs/printful-onboarding.md) for the account setup and migration checklist.
 

@@ -60,7 +60,7 @@ export default {
       const preview = previewCatalog(), providers = readiness(env), reserved = await reservedProducts(env);
       preview.checkoutReady = providers.stripe || providers.paypal;
       preview.products.forEach(p => { p.available = !reserved.has(p.id); });
-      return setOwnerCookie(request, json({ ...preview, paymentProviders: providers }));
+      return setOwnerCookie(request, json({ ...preview, paymentProviders: providers, shippingRequired: env.SHIPPING_MODE === 'printful-us', shippingCountries: ['US'] }));
     }
     if (url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404);
     // Fetch the canonical root asset without triggering the asset service's /index.html -> / redirect.

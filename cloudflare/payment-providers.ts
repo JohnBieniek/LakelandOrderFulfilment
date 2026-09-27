@@ -6,12 +6,15 @@ export interface PaymentSecrets {
   PAYPAL_CLIENT_ID?: string;
   PAYPAL_CLIENT_SECRET?: string;
   PAYPAL_WEBHOOK_ID?: string;
+  PRINTFUL_API_TOKEN?: string;
+  SHIPPING_MODE?: string;
 }
 export interface PaymentLine { id: string; name: string; unitAmount: number; quantity: number; original: boolean; }
 export interface PaymentOrder {
   id: string; owner_hash: string; provider: Provider; cart_hash: string; lines_json: string;
   amount_cents: number; currency: string; status: string; provider_id: string | null;
   approval_url: string | null; created_at: number; expires_at: number; updated_at: number;
+  shipping_quote_id?: string | null; shipping_cents?: number; shipping_address_json?: string | null;
 }
 export class PaymentError extends Error {
   status: number;
@@ -20,7 +23,7 @@ export class PaymentError extends Error {
 export function readiness(env: PaymentSecrets) {
   const enabled = env.PAYMENTS_ENABLED === 'test';
   return {
-    stripe: enabled && !!env.STRIPE_SECRET_KEY?.startsWith('sk_test_') && !!env.STRIPE_WEBHOOK_SECRET?.startsWith('whsec_'),
+    stripe: enabled && env.SHIPPING_MODE !== 'printful-us' && !!env.STRIPE_SECRET_KEY?.startsWith('sk_test_') && !!env.STRIPE_WEBHOOK_SECRET?.startsWith('whsec_'),
     paypal: enabled && !!env.PAYPAL_CLIENT_ID && !!env.PAYPAL_CLIENT_SECRET && !!env.PAYPAL_WEBHOOK_ID
   };
 }
@@ -75,6 +78,7 @@ export function allowedRedirect(url: unknown, provider: Provider): url is string
 }
 export async function createProviderCheckout(order: PaymentOrder, origin: string, env: PaymentSecrets, fetcher: typeof fetch = fetch) {
   const lines: PaymentLine[] = JSON.parse(order.lines_json);
+  const address = order.shipping_address_json ? JSON.parse(order.shipping_address_json) : null;
   if (order.provider === 'stripe') {
     const body = new URLSearchParams({ mode: 'payment', 'payment_method_types[0]': 'card',
       client_reference_id: order.id, 'metadata[order_id]': order.id, 'metadata[environment]': 'lakeland-beta',
@@ -98,10 +102,13 @@ export async function createProviderCheckout(order: PaymentOrder, origin: string
     body: JSON.stringify({ intent: 'CAPTURE', purchase_units: [{ reference_id: order.id, custom_id: order.id,
       description: 'Lakeland Fine Arts beta test — no production or shipping',
       amount: { currency_code: 'USD', value: (order.amount_cents / 100).toFixed(2),
-        breakdown: { item_total: { currency_code: 'USD', value: (order.amount_cents / 100).toFixed(2) } } },
+        breakdown: { item_total: { currency_code: 'USD', value: ((order.amount_cents - (order.shipping_cents ?? 0)) / 100).toFixed(2) },
+          ...(address ? { shipping: { currency_code: 'USD', value: ((order.shipping_cents ?? 0) / 100).toFixed(2) } } : {}) } },
+      ...(address ? { shipping: { name: { full_name: address.name }, address: { address_line_1: address.address1,
+        ...(address.address2 ? { address_line_2: address.address2 } : {}), admin_area_2: address.city, admin_area_1: address.state_code, postal_code: address.zip, country_code: 'US' } } } : {}),
       items: lines.map(line => ({ name: line.name + ' (beta test)', quantity: String(line.quantity),
         unit_amount: { currency_code: 'USD', value: (line.unitAmount / 100).toFixed(2) } })) }],
-      payment_source: { paypal: { experience_context: { user_action: 'PAY_NOW', shipping_preference: 'GET_FROM_FILE',
+      payment_source: { paypal: { experience_context: { user_action: 'PAY_NOW', shipping_preference: address ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE',
         return_url: `${origin}/checkout/success?provider=paypal&order_id=${order.id}`,
         cancel_url: `${origin}/cart?checkout=canceled` } } } }) });
   const link = data.links?.find((link: JsonObject) => link.rel === 'payer-action' || link.rel === 'approve');
@@ -118,6 +125,13 @@ export function stripeState(data: JsonObject, order: PaymentOrder): 'Paid' | 'Ca
 }
 export function paypalState(data: JsonObject, order: PaymentOrder): 'Paid' | 'Canceled' | null {
   const unit = data.purchase_units?.[0];
+  if (order.shipping_address_json) {
+    const expected = JSON.parse(order.shipping_address_json), actual = unit?.shipping?.address;
+    const normalize = (value: unknown) => typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').toUpperCase() : '';
+    const fields: Record<string, string> = { address_line_1: expected.address1, address_line_2: expected.address2, admin_area_2: expected.city, admin_area_1: expected.state_code, postal_code: expected.zip, country_code: 'US' };
+    if (!actual || Object.entries(fields).some(([key, value]) => normalize(actual[key]) !== normalize(value)))
+      throw new PaymentError('The payment shipping address does not match the quoted US address.', 400);
+  }
   if (data.id !== order.provider_id || data.purchase_units?.length !== 1 || unit?.custom_id !== order.id
       || unit?.reference_id !== order.id || unit?.amount?.currency_code !== 'USD'
       || unit?.amount?.value !== (order.amount_cents / 100).toFixed(2)) throw new PaymentError('Payment does not match this order.', 400);
@@ -137,6 +151,10 @@ export async function retrieveState(order: PaymentOrder, env: PaymentSecrets, fe
     : paypalState(await paypalApi('/v2/checkout/orders/' + encodeURIComponent(order.provider_id), env, fetcher), order);
 }
 export async function capturePayPal(order: PaymentOrder, env: PaymentSecrets, fetcher: typeof fetch = fetch) {
+  if (order.shipping_address_json) {
+    const state = await retrieveState(order, env, fetcher);
+    if (state) return state;
+  }
   // This API is permanently pinned to sandbox. Browser token/PayerID never selects the order.
   await paypalApi('/v2/checkout/orders/' + encodeURIComponent(order.provider_id!) + '/capture', env, fetcher,
     { method: 'POST', headers: { 'PayPal-Request-Id': order.id.replace(/-/g, '') + '-cap', Prefer: 'return=representation' }, body: '{}' });

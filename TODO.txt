@@ -2,24 +2,30 @@ LAKELAND ART COMMERCE - NEXT STEPS
 
 DEVELOP BETA (updated 2026-09-27)
    - Home, contact, gallery, products, artist filtering/sorting, display-only fan art, persistent cart, and dispatch estimates implemented.
-   - Original painting, made-to-order clay, and Printful mug examples are labeled as sample listings.
+   - Original painting and made-to-order clay examples remain sample listings. The Beekeeper and Doctor Mug by Kay Pickett is deployed in 11, 15, and 20 oz sizes with published Printful prices and display mockups; checkout remains sandbox-only. Live-site browser verification passed on 2026-09-27.
    - Stripe TEST Checkout, signed payment/expiry webhooks, original reservations, and payment outbox implemented; preview mode keeps payments disabled.
-   - Printful token is present in local user-secrets; read-only API verification returned a store but no published sync products. Publish the mug into that store.
+   - Replacement Printful token verified on 2026-09-27: Lakeland Fine Arts store 18787964 contains the published Beekeeper and Doctor Mug (474191924), with synced 11 oz, 15 oz, and 20 oz variants.
    - Beta deployed to Cloudflare Workers: https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev
-   - Cloudflare preview uses the .NET catalog export and same UI. Cloudflare-native Stripe test Checkout and PayPal sandbox checkout are implemented with a separate D1 order ledger and original reservations. Checkout remains disabled until test credentials are configured.
+   - Cloudflare preview uses the .NET catalog export and same UI. Cloudflare-native Stripe test Checkout and PayPal sandbox checkout are implemented with a separate D1 order ledger and original reservations. PayPal sandbox checkout is enabled; new checkouts require a US mug shipping quote. Stripe is not enabled.
    - GitHub Cloudflare deployment job is prepared; automatic deploys need a scoped Cloudflare API token in the development environment.
    - Azure is no longer the beta host; subscription remains disabled/read-only.
    - Real gallery display copies and an accessible multi-image viewer are implemented; shop listings still need approved artwork/product mappings, prices, and lead times.
    - Contact form sends through Cloudflare with required-field validation. Local polish adds required-field markers and accessible, distinct success/error feedback while preserving text on delivery failure.
-   - Private Printful mug inspection, quote, and unconfirmed draft tools are implemented. Last recorded check (2026-09-23) found zero published products; publish the mug to the intended API store before live quote/draft validation.
-   - Need Stripe/PayPal sandbox account configuration and end-to-end payment/webhook validation. D1 beta storage is implemented; production payment and fulfillment workflows remain.
+   - Private Printful mug inspection, quote, and unconfirmed draft tools are implemented. Correct store and published variants verified on 2026-09-27; six tool tests passed. Live quote/draft validation and order-write permissions remain unverified.
+   - PayPal sandbox credentials are deployed and checkout is enabled: verified unpaid sandbox checkout creation on 2026-09-27. All 13 automated payment tests passed. Buyer approval/capture, real sandbox webhook delivery, and paid-ledger verification remain. Stripe is not enabled. D1 beta storage is implemented; production payment and fulfillment workflows remain.
    - See docs/beta.md for Cloudflare deployment and remaining setup.
    - See docs/payments-cloudflare.md for payment configuration and docs/printful-onboarding.md for the first mug workflow.
 
+US SHIPPING (2026-09-27)
+   - Deployed and verified US-only address capture (50 states and DC) and Printful standard shipping quotes for mug-only carts, with 15-minute owner/cart-bound quotes and immutable PayPal shipping snapshots.
+   - Validation: 18 payment/shipping tests and 16 browser tests passed. Live US quote, unpaid PayPal sandbox checkout, and provider address/total verification passed; non-US quote rejected.
+   - Checkout totals include retail items plus quoted shipping. Sandbox sales tax remains explicitly unconfigured; Michigan sales-tax registration is pending Treasury maintenance.
+   - Remaining: tax calculation/registration, studio and mixed-cart shipping, territories/military addresses, production fulfillment, and scheduled address-retention cleanup.
+
 IMMEDIATE NEXT STEPS
    - Contact-form polish verified: 10 storefront browser tests and 6 contact-handler tests passed on 2026-09-27. Deploy through the normal beta workflow.
-   - Publish the approved mug to Printful, inspect its sync variant, review a quote, and prepare an unconfirmed draft.
-   - Configure Stripe test and/or PayPal sandbox credentials privately; validate checkout, verified webhooks, duplicate delivery, and exactly one D1 payment outbox record.
+   - Choose the published mug size and provide a recipient locally, then review a quote and prepare an unconfirmed draft with appropriate token permissions.
+   - Complete a PayPal sandbox buyer checkout; validate verified webhook delivery, duplicate delivery, and exactly one D1 payment outbox record. Configure Stripe test credentials separately if desired.
    - Approve shop artwork/product mappings, retail prices, and lead times before enabling real purchases.
    - Reconcile historical Azure infrastructure checklist entries below with the current Cloudflare beta; they do not describe active beta hosting.
 

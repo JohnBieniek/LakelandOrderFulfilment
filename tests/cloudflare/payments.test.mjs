@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createHmac } from 'node:crypto';
 import { paymentRequest, applyState, setOwnerCookie } from '../../cloudflare/payments.ts';
 import { readiness, stripeState, paypalState, verifyStripe, allowedRedirect } from '../../cloudflare/payment-providers.ts';
+import { shippingAddress, printfulShipping } from '../../cloudflare/shipping.ts';
 
 const origin = 'https://studio.example';
 const id = '11111111-1111-4111-8111-111111111111';
@@ -14,6 +15,7 @@ function environment() {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec('PRAGMA foreign_keys = ON');
   sqlite.exec(readFileSync(new URL('../../cloudflare/migrations/0001_test_payments.sql', import.meta.url), 'utf8'));
+  sqlite.exec(readFileSync(new URL('../../cloudflare/migrations/0002_shipping_quotes.sql', import.meta.url), 'utf8'));
   const prepare = sql => {
     let values = [];
     const statement = {
@@ -196,4 +198,86 @@ test('confirmed expiration releases an original, late payment requires review', 
   await applyState(env,stored(env),'Paid');
   assert.equal(stored(env).status,'Review');
   assert.equal(env.sqlite.prepare('SELECT COUNT(*) n FROM payment_test_outbox').get().n,0);
+});
+const shippingProducts = [{id:'b7777777-7777-4777-8777-777777777777',name:'11 oz mug',price:9.50,isOriginal:false}, ...products];
+const usAddress = {name:'Sandbox Buyer',address1:'123 Test Street',address2:'',city:'Lansing',state_code:'MI',zip:'48933',country_code:'US'};
+const shippingItems = [{productVariantId:shippingProducts[0].id,quantity:2}];
+function shippingFixture() {
+  const env = {...environment(), SHIPPING_MODE:'printful-us', PRINTFUL_API_TOKEN:'private-fixture'};
+  const mock = mockProvider(), rateCalls = [];
+  const fetcher = async (url, init) => {
+    if (url === 'https://api.printful.com/shipping/rates') { rateCalls.push({url,init}); return Response.json({code:200,result:[{id:'STANDARD',rate:'6.49',currency:'USD'}]}); }
+    return mock.fetcher(url,init);
+  };
+  const send = (path, input, headers) => paymentRequest(request(path,input,headers),env,shippingProducts,fetcher);
+  return {env,mock,rateCalls,send};
+}
+test('US quote snapshots shipping, ignores client amounts, and sends PayPal the complete total and locked address', async()=>{
+  const f=shippingFixture();
+  const quote=await (await f.send('shipping/quote',{items:shippingItems,address:usAddress,shippingCents:0})).json();
+  assert.equal(quote.shippingCents,649); assert.equal(quote.totalCents,2549);
+  assert.equal(quote.taxStatus,'not-configured');
+  assert.deepEqual(JSON.parse(f.rateCalls[0].init.body).items,[{variant_id:1320,quantity:2}]);
+  assert.equal(f.rateCalls[0].init.headers['X-PF-Store-Id'],'18787964');
+  assert.equal(f.rateCalls[0].init.redirect,'manual');
+  const input={provider:'paypal',requestId:id,items:shippingItems,quoteId:quote.quoteId,shippingCents:0,amount:1,address:{...usAddress,country_code:'CA'}};
+  assert.equal((await f.send('checkout',input)).status,200);
+  const order=stored(f.env); assert.equal(order.amount_cents,2549); assert.equal(order.shipping_cents,649);
+  const payload=JSON.parse(f.mock.calls.find(c=>c.url.endsWith('/v2/checkout/orders')).init.body);
+  assert.equal(payload.purchase_units[0].amount.value,'25.49');
+  assert.equal(payload.purchase_units[0].amount.breakdown.item_total.value,'19.00');
+  assert.equal(payload.purchase_units[0].amount.breakdown.shipping.value,'6.49');
+  assert.equal(payload.purchase_units[0].shipping.address.country_code,'US');
+  assert.equal(payload.payment_source.paypal.experience_context.shipping_preference,'SET_PROVIDED_ADDRESS');
+  f.env.sqlite.exec('DELETE FROM payment_shipping_quotes');
+  assert.equal((await f.send('checkout',input)).status,200,'existing checkout retries use its immutable snapshot');
+  assert.equal(f.mock.calls.filter(c=>c.url.endsWith('/v2/checkout/orders')).length,1);
+  f.mock.setPaid();
+  assert.equal((await f.send('checkout/status?orderId='+id)).status,200);
+  assert.equal(stored(f.env).status,'Paid');
+  assert.equal(f.env.sqlite.prepare('SELECT COUNT(*) n FROM payment_test_outbox').get().n,1);
+});
+test('missing, stolen, expired, changed-cart and changed-price quotes cannot create payment orders',async()=>{
+  const f=shippingFixture(), input={provider:'paypal',requestId:id,items:shippingItems};
+  assert.equal((await f.send('checkout',input)).status,400);
+  const quote=await (await f.send('shipping/quote',{items:shippingItems,address:usAddress})).json();
+  const quoted={...input,quoteId:quote.quoteId};
+  assert.equal((await f.send('checkout',quoted,{Cookie:'lakeland_payment_owner='+'b'.repeat(64)})).status,409);
+  assert.equal((await f.send('checkout',{...quoted,items:[{...shippingItems[0],quantity:1}]})).status,409);
+  const changed=shippingProducts.map(p=>({...p,price:p.price+1}));
+  assert.equal((await paymentRequest(request('checkout',quoted),f.env,changed,f.mock.fetcher)).status,409);
+  f.env.sqlite.exec('UPDATE payment_shipping_quotes SET expires_at=0');
+  assert.equal((await f.send('checkout',quoted)).status,409);
+  assert.equal(f.env.sqlite.prepare('SELECT COUNT(*) n FROM payment_orders').get().n,0);
+  assert.equal(f.mock.calls.length,0);
+});
+test('US-only address and supported mug cart validation fail before any shipping request',async()=>{
+  const f=shippingFixture();
+  for(const address of [{...usAddress,country_code:'CA'},{...usAddress,state_code:'PR'},{...usAddress,state_code:'AA'},{...usAddress,zip:'bad'},{...usAddress,address1:'\n'}])
+    assert.equal((await f.send('shipping/quote',{items:shippingItems,address})).status,400);
+  assert.equal((await f.send('shipping/quote',{items:[...shippingItems,{productVariantId:'painting',quantity:1}],address:usAddress})).status,400);
+  assert.equal((await f.send('shipping/quote',{items:shippingItems,address:usAddress},{Origin:'https://evil.example'})).status,403);
+  assert.equal((await f.send('shipping/quote',{items:shippingItems,address:usAddress},{Cookie:''})).status,403);
+  assert.equal(f.rateCalls.length,0);
+  assert.equal(shippingAddress({...usAddress,state_code:'AK'}).state_code,'AK');
+  assert.equal(shippingAddress({...usAddress,state_code:'HI'}).state_code,'HI');
+  assert.equal(shippingAddress({...usAddress,state_code:'DC'}).state_code,'DC');
+});
+test('shipping provider errors, redirects, unsupported currency and malformed rates never become free shipping',async()=>{
+  const lines=[{id:shippingProducts[0].id,quantity:1}];
+  for(const response of [new Response('secret',{status:403}),new Response('',{status:302,headers:{Location:'https://evil.example'}}),Response.json({code:200,result:[]}),Response.json({code:200,result:[{id:'STANDARD',rate:'3.50',currency:'EUR'}]}),Response.json({code:200,result:[{id:'STANDARD',rate:'-1',currency:'USD'}]}),Response.json({code:200,result:[{id:'STANDARD',rate:'NaN',currency:'USD'}]})]) {
+    await assert.rejects(printfulShipping(lines,usAddress,'private-fixture',async()=>response),error=>error.status===503&&!error.message.includes('secret')&&!error.message.includes('private-fixture'));
+  }
+  await assert.rejects(printfulShipping(lines,usAddress,undefined,async()=>{throw Error('must not call');}),/not configured/);
+});
+test('PayPal address changes are rejected before capture and cannot mark an order paid',async()=>{
+  const f=shippingFixture();
+  const quote=await (await f.send('shipping/quote',{items:shippingItems,address:usAddress})).json();
+  await f.send('checkout',{provider:'paypal',requestId:id,items:shippingItems,quoteId:quote.quoteId});
+  f.mock.sessions.get('PAYPAL123').purchase_units[0].shipping.address.country_code='CA';
+  assert.equal((await f.send('paypal/capture',{orderId:id})).status,400);
+  assert.equal(f.mock.calls.some(c=>c.url.endsWith('/capture')),false);
+  f.mock.setPaid();
+  assert.equal((await f.send('checkout/status?orderId='+id)).status,400);
+  assert.equal(stored(f.env).status,'PendingPayment');
 });

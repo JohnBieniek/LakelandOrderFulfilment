@@ -3,7 +3,7 @@ import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const storeId = 18691434;
+export const storeId = 18787964;
 export class PrintfulError extends Error {
   constructor(status) { super(`Printful request failed (HTTP ${status}). Check the store token, permissions and product/address details.`); this.status = status; }
 }

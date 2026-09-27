@@ -4,6 +4,8 @@ const escape = text => String(text ?? '').replace(/[&<>"']/g, char => ({ '&': '&
 const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
 const save = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { toast('Your browser cannot save this cart between visits.'); } };
 let catalog;
+let shippingQuote = null;
+let shippingDraft = {};
 let cart = read('lakeland-cart-v1', []);
 if (!Array.isArray(cart)) cart = [];
 let toastTimer;
@@ -76,12 +78,12 @@ function sorted(items) {
   });
 }
 function productCard(p) {
-  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · Sample listing</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p><div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
+  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · ${p.isSample ? 'Sample listing' : 'Published design'}</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p><div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
 }
 function renderProducts() {
   const kind = new URLSearchParams(location.search).get('kind') || '';
   const items = sorted(catalog.products.filter(p => !kind || p.kind === kind));
-  main.innerHTML = `<div class="wrap">${intro('The collection', 'Art to make your own.', 'Something for your walls, something for your shelves, something for your everyday. Find the piece that speaks to you.')}<div class="notice">You’re exploring our beta. Artwork, artist labels, prices, and lead times are samples. No real purchases or shipments are available yet.</div><div class="filters"><div class="tabs" aria-label="Product types">${[['', 'All pieces'], ['original', 'Original paintings'], ['clay', 'Handmade clay'], ['printful', 'Print on demand']].map(([value, label]) => `<button class="tab ${kind === value ? 'selected' : ''}" data-kind="${value}" aria-pressed="${kind === value}">${label}</button>`).join('')}</div>${filterFields()}</div><p class="results-count" aria-live="polite">${items.length} ${items.length === 1 ? 'piece' : 'pieces'} to discover</p>${items.length ? `<div class="product-grid">${items.map(productCard).join('')}</div>` : '<div class="empty"><h2>No pieces found.</h2><p>Try another artist or explore all product types.</p><a class="button light" href="/products">Clear filters</a></div>'}<p class="shipping-note">A note on shipping: these are estimated <strong>dispatch dates</strong>, not arrival dates. Weekends are excluded; holidays, studio capacity, and destination may change timing. Clay is made after you order. Printful items ship separately. Final shipping rates and taxes are still being configured.</p></div>`;
+  main.innerHTML = `<div class="wrap">${intro('The collection', 'Art to make your own.', 'Something for your walls, something for your shelves, something for your everyday. Find the piece that speaks to you.')}<div class="notice">You’re exploring our beta. The Beekeeper and Doctor Mug features real artwork and published sizes. Other listings are samples. Checkout uses test payments only; dispatch estimates are provisional and no shipments are created.</div><div class="filters"><div class="tabs" aria-label="Product types">${[['', 'All pieces'], ['original', 'Original paintings'], ['clay', 'Handmade clay'], ['printful', 'Print on demand']].map(([value, label]) => `<button class="tab ${kind === value ? 'selected' : ''}" data-kind="${value}" aria-pressed="${kind === value}">${label}</button>`).join('')}</div>${filterFields()}</div><p class="results-count" aria-live="polite">${items.length} ${items.length === 1 ? 'piece' : 'pieces'} to discover</p>${items.length ? `<div class="product-grid">${items.map(productCard).join('')}</div>` : '<div class="empty"><h2>No pieces found.</h2><p>Try another artist or explore all product types.</p><a class="button light" href="/products">Clear filters</a></div>'}<p class="shipping-note">A note on shipping: these are estimated <strong>dispatch dates</strong>, not arrival dates. Weekends are excluded; holidays, studio capacity, and destination may change timing. Clay is made after you order. Printful items ship separately. Final shipping rates and taxes are still being configured.</p></div>`;
   bindFilters();
 }
 const viewIndices = new Map();
@@ -223,28 +225,81 @@ function renderContact() {
     }
   });
 }
+function shippingForm() {
+  const states = 'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ');
+  return `<form id="shipping-form"><h3>Where should it go?</h3><p>United States only (50 states and DC). Shipping quotes currently support mug-only carts.</p>${[['name','Full name','name'],['address1','Street address','address-line1'],['address2','Apartment or suite (optional)','address-line2'],['city','City','address-level2']].map(([name,label,autocomplete]) => `<div class="field"><label for="shipping-${name}">${label}</label><input id="shipping-${name}" name="${name}" autocomplete="shipping ${autocomplete}" maxlength="100" ${name !== 'address2' ? 'required' : ''} value="${escape(shippingDraft[name] || '')}"></div>`).join('')}<div class="field"><label for="shipping-state">State</label><select id="shipping-state" name="state_code" autocomplete="shipping address-level1" required><option value="">Select state</option>${states.map(state => `<option value="${state}" ${shippingDraft.state_code === state ? 'selected' : ''}>${state}</option>`).join('')}</select></div><div class="field"><label for="shipping-zip">ZIP code</label><input id="shipping-zip" name="zip" autocomplete="shipping postal-code" inputmode="numeric" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10" required value="${escape(shippingDraft.zip || '')}"></div><p>Country: United States</p><p class="form-note">Your address is sent to Printful for a quote and to PayPal for checkout. This is a test; nothing will ship.</p><button class="button light" type="submit">Calculate shipping</button><p id="shipping-status" role="status" aria-live="polite"></p></form><div class="total-row"><span>Shipping</span><span id="shipping-cost">Calculate above</span></div><div class="total-row"><span>Sales tax</span><span>Not configured (sandbox)</span></div>`;
+}
+function bindShipping() {
+  const form = document.querySelector('#shipping-form');
+  if (!form) return;
+  let revision = 0;
+  const invalidate = () => {
+    revision++;
+    shippingDraft = Object.fromEntries(new FormData(form));
+    shippingQuote = null;
+    document.querySelector('#paypal-checkout-button').disabled = true;
+    document.querySelector('#checkout-button').disabled = true;
+    document.querySelector('#shipping-cost').textContent = 'Calculate above';
+    document.querySelector('#shipping-status').textContent = '';
+    document.querySelector('#checkout-total').textContent = money(cartItems().reduce((sum, i) => sum + i.quantity * i.product.price, 0));
+  };
+  form.addEventListener('input', invalidate);
+  form.addEventListener('change', invalidate);
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    invalidate();
+    const version = revision, snapshot = JSON.stringify(cart), button = form.querySelector('button');
+    const status = form.querySelector('#shipping-status');
+    button.disabled = true;
+    status.textContent = 'Getting your Printful shipping quote...';
+    try {
+      const response = await fetch('/api/shop/shipping/quote', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lakeland-Cart': '1' },
+        body: JSON.stringify({ address: { ...shippingDraft, country_code: 'US' }, items: cart.map(i => ({ productVariantId: i.id, quantity: i.quantity })) }) });
+      const result = await response.json();
+      if (!form.isConnected || version !== revision || snapshot !== JSON.stringify(cart)) return;
+      if (!response.ok) throw new Error(result.error || 'Shipping quote unavailable. Please try again.');
+      shippingQuote = result;
+      document.querySelector('#shipping-cost').textContent = money(result.shippingCents / 100);
+      document.querySelector('#checkout-total').textContent = money(result.totalCents / 100);
+      status.textContent = 'Printful standard shipping. Quote valid for 15 minutes; sales tax is not included in this sandbox test.';
+      document.querySelector('#paypal-checkout-button').disabled = !catalog.paymentProviders?.paypal;
+      document.querySelector('#checkout-error').textContent = '';
+    } catch (error) {
+      if (form.isConnected && version === revision) status.textContent = error.message;
+    } finally { button.disabled = false; }
+  });
+}
 function renderCart() {
+  shippingQuote = null;
   const items = cartItems();
   const providers = catalog.paymentProviders || { stripe: catalog.checkoutReady, paypal: false };
   const canceled = new URLSearchParams(location.search).get('checkout') === 'canceled';
-  main.innerHTML = `<div class="wrap">${intro('Your little collection', 'The good things you found.', 'A painting to treasure. A sculpture made for you. A little art for every day.')} ${canceled ? '<div class="notice">You returned from checkout. Your cart is still here. An original may remain reserved until its checkout session expires.</div>' : ''}${!items.length ? '<div class="empty"><h2>Your cart is waiting for a little art.</h2><p>Take a look around and see what speaks to you.</p><a class="button" href="/products">Explore the collection ↗</a></div>' : `<div class="cart-layout"><section aria-label="Cart items">${items.map(({ product: p, quantity }) => `<article class="cart-item"><img src="${p.image}" alt="${escape(p.name)} sample"><div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price * quantity)}</span></div><p>${escape(p.artist)} · ${kindName(p.kind)}</p><p>Estimated ship date: ${estimate(p)}</p><p>${escape(p.estimate.description)}</p><div class="cart-controls"><div class="quantity"><button data-change="${p.id}" data-amount="-1" aria-label="Decrease quantity of ${escape(p.name)}">−</button><span aria-label="Quantity ${quantity}">${quantity}</span><button data-change="${p.id}" data-amount="1" ${quantity >= p.maxQuantity ? 'disabled' : ''} aria-label="Increase quantity of ${escape(p.name)}">+</button></div><button class="remove" data-remove="${p.id}">Remove</button>${p.maxQuantity === 1 ? '<span class="product-meta">One of a kind</span>' : ''}</div></div></article>`).join('')}<p class="shipping-note">Ship dates are estimates, not delivery guarantees. Studio-made and Printful items may ship separately. Adding an original to your cart does not reserve it; reservation starts at checkout.</p><a class="text-link" href="/products">← Keep exploring</a></section><aside class="cart-summary"><h2>Your order</h2><div class="total-row"><span>Items (${items.reduce((sum, i) => sum + i.quantity, 0)})</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><div class="total-row"><span>Shipping & tax</span><span>Not charged in beta</span></div><div class="total-row main"><span>Test subtotal</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><button class="button" id="checkout-button" ${providers.stripe ? '' : 'disabled'}>${providers.stripe ? 'Continue to Stripe test checkout ↗' : 'Test checkout coming soon'}</button><button class="button light" id="paypal-checkout-button" ${providers.paypal ? '' : 'disabled'}>${providers.paypal ? 'Continue to PayPal sandbox' : 'PayPal sandbox coming soon'}</button><p>Beta test only: use Stripe test cards or a PayPal sandbox buyer account. No real charges or shipments.</p><p>All listings and prices are beta samples. Final shipping rates, taxes, and production lead times will be confirmed before launch.</p><p class="payment-note">Secure hosted checkout with Stripe or PayPal</p><p id="checkout-error" role="alert"></p></aside></div>`}</div>`;
+  main.innerHTML = `<div class="wrap">${intro('Your little collection', 'The good things you found.', 'A painting to treasure. A sculpture made for you. A little art for every day.')} ${canceled ? '<div class="notice">You returned from checkout. Your cart is still here. An original may remain reserved until its checkout session expires.</div>' : ''}${!items.length ? '<div class="empty"><h2>Your cart is waiting for a little art.</h2><p>Take a look around and see what speaks to you.</p><a class="button" href="/products">Explore the collection ↗</a></div>' : `<div class="cart-layout"><section aria-label="Cart items">${items.map(({ product: p, quantity }) => `<article class="cart-item"><img src="${p.image}" alt="${escape(p.name)} sample"><div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price * quantity)}</span></div><p>${escape(p.artist)} · ${kindName(p.kind)}</p><p>Estimated ship date: ${estimate(p)}</p><p>${escape(p.estimate.description)}</p><div class="cart-controls"><div class="quantity"><button data-change="${p.id}" data-amount="-1" aria-label="Decrease quantity of ${escape(p.name)}">−</button><span aria-label="Quantity ${quantity}">${quantity}</span><button data-change="${p.id}" data-amount="1" ${quantity >= p.maxQuantity ? 'disabled' : ''} aria-label="Increase quantity of ${escape(p.name)}">+</button></div><button class="remove" data-remove="${p.id}">Remove</button>${p.maxQuantity === 1 ? '<span class="product-meta">One of a kind</span>' : ''}</div></div></article>`).join('')}<p class="shipping-note">Ship dates are estimates, not delivery guarantees. Studio-made and Printful items may ship separately. Adding an original to your cart does not reserve it; reservation starts at checkout.</p><a class="text-link" href="/products">← Keep exploring</a></section><aside class="cart-summary"><h2>Your order</h2><div class="total-row"><span>Items (${items.reduce((sum, i) => sum + i.quantity, 0)})</span><span>${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div>${catalog.shippingRequired ? shippingForm() : '<div class="total-row"><span>Shipping & tax</span><span>Not charged in beta</span></div>'}<div class="total-row main"><span>${catalog.shippingRequired ? 'Test total before tax' : 'Test subtotal'}</span><span id="checkout-total">${money(items.reduce((sum, i) => sum + i.quantity * i.product.price, 0))}</span></div><button class="button" id="checkout-button" ${providers.stripe && !catalog.shippingRequired ? '' : 'disabled'}>${providers.stripe ? 'Continue to Stripe test checkout ↗' : 'Test checkout coming soon'}</button><button class="button light" id="paypal-checkout-button" ${providers.paypal && !catalog.shippingRequired ? '' : 'disabled'}>${providers.paypal ? 'Continue to PayPal sandbox' : 'PayPal sandbox coming soon'}</button><p>Beta test only: use Stripe test cards or a PayPal sandbox buyer account. No real charges or shipments.</p><p>Sandbox checkout only. Sales tax is not configured or collected in this test. No products will be made or shipped.</p><p class="payment-note">Secure hosted checkout with Stripe or PayPal</p><p id="checkout-error" role="alert"></p></aside></div>`}</div>`;
   main.querySelectorAll('[data-change]').forEach(button => button.addEventListener('click', () => changeCart(button.dataset.change, Number(button.dataset.amount))));
   main.querySelectorAll('[data-remove]').forEach(button => button.addEventListener('click', () => changeCart(button.dataset.remove, -25)));
+  bindShipping();
   document.querySelector('#checkout-button')?.addEventListener('click', () => startCheckout('stripe'));
   document.querySelector('#paypal-checkout-button')?.addEventListener('click', () => startCheckout('paypal'));
 }
 async function startCheckout(provider) {
+  if (catalog.shippingRequired && (!shippingQuote || shippingQuote.expiresAt * 1000 <= Date.now())) {
+    document.querySelector('#checkout-error').textContent = 'Get a fresh shipping quote before continuing.';
+    return;
+  }
   const buttons = [...document.querySelectorAll('#checkout-button, #paypal-checkout-button')];
   const states = buttons.map(button => button.disabled);
   buttons.forEach(button => { button.disabled = true; });
   const snapshot = JSON.stringify(cart);
+  const quoteId = catalog.shippingRequired ? shippingQuote.quoteId : undefined;
   const key = 'lakeland-checkout-' + provider;
   let record = read(key, null);
-  if (!record || record.snapshot !== snapshot) { record = { requestId: crypto.randomUUID(), snapshot }; save(key, record); }
+  if (!record || record.snapshot !== snapshot || record.quoteId !== quoteId) { record = { requestId: crypto.randomUUID(), snapshot, quoteId }; save(key, record); }
   try {
-    const response = await fetch('/api/shop/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lakeland-Cart': '1' }, body: JSON.stringify({ provider, requestId: record.requestId, items: cart.map(i => ({ productVariantId: i.id, quantity: i.quantity })) }) });
+    const response = await fetch('/api/shop/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lakeland-Cart': '1' }, body: JSON.stringify({ provider, requestId: record.requestId, quoteId, items: cart.map(i => ({ productVariantId: i.id, quantity: i.quantity })) }) });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || 'Checkout is temporarily unavailable. Your cart is saved.');
+    if (snapshot !== JSON.stringify(cart) || (catalog.shippingRequired && shippingQuote?.quoteId !== quoteId)) throw new Error('Your cart or shipping address changed. Review it before continuing.');
     const redirect = new URL(result.url);
     const host = provider === 'stripe' ? 'checkout.stripe.com' : 'www.sandbox.paypal.com';
     if (redirect.protocol !== 'https:' || redirect.hostname !== host || redirect.port || redirect.username || redirect.password) throw new Error('Checkout returned an unexpected address. Please contact the studio.');
@@ -252,7 +307,7 @@ async function startCheckout(provider) {
   } catch (error) {
     const node = document.querySelector('#checkout-error');
     if (node) node.textContent = error.message;
-    buttons.forEach((button, index) => { button.disabled = states[index]; });
+    buttons.forEach((button, index) => { button.disabled = states[index] || (catalog.shippingRequired && !shippingQuote); });
   }
 }
 async function renderSuccess() {

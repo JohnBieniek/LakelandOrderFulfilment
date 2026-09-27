@@ -1,5 +1,7 @@
 import { PaymentError, readiness, boundedText, createProviderCheckout, retrieveState, capturePayPal, verifyStripe, verifyPayPal, stripeState } from './payment-providers.ts';
 import type { PaymentSecrets, PaymentOrder, PaymentLine, Provider } from './payment-providers.ts';
+import { shippingAddress, printfulShipping } from './shipping.ts';
+import type { ShippingQuote } from './shipping.ts';
 
 export type PaymentEnvironment = Env & PaymentSecrets;
 type Product = { id: string; name: string; price: number; isOriginal: boolean };
@@ -49,14 +51,8 @@ export async function applyState(env: PaymentEnvironment, order: PaymentOrder, s
   }
   if (statements.length) await db.batch(statements);
 }
-async function checkout(request: Request, env: PaymentEnvironment, products: Product[], fetcher: typeof fetch) {
-  const input = await body(request);
-  const provider: Provider = input?.provider ?? 'stripe';
-  if (!['stripe', 'paypal'].includes(provider)) throw new PaymentError('Choose Stripe or PayPal.', 400);
-  if (!readiness(env)[provider]) throw new PaymentError('Test checkout is not configured yet. Your cart is saved.', 503);
-  const token = owner(request);
-  if (!token) throw new PaymentError('Refresh the page to begin a secure checkout.', 403);
-  if (!uuid.test(input.requestId) || !Array.isArray(input.items) || !input.items.length || input.items.length > 30) throw new PaymentError('Invalid cart.', 400);
+function cartLines(input: any, products: Product[]): PaymentLine[] {
+  if (!Array.isArray(input?.items) || !input.items.length || input.items.length > 30) throw new PaymentError('Invalid cart.', 400);
   const quantities = new Map<string, number>();
   for (const item of input.items) {
     if (!item || typeof item.productVariantId !== 'string' || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 25) throw new PaymentError('Invalid quantity.', 400);
@@ -67,15 +63,53 @@ async function checkout(request: Request, env: PaymentEnvironment, products: Pro
     if (!product || quantity > (product.isOriginal ? 1 : 25)) throw new PaymentError('An item or quantity is unavailable.', 400);
     return { id, name: product.name, quantity, unitAmount: Math.round(product.price * 100), original: product.isOriginal };
   });
-  const amount = lines.reduce((sum, line) => sum + line.unitAmount * line.quantity, 0);
+  return lines;
+}
+async function quoteShipping(request: Request, env: PaymentEnvironment, products: Product[], fetcher: typeof fetch) {
+  if (env.SHIPPING_MODE !== 'printful-us') throw new PaymentError('Shipping quotes are unavailable.', 503);
+  const token = owner(request);
+  if (!token) throw new PaymentError('Refresh the page to begin a secure checkout.', 403);
+  const input = await body(request), lines = cartLines(input, products), address = shippingAddress(input.address);
+  const rate = await printfulShipping(lines, address, env.PRINTFUL_API_TOKEN, fetcher);
+  const id = crypto.randomUUID(), expires = now() + 900;
+  await env.PAYMENTS_DB.batch([
+    env.PAYMENTS_DB.prepare('DELETE FROM payment_shipping_quotes WHERE expires_at <= ?').bind(now()),
+    env.PAYMENTS_DB.prepare('INSERT INTO payment_shipping_quotes (id,owner_hash,cart_hash,address_json,shipping_cents,service,expires_at) VALUES (?,?,?,?,?,?,?)')
+      .bind(id, await hash(token), await hash(JSON.stringify(lines)), JSON.stringify(address), rate.cents, rate.service, expires)
+  ]);
+  const subtotalCents = lines.reduce((sum, line) => sum + line.unitAmount * line.quantity, 0);
+  return json({ quoteId: id, shippingCents: rate.cents, subtotalCents, totalCents: subtotalCents + rate.cents, currency: 'USD', expiresAt: expires, taxStatus: 'not-configured', service: 'Printful standard shipping' });
+}
+async function checkout(request: Request, env: PaymentEnvironment, products: Product[], fetcher: typeof fetch) {
+  const input = await body(request);
+  const provider: Provider = input?.provider ?? 'stripe';
+  if (!['stripe', 'paypal'].includes(provider)) throw new PaymentError('Choose Stripe or PayPal.', 400);
+  if (!readiness(env)[provider]) throw new PaymentError('Test checkout is not configured yet. Your cart is saved.', 503);
+  const token = owner(request);
+  if (!token) throw new PaymentError('Refresh the page to begin a secure checkout.', 403);
+  if (!uuid.test(input.requestId)) throw new PaymentError('Invalid cart.', 400);
+  const lines = cartLines(input, products);
+  let amount = lines.reduce((sum, line) => sum + line.unitAmount * line.quantity, 0);
   if (!Number.isSafeInteger(amount) || amount <= 0 || amount > 99999999) throw new PaymentError('Invalid total.', 400);
   const ownerHash = await hash(token), cartHash = await hash(JSON.stringify(lines)), time = now();
   const db = env.PAYMENTS_DB;
   let order = await db.prepare('SELECT * FROM payment_orders WHERE id=?').bind(input.requestId).first<PaymentOrder>();
+  let quote: ShippingQuote | null = null;
+  if (env.SHIPPING_MODE === 'printful-us') {
+    if (typeof input.quoteId !== 'string' || !uuid.test(input.quoteId)) throw new PaymentError('Get a US shipping quote before checkout.', 400);
+    if (order) {
+      if (order.shipping_quote_id !== input.quoteId) throw new PaymentError('The shipping quote changed. Start a new checkout.', 409);
+    } else {
+      quote = await db.prepare('SELECT * FROM payment_shipping_quotes WHERE id=? AND owner_hash=?').bind(input.quoteId, ownerHash).first<ShippingQuote>();
+      if (!quote || quote.expires_at <= time || quote.cart_hash !== cartHash) throw new PaymentError('Shipping quote expired or the cart changed. Get a new quote.', 409);
+      amount += quote.shipping_cents;
+      if (!Number.isSafeInteger(amount) || amount > 99999999) throw new PaymentError('Invalid total.', 400);
+    }
+  }
   if (!order) {
     try {
       await db.batch([
-        db.prepare('INSERT INTO payment_orders (id,owner_hash,provider,cart_hash,lines_json,amount_cents,created_at,expires_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)').bind(input.requestId, ownerHash, provider, cartHash, JSON.stringify(lines), amount, time, time + 2700, time),
+        db.prepare('INSERT INTO payment_orders (id,owner_hash,provider,cart_hash,lines_json,amount_cents,created_at,expires_at,updated_at,shipping_quote_id,shipping_cents,shipping_address_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)').bind(input.requestId, ownerHash, provider, cartHash, JSON.stringify(lines), amount, time, time + 2700, time, quote?.id ?? null, quote?.shipping_cents ?? 0, quote?.address_json ?? null),
         ...lines.filter(l => l.original).map(l => db.prepare('INSERT INTO payment_original_reservations (product_id,order_id) VALUES (?,?)').bind(l.id, input.requestId))
       ]);
     } catch {
@@ -125,6 +159,7 @@ export async function paymentRequest(request: Request, env: PaymentEnvironment, 
     if (request.method === 'POST') {
       if (path === '/api/shop/checkout' && !readiness(env).stripe && !readiness(env).paypal) throw new PaymentError('Test checkout is not configured yet. Your cart is saved.', 503);
       if (request.headers.get('Origin') !== url.origin || request.headers.get('X-Lakeland-Cart') !== '1') throw new PaymentError('Please submit checkout from this site.', 403);
+      if (path === '/api/shop/shipping/quote') return await quoteShipping(request, env, products, fetcher);
       if (path === '/api/shop/checkout') return await checkout(request, env, products, fetcher);
       if (path === '/api/shop/paypal/capture') {
         const order = await ownedOrder(request, env, (await body(request))?.orderId);

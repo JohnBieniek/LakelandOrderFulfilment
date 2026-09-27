@@ -5,9 +5,9 @@ The public storefront fulfillment adapter remains disabled. A private local tool
 
 ## Order the first mug
 
-Connection checked on September 23, 2026: the existing token reaches store **18691434**, which Printful currently names **Personal orders**. It has order/product read and write scopes. The store contains **zero published products**. Product-template access returns HTTP 403 with this token; the mug design therefore cannot yet be retrieved. No order was created by this check.
+Connection verified on September 27, 2026: the replacement local token reaches **Lakeland Fine Arts (18787964)**. Published product **474191924**, **Beekeeper and Doctor Mug**, has three synced variants: **11 oz (5512359978)**, **15 oz (5512359979)**, and **20 oz (5512359980)**. The earlier empty-store result referred to a different store, Personal orders (18691434). The tool now targets the correct store. No order was created by this check; order-write permissions and live quote/draft behavior remain unverified.
 
-1. In Printful, open **My products → Product templates**, select the mug, and **Publish / Add to store** for the intended API store. Check the store ID, since the name differs from the expected Lakeland Fine Arts name. If that destination is unavailable, resolve the store selection before creating a new product; do not recreate the artwork from the watermarked gallery copy.
+1. The mug is already published. Review the existing design in Lakeland Fine Arts; no duplicate product is needed.
 2. Run `npm.cmd run printful:inspect`. It reads the existing `Providers:Printful:ApiToken` user-secret (or `Providers__Printful__ApiToken` environment variable) without displaying it. It lists store products and their **sync variant IDs**, not private artwork URLs.
 3. Select the desired mug design and size. Save the recipient locally in the ignored `artifacts/mug-recipient.json`, using `name`, `address1`, optional `address2`, `city`, `state_code`, `country_code`, `zip`, and optional `email` / `phone`. Use uppercase two-letter US state and country codes. Do not commit addresses.
 4. Request the quantity-one estimate, replacing the example ID with the chosen sync variant ID:
@@ -24,7 +24,7 @@ Connection checked on September 23, 2026: the existing token reaches store **186
 
 The tool submits `confirm=false` and recovers an existing order by external ID before attempting a new draft. It rejects mismatched existing orders and non-mug or unready print-file mappings. Review the exact design, address, shipping and final cost in Printful before paying there. This is a regular quantity-one order estimate; it does not promise eligibility for Printful's discounted sample-order program.
 
-Run `npm.cmd run test:printful` for the mocked integration checks. Live quote/draft validation is still pending a published mug and recipient address. No Cloudflare deployment or payment-provider setup is needed to order this first mug through the private tool.
+Run `npm.cmd run test:printful` for the mocked integration checks. All six mocked tool tests passed on September 27, 2026. Live quote/draft validation still needs a selected size, recipient address, and appropriate token permissions. No Cloudflare deployment or payment-provider setup is needed to order this first mug through the private tool.
 
 Sources: [Printful product templates and publishing](https://help.printful.com/hc/en-us/articles/360014010300-What-s-a-product-template-and-how-does-it-work), [Printful Orders API](https://developers.printful.com/docs/#tag/Orders-API).
 
