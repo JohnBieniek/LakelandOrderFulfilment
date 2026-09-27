@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Bunny hood portrait': 'Tina from Bob’s Burgers',
   'Adventure time princess bubblegum': 'Adventure Time Princess Bubblegum',
   'Totoro and mei under galaxy sky': 'Totoro and Mei under galaxy sky',
   'The beekeeper and the doctor': 'Beekeeper and doctor',
@@ -36,7 +37,7 @@ const descriptions = {
   'Art print display': 'A photograph of several studio art prints arranged together, showing a mix of character pieces and imaginative paintings.',
   'Howl and sophie painted box lid': 'Howl and Sophie from Howl’s Moving Castle painted together on a circular box lid.',
   'Red orange mushrooms': 'Two brightly colored mushrooms with speckled caps stand against a blue-green background.',
-  'Bunny hood portrait': 'A portrait of a young character wearing a tall, pink bunny-eared hood.',
+  'Tina from Bob’s Burgers': 'A portrait of Tina from Bob’s Burgers wearing a pink bunny-eared hood.',
   'Red haired space babe': 'A red-haired figure in profile against a swirling blue and violet cosmic background.',
   'Spirited away chihiro and haku': 'Chihiro and the dragon Haku from Spirited Away, painted with a vivid turquoise sky and red bridge.',
   'Custom couple portrait with reference': 'A stylized painted couple portrait presented alongside the reference photograph used for the commission.',

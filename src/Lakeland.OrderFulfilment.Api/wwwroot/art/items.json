@@ -1492,14 +1492,14 @@
     "label": "View 1"
   },
   {
-    "id": "work-ec8552d1e19d5e63",
-    "title": "Bunny hood portrait",
+    "id": "work-05a035f998137e31",
+    "title": "Tina from Bob’s Burgers",
     "artist": "Kay Pickett",
     "medium": "Fan art",
     "fanArt": true,
     "productId": null,
     "isSample": false,
-    "description": "A portrait of a young character wearing a tall, pink bunny-eared hood. Fan art for appreciation only; not for sale.",
+    "description": "A portrait of Tina from Bob’s Burgers wearing a pink bunny-eared hood. Fan art for appreciation only; not for sale.",
     "images": [
       {
         "image": "/art/display/bunny-hood-portrait-8e9bc06755e3.webp",
@@ -1507,7 +1507,7 @@
         "height": 900,
         "watermarked": true,
         "displaySha256": "8e9bc06755e32e417486d9291932a0174fffa91d010d0c71c3579db90afb5594",
-        "label": "View 1"
+        "label": "Bunny hood portrait"
       }
     ],
     "image": "/art/display/bunny-hood-portrait-8e9bc06755e3.webp",
@@ -1515,7 +1515,7 @@
     "height": 900,
     "watermarked": true,
     "displaySha256": "8e9bc06755e32e417486d9291932a0174fffa91d010d0c71c3579db90afb5594",
-    "label": "View 1"
+    "label": "Bunny hood portrait"
   },
   {
     "id": "work-796c41a456309371",
