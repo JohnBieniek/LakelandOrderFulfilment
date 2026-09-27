@@ -57,3 +57,5 @@ body.viewer-open{overflow:hidden}
 /* Consistent, readable footer typography. */
 footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bottom{font-size:14pt}
 .footer-bottom a{overflow-wrap:anywhere}
+
+.page-intro.page-intro-wide,.page-intro-wide p{max-width:none}
