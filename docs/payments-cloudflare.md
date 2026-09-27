@@ -69,7 +69,7 @@ For local integration testing only, the same names can be stored in the git-igno
 - Use a sample mug first. Complete a Stripe test checkout and a PayPal sandbox checkout separately. Confirm their provider dashboards show test payments and the site confirms payment.
 - Confirm declined/canceled checkouts preserve the cart. PayPal approval or visiting the success URL must not by itself mark an order paid.
 - Check each provider's webhook delivery log. Stripe requires a valid raw-body HMAC; PayPal requires successful remote signature verification plus authenticated order retrieval.
-- Inspect D1: `payment_orders` should be `Paid`, with exactly one `BetaPaymentRecorded` row in `payment_test_outbox` per paid order. No Printful order, label purchase, studio production, or email is triggered by these test records.
+- Inspect D1: `payment_orders` should be `Paid`, with exactly one `BetaPaymentRecorded` row in `payment_test_outbox` per paid order. With `PRINTFUL_DRAFT_MODE=draft-only`, verified paid mug orders enqueue unconfirmed Printful drafts. No production confirmation, label purchase, studio production, or email is triggered.
 - Retry the same request and redeliver a webhook; no second payment or outbox row should be created. A different browser cannot read or capture the order because ownership is bound to an HttpOnly cookie.
 
 Automated checks use mocked providers and real in-memory SQLite transactions; they do not validate account permissions or replace these end-to-end account tests:
@@ -93,3 +93,13 @@ Before deploying a fresh database, apply the additive schema with `npx.cmd wrang
 - Before real payments: approve actual catalog/variant mappings, implement address/fulfillment records, shipping/tax calculations, refunds/disputes, reconciliation, inventory administration and fulfillment queues, and complete provider live-account verification. Then add and review a separate production payment path; do not replace these test keys with live keys.
 
 References: [Stripe Checkout Sessions](https://docs.stripe.com/api/checkout/sessions/create), [Stripe signature verification](https://docs.stripe.com/webhooks/signature), [PayPal Orders v2](https://developer.paypal.com/api/orders/v2), [PayPal webhook verification](https://developer.paypal.com/api/rest/webhooks/rest/).
+
+## Unconfirmed Printful drafts
+
+Apply `0003_printful_drafts.sql` before deployment. The `DRAFT_QUEUE` producer/consumer uses `lakeland-printful-drafts-beta`; no cron is required. `PAYMENTS_ENABLED=test`, `PRINTFUL_DRAFT_MODE=draft-only`, and `PRINTFUL_API_TOKEN` enable this path. The token needs order read/write and product read access to store 18787964.
+
+Only a verified Paid order with its payment outbox event and US shipping snapshot is eligible. The queue uses stored retail prices, quantities, recipient and approved mug sync variants. Every create request explicitly sets `confirm=false&update_existing=false`. The transport cannot call confirmation or update endpoints. Packing slips and item names mark sandbox orders as tests.
+
+D1 `payment_printful_drafts` records attempts, state and provider ID. Stable 32-character external IDs, atomic leases and lookup-before-create protect duplicate deliveries and lost responses. Transient failures back off; invalid mappings, mismatched existing orders and exhausted retries enter `Review`. Credentials and recipient data are excluded from failure logs.
+
+Check `order_id,status,printful_id,attempts,last_error` in that table. Investigate Review rows before retrying. After resolving a known cause, reset only the affected row to Pending with `next_attempt_at=0,lease_until=0,lease_token=NULL`, preserving its external ID and payload. Publish `{ "orderId": "<existing payment order UUID>" }` to the queue using the authenticated Cloudflare Queues API. Reconcile Printful by the same external ID first if the outcome is ambiguous. Never create a new reference to bypass a mismatch. Queue publication is awaited; webhook/status retries can republish a paid outbox entry if publication failed. Manual outbox replay remains available after queue retry exhaustion; automated reconciliation and alerting remain future production work.

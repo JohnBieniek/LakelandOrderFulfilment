@@ -1,11 +1,11 @@
 # Printful onboarding and cutover
 
 Printful is the sole active print-on-demand provider. Originals remain studio-fulfilled.
-The public storefront fulfillment adapter remains disabled. A private local tool can now inspect published products, quote one mug, and create an unconfirmed draft using the existing .NET user-secret. It does not confirm orders or connect beta test payments to real production.
+The .NET storefront fulfillment adapter remains disabled. The Cloudflare beta now sends verified sandbox mug payments through a durable queue to unconfirmed Printful drafts; see [payment draft operations](payments-cloudflare.md#unconfirmed-printful-drafts). A private local tool can now inspect published products, quote one mug, and create an unconfirmed draft using the existing .NET user-secret. It does not confirm orders or connect beta test payments to real production.
 
 ## Order the first mug
 
-Connection verified on September 27, 2026: the replacement local token reaches **Lakeland Fine Arts (18787964)**. Published product **474191924**, **Beekeeper and Doctor Mug**, has three synced variants: **11 oz (5512359978)**, **15 oz (5512359979)**, and **20 oz (5512359980)**. The earlier empty-store result referred to a different store, Personal orders (18691434). The tool now targets the correct store. No order was created by this check; order-write permissions and live quote/draft behavior remain unverified.
+Connection verified on September 27, 2026: the replacement local token reaches **Lakeland Fine Arts (18787964)**. Published product **474191924**, **Beekeeper and Doctor Mug**, has three synced variants: **11 oz (5512359978)**, **15 oz (5512359979)**, and **20 oz (5512359980)**. The earlier empty-store result referred to a different store, Personal orders (18691434). The tool now targets the correct store. That initial inspection created no order. Later beta validation verified US shipping quotes and order-write access: paid sandbox checkouts created drafts 178274908 and 178274918, each one 11 oz mug at $9.50 retail, directly verified as unconfirmed on September 27, 2026.
 
 1. The mug is already published. Review the existing design in Lakeland Fine Arts; no duplicate product is needed.
 2. Run `npm.cmd run printful:inspect`. It reads the existing `Providers:Printful:ApiToken` user-secret (or `Providers__Printful__ApiToken` environment variable) without displaying it. It lists store products and their **sync variant IDs**, not private artwork URLs.
@@ -24,7 +24,7 @@ Connection verified on September 27, 2026: the replacement local token reaches *
 
 The tool submits `confirm=false` and recovers an existing order by external ID before attempting a new draft. It rejects mismatched existing orders and non-mug or unready print-file mappings. Review the exact design, address, shipping and final cost in Printful before paying there. This is a regular quantity-one order estimate; it does not promise eligibility for Printful's discounted sample-order program.
 
-Run `npm.cmd run test:printful` for the mocked integration checks. All six mocked tool tests passed on September 27, 2026. Live quote/draft validation still needs a selected size, recipient address, and appropriate token permissions. No Cloudflare deployment or payment-provider setup is needed to order this first mug through the private tool.
+Run `npm.cmd run test:printful` for the mocked integration checks. All six mocked tool tests passed on September 27, 2026. The beta queue workflow has separately passed live quote/draft validation using the two sandbox checkout recipients. No Cloudflare deployment or payment-provider setup is needed to order this first mug through the private tool.
 
 Sources: [Printful product templates and publishing](https://help.printful.com/hc/en-us/articles/360014010300-What-s-a-product-template-and-how-does-it-work), [Printful Orders API](https://developers.printful.com/docs/#tag/Orders-API).
 

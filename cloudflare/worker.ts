@@ -3,6 +3,7 @@ import { submitContact } from './contact';
 import { paymentRequest, reservedProducts, setOwnerCookie } from './payments';
 import type { PaymentEnvironment } from './payments';
 import { readiness } from './payment-providers';
+import { consumePrintfulDrafts } from './printful-drafts';
 
 const pageRoutes = new Set(['/contact', '/gallery', '/products', '/cart', '/checkout/success']);
 const securityHeaders = {
@@ -48,6 +49,9 @@ function json(body: unknown, status = 200): Response {
 }
 
 export default {
+  async queue(batch, env): Promise<void> {
+    await consumePrintfulDrafts(batch, env);
+  },
   async fetch(request, env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === '/api/contact') return submitContact(request, env);

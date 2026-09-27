@@ -1,13 +1,8 @@
 import { boundedText, PaymentError } from './payment-providers.ts';
 import type { PaymentLine } from './payment-providers.ts';
+import { mugMappings, printfulStoreId } from './printful-catalog.ts';
 
 export const usStates = 'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ');
-// Catalog variant IDs, verified against the published sync variants in store 18787964.
-const mugVariants: Record<string, number> = {
-  'b7777777-7777-4777-8777-777777777777': 1320,
-  'b8888888-8888-4888-8888-888888888888': 4830,
-  'b9999999-9999-4999-8999-999999999999': 16586
-};
 export interface ShippingAddress { name: string; address1: string; address2: string; city: string; state_code: string; zip: string; country_code: 'US'; }
 export interface ShippingQuote { id: string; owner_hash: string; cart_hash: string; address_json: string; shipping_cents: number; service: string; expires_at: number; }
 export function shippingAddress(value: unknown): ShippingAddress {
@@ -25,12 +20,12 @@ export function shippingAddress(value: unknown): ShippingAddress {
 }
 export async function printfulShipping(lines: PaymentLine[], address: ShippingAddress, token: string | undefined, fetcher: typeof fetch) {
   if (!token) throw new PaymentError('Shipping quotes are not configured yet. Please try again later.', 503);
-  if (lines.some(line => !mugVariants[line.id]) || lines.reduce((sum, line) => sum + line.quantity, 0) > 25)
+  if (lines.some(line => !mugMappings[line.id]) || lines.reduce((sum, line) => sum + line.quantity, 0) > 25)
     throw new PaymentError('Shipping checkout currently supports up to 25 Beekeeper and Doctor mugs. Please remove studio items or contact us about their shipping.', 400);
   const response = await fetcher.call(globalThis, 'https://api.printful.com/shipping/rates', {
     method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(15000),
-    headers: { Authorization: `Bearer ${token}`, 'X-PF-Store-Id': '18787964', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ recipient: address, items: lines.map(line => ({ variant_id: mugVariants[line.id], quantity: line.quantity })), currency: 'USD', locale: 'en_US' })
+    headers: { Authorization: `Bearer ${token}`, 'X-PF-Store-Id': String(printfulStoreId), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipient: address, items: lines.map(line => ({ variant_id: mugMappings[line.id].catalogVariantId, quantity: line.quantity })), currency: 'USD', locale: 'en_US' })
   });
   if (!response.ok) throw new PaymentError('Printful could not quote shipping to this address. Check the address or try again later.', 503);
   let data;

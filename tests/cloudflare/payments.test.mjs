@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createHmac } from 'node:crypto';
 import { paymentRequest, applyState, setOwnerCookie } from '../../cloudflare/payments.ts';
 import { readiness, stripeState, paypalState, verifyStripe, allowedRedirect } from '../../cloudflare/payment-providers.ts';
+import { processPrintfulDrafts, draftApi, enqueuePrintfulDraft, consumePrintfulDrafts } from '../../cloudflare/printful-drafts.ts';
 import { shippingAddress, printfulShipping } from '../../cloudflare/shipping.ts';
 
 const origin = 'https://studio.example';
@@ -16,6 +17,7 @@ function environment() {
   sqlite.exec('PRAGMA foreign_keys = ON');
   sqlite.exec(readFileSync(new URL('../../cloudflare/migrations/0001_test_payments.sql', import.meta.url), 'utf8'));
   sqlite.exec(readFileSync(new URL('../../cloudflare/migrations/0002_shipping_quotes.sql', import.meta.url), 'utf8'));
+  sqlite.exec(readFileSync(new URL('../../cloudflare/migrations/0003_printful_drafts.sql', import.meta.url), 'utf8'));
   const prepare = sql => {
     let values = [];
     const statement = {
@@ -280,4 +282,146 @@ test('PayPal address changes are rejected before capture and cannot mark an orde
   f.mock.setPaid();
   assert.equal((await f.send('checkout/status?orderId='+id)).status,400);
   assert.equal(stored(f.env).status,'PendingPayment');
+});
+async function paidDraftFixture() {
+  const f=shippingFixture(); f.env.PRINTFUL_DRAFT_MODE='draft-only';
+  f.messages=[]; f.env.DRAFT_QUEUE={async send(message){f.messages.push(message);}};
+  const quote=await (await f.send('shipping/quote',{items:shippingItems,address:usAddress})).json();
+  await f.send('checkout',{provider:'paypal',requestId:id,items:shippingItems,quoteId:quote.quoteId});
+  f.mock.setPaid(); await f.send('checkout/status?orderId='+id);
+  return f;
+}
+function mockPrintful({lostResponse=false,badFiles=false,lookupFailure=false}={}) {
+  const orders=new Map(),calls=[];
+  const fetcher=async(url,init)=>{
+    calls.push({url,init});
+    if(url.includes('/store/variants/')) {
+      const syncId=Number(url.split('/').at(-1));
+      return Response.json({code:200,result:{sync_product_id:474191924,id:syncId,variant_id:1320,synced:true,files:[{type:'default',status:badFiles?'waiting':'ok'}]}});
+    }
+    if(url.includes('/orders/@')) {
+      if(lookupFailure)return new Response('private provider data',{status:503});
+      const order=orders.get(url.split('@').at(-1));
+      return order?Response.json({code:200,result:order}):new Response('',{status:404});
+    }
+    assert.equal(url,'https://api.printful.com/orders?confirm=false&update_existing=false');
+    assert.equal(init.method,'POST'); assert.equal(init.redirect,'manual');
+    assert.equal(init.headers['X-PF-Store-Id'],'18787964');
+    const payload=JSON.parse(init.body);
+    assert.equal(payload.external_id.length,32);
+    assert.equal(payload.items[0].sync_variant_id,5512359978);
+    assert.equal(payload.items[0].quantity,2);
+    assert.match(payload.packing_slip.message,/SANDBOX/);
+    if(orders.has(payload.external_id))return new Response('',{status:409});
+    const order={id:987654,status:'draft',...payload}; orders.set(payload.external_id,order);
+    if(lostResponse)throw Error('private network failure');
+    return Response.json({code:200,result:order});
+  };
+  return {orders,calls,fetcher};
+}
+const draftRow=f=>f.env.sqlite.prepare('SELECT * FROM payment_printful_drafts WHERE order_id=?').get(id);
+test('verified payments create one unconfirmed Printful draft across concurrent runners and replay',async()=>{
+  const f=await paidDraftFixture(),pf=mockPrintful();
+  await Promise.all([processPrintfulDrafts(f.env,pf.fetcher),processPrintfulDrafts(f.env,pf.fetcher)]);
+  await processPrintfulDrafts(f.env,pf.fetcher);
+  assert.equal(draftRow(f).status,'Draft'); assert.equal(draftRow(f).printful_id,987654);
+  assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,1);
+  assert.equal(pf.orders.size,1);
+  assert.equal(stored(f.env).status,'Paid');
+});
+test('draft consumer fails closed for disabled mode, live mode, unpaid, Review or missing outbox orders',async()=>{
+  const f=await paidDraftFixture(),pf=mockPrintful();
+  for(const changes of [{PRINTFUL_DRAFT_MODE:undefined},{PRINTFUL_DRAFT_MODE:'live'},{PAYMENTS_ENABLED:'live'},{PRINTFUL_API_TOKEN:undefined}])
+    await processPrintfulDrafts({...f.env,...changes},pf.fetcher);
+  assert.equal(draftRow(f),undefined);
+  for(const status of ['PendingPayment','Review','Canceled']) {
+    f.env.sqlite.prepare('UPDATE payment_orders SET status=?').run(status);
+    await processPrintfulDrafts(f.env,pf.fetcher);
+    assert.equal(draftRow(f),undefined);
+  }
+  f.env.sqlite.exec("UPDATE payment_orders SET status='Paid'; DELETE FROM payment_test_outbox");
+  await processPrintfulDrafts(f.env,pf.fetcher);
+  assert.equal(draftRow(f),undefined); assert.equal(pf.calls.length,0);
+});
+test('lost Printful create responses recover the same draft without another POST',async()=>{
+  const f=await paidDraftFixture(),pf=mockPrintful({lostResponse:true});
+  await processPrintfulDrafts(f.env,pf.fetcher);
+  assert.equal(draftRow(f).status,'Draft');
+  assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,1);
+});
+test('existing mismatched or confirmed Printful orders go to review and are never modified',async()=>{
+  for(const mismatch of [{status:'pending'},{recipient:{...usAddress,country_code:'CA'}},{items:[{sync_variant_id:5512359979,quantity:2}]}]) {
+    const f=await paidDraftFixture(),pf=mockPrintful();
+    pf.orders.set(id.replaceAll('-',''),{id:999,status:'draft',external_id:id.replaceAll('-',''),shipping:'STANDARD',recipient:usAddress,items:[{sync_variant_id:5512359978,quantity:2}],...mismatch});
+    await processPrintfulDrafts(f.env,pf.fetcher);
+    assert.equal(draftRow(f).status,'Review');
+    assert.equal(draftRow(f).last_error,'printful_order_needs_review');
+    assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,0);
+  }
+});
+test('bad mappings and unready files never submit drafts',async()=>{
+  const f=await paidDraftFixture(),pf=mockPrintful({badFiles:true});
+  await processPrintfulDrafts(f.env,pf.fetcher);
+  assert.equal(draftRow(f).status,'Review');
+  assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,0);
+  const g=await paidDraftFixture();
+  g.env.sqlite.prepare('UPDATE payment_orders SET lines_json=?').run(JSON.stringify([{id:'unknown',quantity:2,unitAmount:950,original:false}]));
+  const other=mockPrintful(); await processPrintfulDrafts(g.env,other.fetcher);
+  assert.equal(draftRow(g).status,'Review');assert.equal(other.calls.length,0);
+});
+test('Printful lookup failures back off, cap retries, and store only sanitized failure codes',async()=>{
+  const f=await paidDraftFixture(),pf=mockPrintful({lookupFailure:true});let time=Math.floor(Date.now()/1000);
+  for(let attempt=1;attempt<=5;attempt++){
+    await processPrintfulDrafts(f.env,pf.fetcher,()=>time);
+    assert.equal(draftRow(f).attempts,attempt);
+    assert.equal(draftRow(f).status,attempt<5?'Retry':'Review');
+    assert.equal(draftRow(f).last_error,'printful_http_503');
+    time=draftRow(f).next_attempt_at+1;
+  }
+  assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,0);
+});
+test('stale draft leases recover existing provider drafts without submitting twice',async()=>{
+  const f=await paidDraftFixture(),pf=mockPrintful();
+  await processPrintfulDrafts(f.env,pf.fetcher);
+  f.env.sqlite.exec("UPDATE payment_printful_drafts SET status='Processing',lease_token='stale',lease_until=0,printful_id=NULL");
+  await processPrintfulDrafts(f.env,pf.fetcher);
+  assert.equal(draftRow(f).status,'Draft');assert.equal(draftRow(f).printful_id,987654);
+  assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,1);
+});
+test('draft transport refuses confirmation, updates and arbitrary endpoints',async()=>{
+  let calls=0;
+  for(const path of ['/orders/1/confirm','/orders?confirm=true','/orders','/orders/1','https://evil.example'])
+    await assert.rejects(draftApi('private-token',path,undefined,async()=>{calls++;}),/unsupported_operation/);
+  assert.equal(calls,0);
+});
+
+test('queue acknowledges completed drafts and retries transient failures',async()=>{
+  for(const fails of [false,true]) {
+    const f=await paidDraftFixture(),pf=mockPrintful({lookupFailure:fails});
+    assert.ok(f.messages.some(message=>message.orderId===id));
+    let ack=0,retry=0;
+    const batch={messages:[{body:{orderId:id},ack(){ack++;},retry(options){retry++;assert.ok(options.delaySeconds>=60);}}]};
+    await consumePrintfulDrafts(batch,f.env,pf.fetcher);
+    assert.equal(ack,fails?0:1);assert.equal(retry,fails?1:0);
+    if(!fails) {
+      const before=f.messages.length;
+      await enqueuePrintfulDraft(f.env,id);
+      assert.equal(f.messages.length,before);
+      await consumePrintfulDrafts(batch,f.env,pf.fetcher);
+      assert.equal(pf.calls.filter(c=>c.init.method==='POST').length,1);
+    }
+  }
+});
+
+test('missing credentials do not acknowledge queued jobs; publication failures preserve paid records',async()=>{
+  const f=await paidDraftFixture();let ack=0;
+  await assert.rejects(consumePrintfulDrafts({messages:[{body:{orderId:id},ack(){ack++;}}]}, {...f.env,PRINTFUL_API_TOKEN:undefined}),/token is not configured/);
+  assert.equal(ack,0);
+  f.env.DRAFT_QUEUE={async send(){throw new Error('Queue unavailable');}};
+  assert.equal((await f.send('checkout/status?orderId='+id)).status,503);
+  assert.equal(stored(f.env).status,'Paid');
+  f.env.DRAFT_QUEUE={async send(message){f.messages.push(message);}};
+  const before=f.messages.length;
+  assert.equal((await f.send('checkout/status?orderId='+id)).status,200);
+  assert.ok(f.messages.length>before);
 });

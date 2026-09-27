@@ -8,6 +8,7 @@ export interface PaymentSecrets {
   PAYPAL_WEBHOOK_ID?: string;
   PRINTFUL_API_TOKEN?: string;
   SHIPPING_MODE?: string;
+  PRINTFUL_DRAFT_MODE?: string;
 }
 export interface PaymentLine { id: string; name: string; unitAmount: number; quantity: number; original: boolean; }
 export interface PaymentOrder {

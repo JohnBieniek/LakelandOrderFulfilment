@@ -11,7 +11,7 @@ DEVELOP BETA (updated 2026-09-27)
    - Azure is no longer the beta host; subscription remains disabled/read-only.
    - Real gallery display copies and an accessible multi-image viewer are implemented; shop listings still need approved artwork/product mappings, prices, and lead times.
    - Contact form sends through Cloudflare with required-field validation. Local polish adds required-field markers and accessible, distinct success/error feedback while preserving text on delivery failure.
-   - Private Printful mug inspection, quote, and unconfirmed draft tools are implemented. Correct store and published variants verified on 2026-09-27; six tool tests passed. Live quote/draft validation and order-write permissions remain unverified.
+   - Private Printful mug inspection, quote, and unconfirmed draft tools are implemented. Correct store and published variants verified on 2026-09-27; six tool tests passed. Live US quotes and order-write permissions verified; two unconfirmed sandbox drafts created on 2026-09-27.
    - PayPal sandbox credentials are deployed and checkout is enabled: verified unpaid sandbox checkout creation on 2026-09-27. All 13 automated payment tests passed. Buyer approval/capture, a verified PAYMENT.CAPTURE.COMPLETED webhook, and exactly one paid-ledger outbox record verified on 2026-09-27. Stripe is not enabled. D1 beta storage is implemented; production payment and fulfillment workflows remain.
    - See docs/beta.md for Cloudflare deployment and remaining setup.
    - See docs/payments-cloudflare.md for payment configuration and docs/printful-onboarding.md for the first mug workflow.
@@ -22,10 +22,17 @@ US SHIPPING (2026-09-27)
    - Checkout totals include retail items plus quoted shipping. Sandbox sales tax remains explicitly unconfigured; Michigan sales-tax registration is pending Treasury maintenance.
    - Remaining: tax calculation/registration, studio and mixed-cart shipping, territories/military addresses, production fulfillment, and scheduled address-retention cleanup.
 
+PRINTFUL DRAFT AUTOMATION (2026-09-27)
+   - Deployed verified sandbox payment -> durable Cloudflare queue -> unconfirmed Printful draft. Retail prices, quantities and US recipient snapshots are preserved.
+   - Stable external IDs, atomic leases, duplicate delivery protection, bounded retries and Review status implemented. Confirmation/update endpoints are excluded.
+   - Direct Printful GET and D1 verification passed for drafts 178274908 and 178274918, both status draft; no confirmation or real payment submitted.
+   - Validation: 28 payment/shipping/draft/queue tests, TypeScript checks and deployment dry run passed.
+   - Remaining before production: sample quality review, Michigan registration/tax calculation, live-payment design, refunds, fulfillment tracking, alerts and automated reconciliation.
+
 IMMEDIATE NEXT STEPS
    - Contact-form polish verified: 10 storefront browser tests and 6 contact-handler tests passed on 2026-09-27. Deploy through the normal beta workflow.
-   - Choose the published mug size and provide a recipient locally, then review a quote and prepare an unconfirmed draft with appropriate token permissions.
-   - PayPal sandbox buyer checkout and verified webhook completed with exactly one payment outbox record. Live webhook redelivery remains to validate; automated replay tests pass. Configure Stripe test credentials separately if desired.
+   - Review Printful drafts 178274908 and 178274918 in Lakeland Fine Arts: each has one 11 oz mug at $9.50 retail. Both remain unconfirmed; sandbox payments do not authorize production.
+   - Two PayPal sandbox payments (including user-reported guest card checkout) and verified webhooks completed, each with exactly one payment outbox record. Live webhook redelivery remains to validate; automated replay tests pass. Configure Stripe test credentials separately if desired.
    - Approve shop artwork/product mappings, retail prices, and lead times before enabling real purchases.
    - Reconcile historical Azure infrastructure checklist entries below with the current Cloudflare beta; they do not describe active beta hosting.
 

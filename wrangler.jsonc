@@ -6,7 +6,11 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": false,
-  "vars": { "SHIPPING_MODE": "printful-us" },
+  "vars": { "SHIPPING_MODE": "printful-us", "PRINTFUL_DRAFT_MODE": "draft-only" },
+  "queues": {
+    "producers": [{ "binding": "DRAFT_QUEUE", "queue": "lakeland-printful-drafts-beta" }],
+    "consumers": [{ "queue": "lakeland-printful-drafts-beta", "max_batch_size": 1, "max_batch_timeout": 1, "max_concurrency": 1, "max_retries": 10, "retry_delay": 60 }]
+  },
   "d1_databases": [
     { "binding": "PAYMENTS_DB", "database_name": "lakeland-payments-beta", "database_id": "592e7c7a-5c59-4ae5-a9e3-688a1f1b5107", "migrations_dir": "cloudflare/migrations" }
   ],

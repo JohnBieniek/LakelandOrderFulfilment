@@ -2,6 +2,7 @@ import { PaymentError, readiness, boundedText, createProviderCheckout, retrieveS
 import type { PaymentSecrets, PaymentOrder, PaymentLine, Provider } from './payment-providers.ts';
 import { shippingAddress, printfulShipping } from './shipping.ts';
 import type { ShippingQuote } from './shipping.ts';
+import { enqueuePrintfulDraft } from './printful-drafts.ts';
 
 export type PaymentEnvironment = Env & PaymentSecrets;
 type Product = { id: string; name: string; price: number; isOriginal: boolean };
@@ -50,6 +51,7 @@ export async function applyState(env: PaymentEnvironment, order: PaymentOrder, s
     statements.push(db.prepare("DELETE FROM payment_original_reservations WHERE order_id=? AND EXISTS (SELECT 1 FROM payment_orders WHERE id=? AND status='Canceled')").bind(order.id, order.id));
   }
   if (statements.length) await db.batch(statements);
+  if (state === 'Paid') await enqueuePrintfulDraft(env, order.id);
 }
 function cartLines(input: any, products: Product[]): PaymentLine[] {
   if (!Array.isArray(input?.items) || !input.items.length || input.items.length > 30) throw new PaymentError('Invalid cart.', 400);
@@ -177,6 +179,7 @@ export async function paymentRequest(request: Request, env: PaymentEnvironment, 
       const order = await ownedOrder(request, env, url.searchParams.get('orderId'));
       if (order.status === 'PendingPayment' && readiness(env)[order.provider]) await applyState(env, order, await retrieveState(order, env, fetcher));
       const current = await ownedOrder(request, env, order.id);
+      if (current.status === 'Paid') await enqueuePrintfulDraft(env, current.id);
       return json({ status: current.status, provider: current.provider, test: true });
     }
     return json({ error: 'Not found or method not allowed.' }, 404);
