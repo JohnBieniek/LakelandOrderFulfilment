@@ -17,7 +17,7 @@ R2 is not enabled on the connected Cloudflare account. The current free setup pu
 
 ## Display policy
 
-- Paintings, drawings, digital art, flat designs, and fan art: create a separate web copy, cap the longest edge at 1200 pixels without upscaling, remove metadata, and bake a repeated visible Lakeland Fine Arts watermark into the pixels across the image. A CSS overlay is insufficient because the underlying image remains clean.
+- Paintings, drawings, digital art, flat designs, and fan art: create a separate web copy, cap the longest edge at 1200 pixels without upscaling, remove metadata, and bake one soft Lakeland Fine Arts watermark into the lower interior of the image (centered at 76% height, regular-weight text, approximately 22% white opacity with a faint dark outline). A CSS overlay is insufficient because the underlying image remains clean.
 - Sculpture-only photographs: reduced-resolution display copies without a watermark. If a sculpture photograph also shows a reproducible painting or design, watermark it.
 - Retain originals byte-for-byte. Never apply watermarks to a print master.
 - Keep reference art, uncertain attributions, and unidentified videos private pending review. Do not assert ownership by watermarking other artists' reference work.

@@ -21,22 +21,21 @@ OUTPUT = PUBLIC / 'art/display'
 def watermark(im):
     layer = Image.new('RGBA', im.size)
     draw = ImageDraw.Draw(layer)
-    size = max(12, round(im.width / 30))
+    # One interior mark, matching the approved preview without regenerating art.
+    size = max(9, round(im.width / 32))
     font = None
-    for name in ['C:/Windows/Fonts/arialbd.ttf', 'DejaVuSans-Bold.ttf']:
+    for name in ['C:/Windows/Fonts/arial.ttf', 'DejaVuSans.ttf']:
         try:
             font = ImageFont.truetype(name, size)
             break
         except OSError:
             pass
     if font is None:
-        raise RuntimeError('Install Arial or DejaVuSans-Bold for the watermark.')
+        raise RuntimeError('Install Arial or DejaVuSans for the watermark.')
     label = 'LAKELAND FINE ARTS'
-    step = round(draw.textlength(label, font=font)) + size * 2
-    for row, y in enumerate(range(size, im.height, size * 5)):
-        for x in range(-step // 3 if row % 2 else size, im.width, step):
-            draw.text((x,y), label, font=font, fill=(255,255,255,105),
-                      stroke_width=1, stroke_fill=(0,0,0,90))
+    draw.text((im.width * .5, im.height * .76), label, anchor='mm',
+              font=font, fill=(255,255,255,55),
+              stroke_width=1, stroke_fill=(0,0,0,32))
     return Image.alpha_composite(im, layer)
 
 def prepare(source):
