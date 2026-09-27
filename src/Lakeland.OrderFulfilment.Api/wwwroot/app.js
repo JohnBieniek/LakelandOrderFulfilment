@@ -60,7 +60,8 @@ function renderHome() {
     <section class="studio-band"><div><span class="eyebrow">A small studio. A bigger story.</span><h2>Made with heart.<br>Shared with you.</h2><p>We believe the things you surround yourself with should mean something. Here, every painting, sculpture, and design begins with an artist and an idea.</p><a href="/contact" class="text-link">Say hello to the studio ↗</a></div><div class="quote">“For the wall you walk past.<br>The shelf you love.<br>The cup you reach for.”</div></section></div>`;
 }
 function filterFields() {
-  const artists = [...new Set([...catalog.products, ...catalog.gallery].map(p => p.artist))].sort();
+  const artists = [...new Set([...catalog.products, ...catalog.gallery].map(p => p.artist))]
+    .filter(artist => !['Studio painter', 'Studio sculptor'].includes(artist)).sort();
   const params = new URLSearchParams(location.search);
   return `<div class="filter-fields"><label>Artist<select id="artist-filter" aria-label="Artist"><option value="">All artists</option>${artists.map(artist => `<option value="${escape(artist)}" ${params.get('artist') === artist ? 'selected' : ''}>${escape(artist)}</option>`).join('')}</select></label><label>Sort by<select id="sort-filter" aria-label="Sort by">${[['featured', 'Featured'], ['artist', 'Artist A–Z'], ['title', 'Title A–Z'], ...(location.pathname === '/products' ? [['price-low', 'Price: low to high'], ['price-high', 'Price: high to low']] : [])].map(([value, label]) => `<option value="${value}" ${params.get('sort') === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label></div>`;
 }
