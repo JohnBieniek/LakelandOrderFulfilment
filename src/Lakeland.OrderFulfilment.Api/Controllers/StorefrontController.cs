@@ -25,7 +25,7 @@ public sealed class StorefrontController(StorefrontCatalog catalog, CommerceDbCo
         return Ok(new {
             beta = true, currency = "USD", checkoutReady = stripe.Ready && !configuration.GetValue<bool>("Storefront:PreviewOnly"),
             contactEmail = "contact@lakelandfinearts.com",
-            products = catalog.Products.Select(p => new { p.Id, p.Name, p.Artist, p.Kind, p.Price, p.Image, p.Description, p.Details, p.IsSample,
+            products = catalog.Products.Select(p => new { p.Id, p.Name, p.Artist, p.Kind, p.ProductType, p.Price, p.Image, p.Description, p.Details, p.IsSample,
                 maxQuantity = p.IsOriginal ? 1 : 25,
                 available = !p.IsOriginal || (availability.TryGetValue(p.Id, out var status) && status == ArtworkAvailability.Available),
                 estimate = catalog.Estimate(p) }),

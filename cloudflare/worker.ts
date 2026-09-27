@@ -29,7 +29,7 @@ export function previewCatalog(now = new Date()) {
     checkoutReady: false,
     contactEmail: 'contact@lakelandfinearts.com',
     products: catalog.products.map(p => ({
-      id: p.id, name: p.name, artist: p.artist, kind: p.kind, price: p.price,
+      id: p.id, name: p.name, artist: p.artist, kind: p.kind, productType: p.productType, price: p.price,
       image: p.image, description: p.description, details: p.details, isSample: p.isSample,
       maxQuantity: p.isOriginal ? 1 : 25,
       available: true,
