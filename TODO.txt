@@ -1,16 +1,27 @@
 LAKELAND ART COMMERCE - NEXT STEPS
 
-DEVELOP BETA (2026-09-21)
+DEVELOP BETA (updated 2026-09-27)
    - Home, contact, gallery, products, artist filtering/sorting, display-only fan art, persistent cart, and dispatch estimates implemented.
    - Original painting, made-to-order clay, and Printful mug examples are labeled as sample listings.
    - Stripe TEST Checkout, signed payment/expiry webhooks, original reservations, and payment outbox implemented; preview mode keeps payments disabled.
    - Printful token is present in local user-secrets; read-only API verification returned a store but no published sync products. Publish the mug into that store.
    - Beta deployed to Cloudflare Workers: https://lakeland-fine-arts-beta.johnbieniekgt.workers.dev
-   - Cloudflare preview uses the .NET catalog export and same UI. Checkout remains disabled; payment backend hosting/durable storage still needed.
+   - Cloudflare preview uses the .NET catalog export and same UI. Cloudflare-native Stripe test Checkout and PayPal sandbox checkout are implemented with a separate D1 order ledger and original reservations. Checkout remains disabled until test credentials are configured.
    - GitHub Cloudflare deployment job is prepared; automatic deploys need a scoped Cloudflare API token in the development environment.
    - Azure is no longer the beta host; subscription remains disabled/read-only.
-   - Need real artwork/artist names, approved prices and lead times, Stripe test configuration, and a separate beta database.
+   - Real gallery display copies and an accessible multi-image viewer are implemented; shop listings still need approved artwork/product mappings, prices, and lead times.
+   - Contact form sends through Cloudflare with required-field validation. Local polish adds required-field markers and accessible, distinct success/error feedback while preserving text on delivery failure.
+   - Private Printful mug inspection, quote, and unconfirmed draft tools are implemented. Last recorded check (2026-09-23) found zero published products; publish the mug to the intended API store before live quote/draft validation.
+   - Need Stripe/PayPal sandbox account configuration and end-to-end payment/webhook validation. D1 beta storage is implemented; production payment and fulfillment workflows remain.
    - See docs/beta.md for Cloudflare deployment and remaining setup.
+   - See docs/payments-cloudflare.md for payment configuration and docs/printful-onboarding.md for the first mug workflow.
+
+IMMEDIATE NEXT STEPS
+   - Contact-form polish verified: 10 storefront browser tests and 6 contact-handler tests passed on 2026-09-27. Deploy through the normal beta workflow.
+   - Publish the approved mug to Printful, inspect its sync variant, review a quote, and prepare an unconfirmed draft.
+   - Configure Stripe test and/or PayPal sandbox credentials privately; validate checkout, verified webhooks, duplicate delivery, and exactly one D1 payment outbox record.
+   - Approve shop artwork/product mappings, retail prices, and lead times before enabling real purchases.
+   - Reconcile historical Azure infrastructure checklist entries below with the current Cloudflare beta; they do not describe active beta hosting.
 
 1. Protect the GitHub repository - DONE
    - Enable secret scanning, push protection, Dependabot, CodeQL, branch protection, and required test checks. DONE
@@ -19,7 +30,7 @@ DEVELOP BETA (2026-09-21)
 
 2. Create separate environments and hosting - PARTIAL
    - Maintain Local, Portfolio, and Production environments with separate credentials, databases, storage, identities, domains, and webhooks. PARTIAL - Local and Production foundations exist; Portfolio, custom domains, and provider webhook separation remain.
-   - Register an Azure account or equivalent cloud provider. DONE - Azure subscription is active under contact@lakelandfinearts.com.
+   - Register an Azure account or equivalent cloud provider. DONE - Cloudflare hosts the beta. The former Azure subscription is disabled/read-only.
    - Create hosting, managed PostgreSQL or SQL Server, private object storage, Key Vault, and a managed application identity. DONE - provisioned in Central US with Bicep.
    - Keep production resource values and infrastructure access outside this public repository. DONE - secrets are in Key Vault/GitHub environment settings and deployment uses scoped OIDC.
 
@@ -29,6 +40,7 @@ DEVELOP BETA (2026-09-21)
    - Use managed identity plus Key Vault in production. The committed appsettings.example.json contains names only. DONE - Key Vault and the API managed identity are provisioned; no live provider keys have been added.
 
 4. Register with Stripe - PARTIAL
+   - IMPLEMENTED: Cloudflare Stripe test Checkout, signed completion/expiration webhooks, D1 reservations and payment outbox; PayPal sandbox approval/capture and verified payment handling are also implemented. Provider account configuration and end-to-end validation remain; see docs/payments-cloudflare.md.
    - Create a Stripe business account and complete verification.
    - Begin in test mode and choose hosted Checkout or Payment Element so card details never reach this API.
    - Configure tax behavior and create signed webhooks for completed/failed payments, refunds, and disputes.
@@ -58,6 +70,7 @@ DEVELOP BETA (2026-09-21)
    - Keep its API key only in user-secrets/Key Vault. PARTIAL - both secret stores are ready; an EasyPost key has not been configured.
 
 8. Replace in-memory storage - PARTIAL
+   - Cloudflare beta: separate D1 payment ledger, atomic original reservations, and idempotent payment outbox implemented. This sandbox ledger is not a production fulfillment database. The PostgreSQL items below describe the separate .NET backend.
    - Model artworks, products, variants, artwork-products, provider mappings, orders, order lines, fulfillment groups, inventory reservations, webhook inbox, and outbox. PARTIAL - the core catalog, provider mapping, order, fulfillment, inventory, webhook inbox, outbox, and failure entities now use PostgreSQL; the richer artwork-product publishing relationship remains.
    - Add migrations and database optimistic concurrency for unique originals. DONE - the initial PostgreSQL migration uses the native xmin row version and serializable order transactions.
    - Enforce a unique key on Provider + ExternalEventId. DONE - the migration creates a unique composite webhook-inbox index; fulfillment provider order IDs are also unique per provider.
@@ -74,6 +87,8 @@ DEVELOP BETA (2026-09-21)
     - Snapshot retail price, provider manufacturing cost, allocated shipping, margin, and currency on every order line.
 
 11. Complete checkout and payment orchestration
+    - Beta implementation complete for Stripe test Checkout and PayPal sandbox payments using server catalog prices, verified payment handling, original reservations, and a D1 payment outbox. Live provider validation remains.
+    - Production work remains: shipping/tax quotes, address and fulfillment records, refunds/disputes, reconciliation, inventory administration, and a separate reviewed live-payment path.
     - Accept variant IDs and quantities only; load authoritative prices server-side.
     - Quote shipping/tax and create the Stripe session on the server.
     - Confirm original reservations only after verified payment; release them after failure or expiration.

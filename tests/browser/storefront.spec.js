@@ -57,6 +57,10 @@ test('mixed cart persists, limits originals to one, and supports quantity and re
 test('direct page routes and contact form are usable', async ({ page, request }) => {
   for (const route of ['/gallery', '/products', '/contact', '/cart']) expect((await request.get(route)).ok()).toBeTruthy();
   await page.goto('/contact');
+  await expect(page.locator('.required-note')).toContainText('Required fields');
+  await expect(page.locator('label[for="contact-name"]')).toContainText('Your name *');
+  await expect(page.locator('label[for="contact-email"]')).toContainText('Email address *');
+  await expect(page.locator('label[for="contact-message"]')).toContainText('Your message *');
   await expect(page.getByLabel('Your name')).toBeVisible();
   await expect(page.getByLabel('Email address')).toHaveAttribute('type', 'email');
   await expect(page.getByRole('button', { name: 'Send message' })).toBeVisible();
