@@ -68,6 +68,18 @@ def prepare(source):
     extra = source / 'artwork.local.json'
     if extra.exists():
         entries.extend(json.loads(extra.read_text(encoding='utf-8-sig')))
+    # Split the reviewed owl collage into its original photographic panels.
+    expanded = []
+    for entry in entries:
+        if entry['title'] == 'Needle felt owl multiple views':
+            for label, box in [('Front view', (4, 8, 596, 1192)),
+                               ('Back view', (672, 8, 1141, 592)),
+                               ('Side view', (672, 610, 1143, 1192))]:
+                expanded.append(dict(entry, title='Needle felt owl', viewLabel=label,
+                                     crop=[v / 1200 for v in box]))
+        else:
+            expanded.append(entry)
+    entries = expanded
     OUTPUT.mkdir(parents=True, exist_ok=True)
     gallery, audit = [], []
     hashes = set()
@@ -80,12 +92,17 @@ def prepare(source):
             raise ValueError('Source must remain within the private source folder.')
         original = file.read_bytes()
         digest = hashlib.sha256(original).hexdigest()
-        if digest in hashes:
+        view_key = (digest, tuple(entry.get('crop', [])))
+        if view_key in hashes:
             continue
-        hashes.add(digest)
+        hashes.add(view_key)
         with Image.open(file) as opened:
             original_size = opened.size
             im = ImageOps.exif_transpose(opened).convert('RGBA')
+            if entry.get('crop'):
+                x1, y1, x2, y2 = entry['crop']
+                im = im.crop((round(x1 * im.width), round(y1 * im.height),
+                              round(x2 * im.width), round(y2 * im.height)))
             im.thumbnail((1200,1200), Image.Resampling.LANCZOS)
             backdrop = Image.new('RGBA',im.size,(246,243,238,255))
             im = Image.alpha_composite(backdrop,im)
@@ -105,7 +122,7 @@ def prepare(source):
             medium=entry['medium'],fanArt=entry.get('fanArt',False),productId=None,
             image='/art/display/'+name,width=im.width,height=im.height,
             watermarked=marked,isSample=False,displaySha256=display_hash))
-        for field in ['itemId', 'description']:
+        for field in ['itemId', 'description', 'viewLabel']:
             if entry.get(field):
                 gallery[-1][field] = entry[field]
         audit.append(dict(source=entry['file'],sourceSha256=digest,sourceWidth=original_size[0],

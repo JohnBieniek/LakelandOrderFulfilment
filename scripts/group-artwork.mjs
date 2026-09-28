@@ -78,7 +78,7 @@ const descriptions = {
   'Red and purple needle felt squid': 'Red and purple needle-felt squid with long, curling tentacles. Includes individual figures and views of the pair.',
   'Paw pal phone holders': 'Sculpted animal-paw phone holders, with pink paw pads and tiny claws. Browse the designs from different angles and see how they hold a phone.',
   'Banana peel unicorn': 'A playful little unicorn emerging from a yellow banana peel. The alternate photographs show its sculpted details from different sides.',
-  'Needle felt owl multiple views': 'A small needle-felt owl with a rounded body, pale face, and warm brown markings. These presentation images show several sides of the figure.',
+  'Needle felt owl': 'A small needle-felt owl with a rounded body, pale face, and warm brown markings. Browse the front, back, and side views.',
   'Sarcastic holiday card collection': 'A collection of illustrated holiday cards with playful, sarcastic greetings. Browse the group photographs to see the different designs.',
   'Woman blowing butterflies': 'A woman blows pink butterflies from her hand against a soft blue and violet background.',
   'Mermaid mixed media': 'A floating mermaid with flowing hair and a pink-and-blue tail, created using a mixture of traditional and digital media.',
@@ -110,7 +110,7 @@ for (const image of images) {
   if (group.images.some(v => v.displaySha256 === image.displaySha256)) continue;
   group.images.push({ image: image.image, width: image.width, height: image.height,
     watermarked: image.watermarked, displaySha256: image.displaySha256,
-    label: (aliases[image.title] || image.title) === title ? `View ${group.images.length + 1}` : image.title });
+    label: image.viewLabel || ((aliases[image.title] || image.title) === title ? `View ${group.images.length + 1}` : image.title) });
 }
 // Reviewed cover selection uses the original archive view order on every rebuild.
 const preferredCoverViews = { 'Fantasy creatures collaboration': 4 };

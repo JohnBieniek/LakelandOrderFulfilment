@@ -1812,30 +1812,46 @@
     "label": "View 1"
   },
   {
-    "id": "work-e28d53dc26a09dfb",
-    "title": "Needle felt owl multiple views",
+    "id": "work-9b88d1d5bb1dc223",
+    "title": "Needle felt owl",
     "artist": "Kay Pickett",
     "medium": "Sculpture",
     "fanArt": false,
     "productId": null,
     "isSample": false,
-    "description": "A small needle-felt owl with a rounded body, pale face, and warm brown markings. These presentation images show several sides of the figure.",
+    "description": "A small needle-felt owl with a rounded body, pale face, and warm brown markings. Browse the front, back, and side views.",
     "images": [
       {
-        "image": "/art/display/needle-felt-owl-multiple-views-283635c6031f.webp",
-        "width": 1200,
+        "image": "/art/display/needle-felt-owl-980d000ed881.webp",
+        "width": 600,
         "height": 1200,
         "watermarked": false,
-        "displaySha256": "283635c6031f2b9d3b12abc65c7da2643ba4c3acc745880e444213259939f8c9",
-        "label": "View 1"
+        "displaySha256": "980d000ed88150bb3d4dcda98d40b25fea6b603dc3034a29a842a7619a9e9ce0",
+        "label": "Front view"
+      },
+      {
+        "image": "/art/display/needle-felt-owl-34679c24e54d.webp",
+        "width": 563,
+        "height": 700,
+        "watermarked": false,
+        "displaySha256": "34679c24e54d780b599e0bf659fac60086f809cb68a754a29744913e78438db2",
+        "label": "Back view"
+      },
+      {
+        "image": "/art/display/needle-felt-owl-e1e0cde77d77.webp",
+        "width": 566,
+        "height": 698,
+        "watermarked": false,
+        "displaySha256": "e1e0cde77d7726ab9b6fe85f53c48ae267d7feb78170c889b2e19b244a7eb722",
+        "label": "Side view"
       }
     ],
-    "image": "/art/display/needle-felt-owl-multiple-views-283635c6031f.webp",
-    "width": 1200,
+    "image": "/art/display/needle-felt-owl-980d000ed881.webp",
+    "width": 600,
     "height": 1200,
     "watermarked": false,
-    "displaySha256": "283635c6031f2b9d3b12abc65c7da2643ba4c3acc745880e444213259939f8c9",
-    "label": "View 1"
+    "displaySha256": "980d000ed88150bb3d4dcda98d40b25fea6b603dc3034a29a842a7619a9e9ce0",
+    "label": "Front view"
   },
   {
     "id": "work-b0d2d24104382c1b",
