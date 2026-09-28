@@ -366,7 +366,7 @@ function render() {
   clearTimeout(successTimer);
   if (viewer.open) viewer.close();
   document.querySelectorAll('[data-nav]').forEach(link => { const active = link.dataset.nav === location.pathname; link.classList.toggle('active', active); if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); });
-  const titles = { '/': 'Art, made personal.', '/products': 'The collection', '/gallery': 'The gallery', '/contact': 'Say hello', '/cart': 'Your cart', '/checkout/success': 'Test checkout' };
+  const titles = { '/': 'Small wonders for everyday enjoyment.', '/products': 'The collection', '/gallery': 'The gallery', '/contact': 'Say hello', '/cart': 'Your cart', '/checkout/success': 'Test checkout' };
   document.title = `${titles[location.pathname] || 'Welcome'} · Lakeland Fine Arts`;
   ({ '/': renderHome, '/products': renderProducts, '/gallery': renderGallery, '/contact': renderContact, '/cart': renderCart, '/checkout/success': renderSuccess }[location.pathname] || renderHome)();
 }
