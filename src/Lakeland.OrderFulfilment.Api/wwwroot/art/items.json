@@ -744,22 +744,6 @@
         "watermarked": true,
         "displaySha256": "e5936365cbf73af1b85f0f562e42a31f69faadf66f31e0c1e9cc7ed721ea98ee",
         "label": "View 1"
-      },
-      {
-        "image": "/art/display/antlered-forest-spirit-redraw-c7f1ad94d63a.webp",
-        "width": 838,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "c7f1ad94d63a7a0f7fe8bd8283fa4d2bc3e6f3216d4b32b0e58464ed0c5f969a",
-        "label": "View 2"
-      },
-      {
-        "image": "/art/display/antlered-forest-spirit-redraw-65c8716bca34.webp",
-        "width": 838,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "65c8716bca34dee8c437d36400267a7332fd552fc8cddc1a76342895af88f337",
-        "label": "View 3"
       }
     ],
     "image": "/art/display/antlered-forest-spirit-redraw-e5936365cbf7.webp",
