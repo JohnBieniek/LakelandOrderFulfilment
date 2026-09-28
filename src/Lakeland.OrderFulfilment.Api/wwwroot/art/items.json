@@ -765,20 +765,20 @@
     "description": "Sculpted animal-paw phone holders, with pink paw pads and tiny claws. Browse the designs from different angles and see how they hold a phone.",
     "images": [
       {
-        "image": "/art/display/paw-pal-phone-holders-fb6956daa388.webp",
-        "width": 960,
-        "height": 720,
-        "watermarked": false,
-        "displaySha256": "fb6956daa388c5fbaf90307a40905d25e4b2c49f9c112e6480dfc6070ea19877",
-        "label": "View 1"
-      },
-      {
         "image": "/art/display/paw-pal-phone-holders-ee071fda4124.webp",
         "width": 960,
         "height": 758,
         "watermarked": false,
         "displaySha256": "ee071fda4124eadbc8451548c3d5b725d90b3094e0a91a053f200a68eeb2f943",
         "label": "View 2"
+      },
+      {
+        "image": "/art/display/paw-pal-phone-holders-fb6956daa388.webp",
+        "width": 960,
+        "height": 720,
+        "watermarked": false,
+        "displaySha256": "fb6956daa388c5fbaf90307a40905d25e4b2c49f9c112e6480dfc6070ea19877",
+        "label": "View 1"
       },
       {
         "image": "/art/display/paw-pal-phone-holders-4025d18a952c.webp",
@@ -813,12 +813,12 @@
         "label": "View 6"
       }
     ],
-    "image": "/art/display/paw-pal-phone-holders-fb6956daa388.webp",
+    "image": "/art/display/paw-pal-phone-holders-ee071fda4124.webp",
     "width": 960,
-    "height": 720,
+    "height": 758,
     "watermarked": false,
-    "displaySha256": "fb6956daa388c5fbaf90307a40905d25e4b2c49f9c112e6480dfc6070ea19877",
-    "label": "View 1",
+    "displaySha256": "ee071fda4124eadbc8451548c3d5b725d90b3094e0a91a053f200a68eeb2f943",
+    "label": "View 2",
     "fandoms": []
   },
   {
