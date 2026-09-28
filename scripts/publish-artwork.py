@@ -59,6 +59,9 @@ def prepare(source):
                 continue
             seen.add(file)
             cat = row['category']
+            # User confirmed this specific plate is original artwork by Kay Pickett.
+            if int(row['archive_id']) == 789:
+                cat = 'Paintings'
             if cat in ['Reference art - attribution unconfirmed', 'Community art', 'Videos to identify', 'Art videos']:
                 excluded.append(str(file.relative_to(source)))
                 continue

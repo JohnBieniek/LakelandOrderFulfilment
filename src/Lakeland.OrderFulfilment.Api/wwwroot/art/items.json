@@ -1938,6 +1938,33 @@
     ]
   },
   {
+    "id": "work-3d92fe59c2a29c12",
+    "title": "Celestial blue hand painted plate",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "A hand-painted plate with a blue beetle, leafy patterns, stars, and moons against a dark background.",
+    "images": [
+      {
+        "image": "/art/display/celestial-blue-hand-painted-plate-e5b9159324e3.webp",
+        "width": 1200,
+        "height": 826,
+        "watermarked": true,
+        "displaySha256": "e5b9159324e3a5dea0ed09b906149411b7ce1c24e20c010d5905b2036889c4e8",
+        "label": "View 1"
+      }
+    ],
+    "image": "/art/display/celestial-blue-hand-painted-plate-e5b9159324e3.webp",
+    "width": 1200,
+    "height": 826,
+    "watermarked": true,
+    "displaySha256": "e5b9159324e3a5dea0ed09b906149411b7ce1c24e20c010d5905b2036889c4e8",
+    "label": "View 1",
+    "fandoms": []
+  },
+  {
     "id": "work-9bb73cb9a942be7c",
     "title": "Beekeeper and doctor mug",
     "artist": "Kay Pickett",

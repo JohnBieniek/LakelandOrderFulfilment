@@ -1490,6 +1490,20 @@
     "viewLabel": "Side view"
   },
   {
+    "id": "art-e5b9159324e3a5de",
+    "title": "Celestial blue hand painted plate",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "image": "/art/display/celestial-blue-hand-painted-plate-e5b9159324e3.webp",
+    "width": 1200,
+    "height": 826,
+    "watermarked": true,
+    "isSample": false,
+    "displaySha256": "e5b9159324e3a5dea0ed09b906149411b7ce1c24e20c010d5905b2036889c4e8"
+  },
+  {
     "id": "art-ccc0119411085cf7",
     "title": "Totoro and mei under galaxy sky",
     "artist": "Kay Pickett",

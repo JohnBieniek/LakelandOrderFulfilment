@@ -42,6 +42,7 @@ const aliases = {
   'Victor ohmbre collaboration in progress': 'Fantasy creatures collaboration'
 };
 const descriptions = {
+  'Celestial blue hand painted plate': 'A hand-painted plate with a blue beetle, leafy patterns, stars, and moons against a dark background.',
   'Monstera babe': 'Monstera babe by Kay Pickett. Includes a work-in-progress video.',
   'Bluey fan art poster': 'A colorful Bluey fan-art poster. Includes a video of the artwork.',
   "Miniature sculptures Art 634 display": 'An overview of the miniature sculpture display at Art 634, including small colorful figures and the Baby Turtles glass terrarium. The two photographs show the display from different positions.',
