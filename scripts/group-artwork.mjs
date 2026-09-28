@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Gandalf needle felt figure': 'Legolas Needle Felt Figure',
   'Pink haired woman abstract background': 'Princess Bubblegum’s realm',
   "Spirited away chihiro and haku": "Spirited Away Chihiro and Haku",
   "John bieniek baby turtles terrarium": "John Bieniek Baby Turtles terrarium",
@@ -47,7 +48,7 @@ const descriptions = {
   "Ho ho holy crap Christmas tree card": 'A row of illustrated green Christmas trees accompanies a tongue-in-cheek greeting about the year.',
   "Happy whatever blue Christmas tree card": 'A loose blue Christmas tree illustration paired with the greeting “Happy Whatever.”',
   'Custom dog portrait ornaments': 'Four round portrait ornaments featuring Athena, King, Fiona, and Koda. Each dog is painted against a different colored background.',
-  'Gandalf needle felt figure': 'A small Gandalf-inspired needle-felt figure with a pointed hat, pale beard, and staff.',
+  'Legolas Needle Felt Figure': 'A needle-felt figure inspired by Legolas from The Lord of the Rings.',
   "Claptrap Deadpool crossover sticker": 'A crossover sticker illustration combining Claptrap’s robot form with a Deadpool-inspired design on a bright pink background.',
   'Needle felt llama': 'A small pale needle-felt llama with contrasting dark details and a purple saddle blanket. Includes two viewing angles.',
   'Rabbit breathing galaxy': 'A rabbit sends a cloud of purple and blue stars into the dark space above it.',
