@@ -1155,23 +1155,15 @@
     ]
   },
   {
-    "id": "work-9ebc19cfb853f883",
-    "title": "Needle felt llama",
+    "id": "work-c1ef72b514895c9c",
+    "title": "Needle felt llamas",
     "artist": "Kay Pickett",
     "medium": "Sculpture",
     "fanArt": false,
     "productId": null,
     "isSample": false,
-    "description": "A small pale needle-felt llama with contrasting dark details and a purple saddle blanket. Includes two viewing angles.",
+    "description": "Small needle-felt llamas with colorful details.",
     "images": [
-      {
-        "image": "/art/display/needle-felt-llama-3743befdbe21.webp",
-        "width": 495,
-        "height": 960,
-        "watermarked": false,
-        "displaySha256": "3743befdbe215a4249fa9998a80a4423df30be9133dc4b50c6238c69b2c52c4f",
-        "label": "View 1"
-      },
       {
         "image": "/art/display/needle-felt-llama-6b29954068b1.webp",
         "width": 495,
@@ -1179,14 +1171,22 @@
         "watermarked": false,
         "displaySha256": "6b29954068b190b1dc2e163395036531a3bda374b44bfc0924e40c62853a89b9",
         "label": "View 2"
+      },
+      {
+        "image": "/art/display/needle-felt-llama-3743befdbe21.webp",
+        "width": 495,
+        "height": 960,
+        "watermarked": false,
+        "displaySha256": "3743befdbe215a4249fa9998a80a4423df30be9133dc4b50c6238c69b2c52c4f",
+        "label": "View 1"
       }
     ],
-    "image": "/art/display/needle-felt-llama-3743befdbe21.webp",
+    "image": "/art/display/needle-felt-llama-6b29954068b1.webp",
     "width": 495,
     "height": 960,
     "watermarked": false,
-    "displaySha256": "3743befdbe215a4249fa9998a80a4423df30be9133dc4b50c6238c69b2c52c4f",
-    "label": "View 1",
+    "displaySha256": "6b29954068b190b1dc2e163395036531a3bda374b44bfc0924e40c62853a89b9",
+    "label": "View 2",
     "fandoms": []
   },
   {

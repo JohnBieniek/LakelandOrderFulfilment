@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Needle felt llama': 'Needle felt llamas',
   'Clay characters in hats': 'Christmas creatures',
   'Banana peel unicorn': 'Banana peel slug',
   'Rabbit breathing galaxy': 'Llama breathing galaxy',
@@ -55,7 +56,7 @@ const descriptions = {
   'Custom dog portrait ornaments': 'Four round portrait ornaments featuring Athena, King, Fiona, and Koda. Each dog is painted against a different colored background.',
   'Legolas Needle Felt Figure': 'A needle-felt figure inspired by Legolas from The Lord of the Rings.',
   "Claptrap Deadpool crossover sticker": 'A crossover sticker illustration combining Claptrap’s robot form with a Deadpool-inspired design on a bright pink background.',
-  'Needle felt llama': 'A small pale needle-felt llama with contrasting dark details and a purple saddle blanket. Includes two viewing angles.',
+  'Needle felt llamas': 'Small needle-felt llamas with colorful details.',
   'Llama breathing galaxy': 'A llama sends a cloud of purple and blue stars into the dark space above it.',
   'Art print display': 'A photograph of several studio art prints arranged together, showing a mix of character pieces and imaginative paintings.',
   "Howl and Sophie painted box lid": 'Howl and Sophie from Howl’s Moving Castle painted together on a circular box lid.',
@@ -120,7 +121,7 @@ for (const image of images) {
     label: image.viewLabel || ((aliases[image.title] || image.title) === title ? `View ${group.images.length + 1}` : image.title) });
 }
 // Reviewed cover selection uses the original archive view order on every rebuild.
-const preferredCoverViews = { 'Fantasy creatures collaboration': 4, 'Banana peel slug': 2 };
+const preferredCoverViews = { 'Fantasy creatures collaboration': 4, 'Banana peel slug': 2, 'Needle felt llamas': 2 };
 for (const work of groups.values()) {
   const index = (preferredCoverViews[work.title] || 1) - 1;
   if (index > 0 && work.images[index]) work.images.unshift(...work.images.splice(index, 1));
