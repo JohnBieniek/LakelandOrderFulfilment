@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Banana peel unicorn': 'Banana peel slug',
   'Rabbit breathing galaxy': 'Llama breathing galaxy',
   'Woman blowing butterflies': 'Blowing butterflies',
   'Gandalf needle felt figure': 'Legolas Needle Felt Figure',
@@ -81,7 +82,7 @@ const descriptions = {
   "Lord of the Rings needle felt figures": 'A collection of small needle-felt characters inspired by The Lord of the Rings, photographed together from different angles.',
   'Red and purple needle felt squid': 'Red and purple needle-felt squid with long, curling tentacles. Includes individual figures and views of the pair.',
   'Paw pal phone holders': 'Sculpted animal-paw phone holders, with pink paw pads and tiny claws. Browse the designs from different angles and see how they hold a phone.',
-  'Banana peel unicorn': 'A playful little unicorn emerging from a yellow banana peel. The alternate photographs show its sculpted details from different sides.',
+  'Banana peel slug': 'A playful little slug emerging from a yellow banana peel. The alternate photographs show its sculpted details from different sides.',
   'Needle felt owl': 'A small needle-felt owl with a rounded body, pale face, and warm brown markings. Browse the front, back, and side views.',
   'Sarcastic holiday card collection': 'A collection of illustrated holiday cards with playful, sarcastic greetings. Browse the group photographs to see the different designs.',
   'Blowing butterflies': 'A woman blows pink butterflies from her hand against a soft blue and violet background.',
