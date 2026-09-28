@@ -105,6 +105,7 @@ def prepare(source):
             entry['fanArt'] = True
         if entry['title'] == 'Howls moving castle couple wood plaque':
             entry['fanArt'] = False
+            entry['medium'] = 'Paintings'
         if entry['title'] == 'Pink haired woman abstract background':
             entry['fanArt'] = True
         file = (source / entry['file']).resolve()
