@@ -71,7 +71,7 @@ const descriptions = {
   "Studio Ghibli character collage": 'A colorful collage bringing together characters and scenes inspired by Studio Ghibli films.',
   'Pearls Vision': 'A pink-toned painting inspired by Steven Universe. Includes a framed presentation and an artwork view.',
   'Screaming sun mountain landscape': 'A Rick and Morty-inspired mountain landscape featuring the screaming sun between pale peaks beneath a purple sky.',
-  "Jon and Aiden - Rick and Morty style name plates": 'Two dark painted name plaques with hand-lettered names, Jon and Aiden.',
+  "Jon and Aiden - Rick and Morty style name plates": 'Painted name plates for Jon and Aiden, inspired by Rick and Morty.',
   'Princess Bubblegum’s realm': 'Princess Bubblegum in profile beside a flowing, marbled realm of blues, greens, and pinks, inspired by Adventure Time.',
   'Red needle felt mushroom': 'A small needle-felt mushroom with a rounded red cap and pale stem.',
   'Beekeeper and doctor': 'A beekeeper and a plague doctor share a moment beneath blue flowers, with bees around them. Includes the painted piece and a clean-composition display view.',
@@ -128,6 +128,7 @@ for (const work of groups.values()) {
   if (index > 0 && work.images[index]) work.images.unshift(...work.images.splice(index, 1));
 }
 const fandomsByTitle = {
+  "Jon and Aiden - Rick and Morty style name plates": ["Rick and Morty"],
   "Howl’s Moving Castle": [
     "Ghibli"
   ],

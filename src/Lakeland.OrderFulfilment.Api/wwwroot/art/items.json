@@ -1677,14 +1677,14 @@
     ]
   },
   {
-    "id": "work-ba7c53392c996bba",
+    "id": "work-0beba7ed31e13597",
     "title": "Jon and Aiden - Rick and Morty style name plates",
     "artist": "Kay Pickett",
-    "medium": "Cards and designs",
-    "fanArt": false,
+    "medium": "Paintings",
+    "fanArt": true,
     "productId": null,
     "isSample": false,
-    "description": "Two dark painted name plaques with hand-lettered names, Jon and Aiden.",
+    "description": "Painted name plates for Jon and Aiden, inspired by Rick and Morty. Fan art for appreciation only; not for sale.",
     "images": [
       {
         "image": "/art/display/jon-and-aiden-painted-name-plaques-c6c90c7e6dc4.webp",
@@ -1701,7 +1701,9 @@
     "watermarked": true,
     "displaySha256": "c6c90c7e6dc4662e7932ec5e560e74e8fd29c40ec6492d2f3eb64fed7423db41",
     "label": "View 1",
-    "fandoms": []
+    "fandoms": [
+      "Rick and Morty"
+    ]
   },
   {
     "id": "work-a6fa7d38c9094b32",
