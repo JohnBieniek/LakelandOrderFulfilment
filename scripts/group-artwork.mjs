@@ -42,6 +42,7 @@ const aliases = {
   'Victor ohmbre collaboration in progress': 'Fantasy creatures collaboration'
 };
 const descriptions = {
+  'Bluey fan art poster': 'A colorful Bluey fan-art poster. Includes a video of the artwork.',
   "Miniature sculptures Art 634 display": 'An overview of the miniature sculpture display at Art 634, including small colorful figures and the Baby Turtles glass terrarium. The two photographs show the display from different positions.',
   "Cute Couple wood plaque": 'A small painted wood plaque featuring a cute, stylized couple.',
   'Memorial tattoo rainbow wings': 'A memorial tattoo concept built around a central letter and a pair of colorful wings. This is a design study from the studio archive.',
@@ -139,6 +140,7 @@ for (const work of groups.values()) {
   if (index > 0 && work.images[index]) work.images.unshift(...work.images.splice(index, 1));
 }
 const fandomsByTitle = {
+  'Bluey fan art poster': ['Bluey'],
   "Jon and Aiden - Rick and Morty style name plates": ["Rick and Morty"],
   "Howl’s Moving Castle": [
     "Ghibli"
@@ -191,6 +193,8 @@ const fandomsByTitle = {
   ]
 };
 const owl = [...groups.values()].find(work => work.title === 'Needle felt owl');
+const bluey = [...groups.values()].find(work => work.title === 'Bluey fan art poster');
+if (bluey) bluey.images.push({ ...bluey.images[0], type: 'video', video: '/art/display/bluey-fan-art-poster.mp4', label: 'Bluey poster video' });
 if (owl) owl.images.push({ ...owl.images[0], type: 'video', video: '/art/display/completed-needle-felt-owl.mp4', label: 'Completed owl video' });
 const works = [...groups.values()].map(work => ({ ...work, ...work.images[0],
   fandoms: work.fanArt ? (fandomsByTitle[work.title] || ['Other']) : [],

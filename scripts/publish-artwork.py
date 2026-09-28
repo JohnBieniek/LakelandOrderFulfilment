@@ -1,7 +1,7 @@
 """Create public display copies only. Originals are read-only and never deployed.
 
 Usage: python scripts/publish-artwork.py --source "../Lakeland art"
-Requires Pillow. Add future entries to artwork.local.json in the source folder:
+Requires Pillow and opencv-python for video frame extraction. Add future entries to artwork.local.json in the source folder:
 [{"file":"new-painting.png","title":"Title","artist":"Artist","medium":"Painting",
   "fanArt":false,"sculpture":false}]
 """
@@ -40,6 +40,9 @@ def watermark(im, y=.76):
 
 def prepare(source):
     entries = []
+    entries.append(dict(file='Whimsy archive art/Art videos/bluey-fan-art-poster--2023-11-27--0609.mp4',
+                        title='Bluey fan art poster', artist='Kay Pickett', medium='Paintings',
+                        fanArt=True, sculpture=False, lastFrame=True))
     archive = source / 'Whimsy archive art'
     seen = set()
     excluded = []
@@ -120,7 +123,22 @@ def prepare(source):
         if view_key in hashes:
             continue
         hashes.add(view_key)
-        with Image.open(file) as opened:
+        if entry.get('lastFrame'):
+            import cv2
+            capture = cv2.VideoCapture(str(file))
+            last = None
+            while True:
+                ok, frame = capture.read()
+                if not ok:
+                    break
+                last = frame
+            capture.release()
+            if last is None:
+                raise ValueError('Video contains no decodable frames.')
+            opened_image = Image.fromarray(cv2.cvtColor(last, cv2.COLOR_BGR2RGB))
+        else:
+            opened_image = Image.open(file)
+        with opened_image as opened:
             original_size = opened.size
             im = ImageOps.exif_transpose(opened).convert('RGBA')
             if entry.get('crop'):

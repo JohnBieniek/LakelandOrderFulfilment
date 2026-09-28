@@ -1,5 +1,44 @@
 [
   {
+    "id": "work-f799d6ddfef99378",
+    "title": "Bluey fan art poster",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": true,
+    "productId": null,
+    "isSample": false,
+    "description": "A colorful Bluey fan-art poster. Includes a video of the artwork. Fan art for appreciation only; not for sale.",
+    "images": [
+      {
+        "image": "/art/display/bluey-fan-art-poster-088f66363e65.webp",
+        "width": 506,
+        "height": 360,
+        "watermarked": true,
+        "displaySha256": "088f66363e650eb51979f8cac92aabf9b5c80705cbc166271af130f67fb11ef6",
+        "label": "View 1"
+      },
+      {
+        "image": "/art/display/bluey-fan-art-poster-088f66363e65.webp",
+        "width": 506,
+        "height": 360,
+        "watermarked": true,
+        "displaySha256": "088f66363e650eb51979f8cac92aabf9b5c80705cbc166271af130f67fb11ef6",
+        "label": "Bluey poster video",
+        "type": "video",
+        "video": "/art/display/bluey-fan-art-poster.mp4"
+      }
+    ],
+    "image": "/art/display/bluey-fan-art-poster-088f66363e65.webp",
+    "width": 506,
+    "height": 360,
+    "watermarked": true,
+    "displaySha256": "088f66363e650eb51979f8cac92aabf9b5c80705cbc166271af130f67fb11ef6",
+    "label": "View 1",
+    "fandoms": [
+      "Bluey"
+    ]
+  },
+  {
     "id": "work-3682ae474bec8e37",
     "title": "John Bieniek Baby Turtles terrarium",
     "artist": "John Bieniek",
