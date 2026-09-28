@@ -94,7 +94,8 @@ def prepare(source):
         if Path(entry['file']).name in ('howls-moving-castle--2018-09-30--0700.jpg',
                                        'antlered-forest-spirit-original--2019-04-19--0650.jpg',
                                        'antlered-forest-spirit-redraw--undated--0778.jpg',
-                                       'antlered-forest-spirit-redraw--undated--0790.jpg'):
+                                       'antlered-forest-spirit-redraw--undated--0790.jpg',
+                                       'four-eyed-pastel-cat--2018-10-19--0696.jpg'):
             excluded.append(entry['file'])
             continue
         # Artist-confirmed identification; preserve the fan-art classification on rebuild.

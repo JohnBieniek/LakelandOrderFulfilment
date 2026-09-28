@@ -1343,14 +1343,6 @@
         "watermarked": true,
         "displaySha256": "b96b7304379192c91e18b14f1ba851c5a31a3df15e96c22b66bfe304c9acc895",
         "label": "View 1"
-      },
-      {
-        "image": "/art/display/four-eyed-pastel-cat-4ff05e5215a6.webp",
-        "width": 1200,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "4ff05e5215a63d8925d9a57762fba5b5a5f7b0e66f78ec012cc9c62e2a4e5eb6",
-        "label": "View 2"
       }
     ],
     "image": "/art/display/four-eyed-pastel-cat-b96b73043791.webp",
