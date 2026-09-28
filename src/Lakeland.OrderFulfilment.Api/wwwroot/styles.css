@@ -75,3 +75,5 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 .viewer-stage .viewer-image{width:auto;height:auto;max-width:100%;max-height:min(65dvh,680px)}
 .viewer-thumbnails button{padding:0}.viewer-thumbnails img{height:auto;max-height:64px}
 @media(max-width:700px){.viewer-stage .viewer-image{max-height:48dvh}}
+
+@media(max-width:700px){.footer-top>p{display:block;grid-column:1 / -1;grid-row:2}}
