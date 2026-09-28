@@ -435,20 +435,20 @@
     "description": "A playful little slug emerging from a yellow banana peel. The alternate photographs show its sculpted details from different sides.",
     "images": [
       {
-        "image": "/art/display/banana-peel-unicorn-54065e596955.webp",
-        "width": 607,
-        "height": 1200,
-        "watermarked": false,
-        "displaySha256": "54065e59695594349f9e90ab9377f5a55703fae99256ce0816e2e3f68498f122",
-        "label": "View 1"
-      },
-      {
         "image": "/art/display/banana-peel-unicorn-1a860bca6ef9.webp",
         "width": 607,
         "height": 1200,
         "watermarked": false,
         "displaySha256": "1a860bca6ef9f9d44a9b64b9ef02c4193770eda5b4a6751dc31aa30f9d615149",
         "label": "View 2"
+      },
+      {
+        "image": "/art/display/banana-peel-unicorn-54065e596955.webp",
+        "width": 607,
+        "height": 1200,
+        "watermarked": false,
+        "displaySha256": "54065e59695594349f9e90ab9377f5a55703fae99256ce0816e2e3f68498f122",
+        "label": "View 1"
       },
       {
         "image": "/art/display/banana-peel-unicorn-ef735caee885.webp",
@@ -459,12 +459,12 @@
         "label": "View 3"
       }
     ],
-    "image": "/art/display/banana-peel-unicorn-54065e596955.webp",
+    "image": "/art/display/banana-peel-unicorn-1a860bca6ef9.webp",
     "width": 607,
     "height": 1200,
     "watermarked": false,
-    "displaySha256": "54065e59695594349f9e90ab9377f5a55703fae99256ce0816e2e3f68498f122",
-    "label": "View 1",
+    "displaySha256": "1a860bca6ef9f9d44a9b64b9ef02c4193770eda5b4a6751dc31aa30f9d615149",
+    "label": "View 2",
     "fandoms": []
   },
   {

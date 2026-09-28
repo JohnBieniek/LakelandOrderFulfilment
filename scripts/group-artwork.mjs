@@ -119,7 +119,7 @@ for (const image of images) {
     label: image.viewLabel || ((aliases[image.title] || image.title) === title ? `View ${group.images.length + 1}` : image.title) });
 }
 // Reviewed cover selection uses the original archive view order on every rebuild.
-const preferredCoverViews = { 'Fantasy creatures collaboration': 4 };
+const preferredCoverViews = { 'Fantasy creatures collaboration': 4, 'Banana peel slug': 2 };
 for (const work of groups.values()) {
   const index = (preferredCoverViews[work.title] || 1) - 1;
   if (index > 0 && work.images[index]) work.images.unshift(...work.images.splice(index, 1));
