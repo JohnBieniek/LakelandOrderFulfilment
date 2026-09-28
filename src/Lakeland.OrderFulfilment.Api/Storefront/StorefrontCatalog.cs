@@ -15,18 +15,8 @@ public sealed record ShipEstimate(DateOnly Earliest, DateOnly Latest, string Des
 
 public sealed class StorefrontCatalog(TimeProvider clock)
 {
-    // Beta display examples only. Replace with approved work, pricing, and per-product lead times before launch.
+    // Published products only; artwork browsing uses the curated public gallery manifest.
     public IReadOnlyList<ShopProduct> Products { get; } = [
-        new(Guid.Parse("b1111111-1111-4111-8111-111111111111"), "Where the water settles", "Studio painter", "original", 420,
-            "/art/lake.svg", "A quiet study of water, light, and the spaces in between.", "Original painting · 18 × 24 in · Unframed", 3, 5),
-        new(Guid.Parse("b2222222-2222-4222-8222-222222222222"), "The long way home", "Studio painter", "original", 360,
-            "/art/hills.svg", "Soft hills and a familiar path, held in the warm colors of the afternoon.", "Original painting · 16 × 20 in · Unframed", 3, 5),
-        new(Guid.Parse("b3333333-3333-4333-8333-333333333333"), "A little wild", "Studio painter", "original", 280,
-            "/art/botanical.svg", "An expressive botanical study that brings a little of the outdoors inside.", "Original painting · 12 × 16 in · Unframed", 3, 5),
-        new(Guid.Parse("b4444444-4444-4444-8444-444444444444"), "The quiet companion", "Studio sculptor", "clay", 85,
-            "/art/sculpture.svg", "A small, hand-built clay companion. Made especially for you, with its own gentle character.", "Made to order · Hand-built clay · Approx. 5 in tall", 15, 25),
-        new(Guid.Parse("b5555555-5555-4555-8555-555555555555"), "Little woodland spirit", "Studio sculptor", "clay", 65,
-            "/art/woodland.svg", "A playful little sculpture for a shelf, a desk, or a favorite corner.", "Made to order · Hand-built clay · Approx. 4 in tall", 15, 25),
         new(Guid.Parse("b7777777-7777-4777-8777-777777777777"), "Beekeeper and Doctor Mug / 11 oz", "Kay Pickett", "printful", 9.50m,
             "/art/display/beekeeper-and-doctor-white-glossy-mug-white-11-oz-cutting-board-229fc426acbf.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 11 oz / Printed by Printful", 4, 8, false, "mugs"),
         new(Guid.Parse("b8888888-8888-4888-8888-888888888888"), "Beekeeper and Doctor Mug / 15 oz", "Kay Pickett", "printful", 12.50m,
@@ -35,12 +25,7 @@ public sealed class StorefrontCatalog(TimeProvider clock)
             "/art/display/beekeeper-and-doctor-white-glossy-mug-white-20-oz-cutting-board-7b768cd1ce32.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 20 oz / Printed by Printful", 4, 8, false, "mugs")
     ];
 
-    public IReadOnlyList<GalleryWork> Gallery => Products.Where(p => p.Kind != "printful")
-        .Select(p => new GalleryWork(p.Id.ToString(), p.Name, p.Artist, p.Details.Split('·')[0].Trim(), p.Image, false, p.Id))
-        .Concat([
-            new GalleryWork("fan-moon", "Somewhere among the stars", "Studio painter", "Fan art study · Display only", "/art/moon.svg", true, null),
-            new GalleryWork("fan-forest", "A storybook kind of place", "Studio sculptor", "Fan art study · Display only", "/art/forest.svg", true, null)
-        ]).ToArray();
+    public IReadOnlyList<GalleryWork> Gallery => [];
 
     public ShipEstimate Estimate(ShopProduct product) => new(AddBusinessDays(DateOnly.FromDateTime(clock.GetUtcNow().UtcDateTime), product.MinBusinessDays),
         AddBusinessDays(DateOnly.FromDateTime(clock.GetUtcNow().UtcDateTime), product.MaxBusinessDays),

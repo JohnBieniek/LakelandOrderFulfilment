@@ -1,6 +1,7 @@
 LAKELAND ART COMMERCE - NEXT STEPS
 
 DEVELOP BETA (updated 2026-09-27)
+   - Removed all five sample storefront products and eight placeholder illustrations. Homepage uses real archive images; shop contains only the three published mugs. Actual gallery remains intact.
    - Regenerated all 209 gallery display entries with approved soft interior watermark styling (170 marked entries; 39 sculpture photos unchanged). Retained 57 grouped items and 204 distinct views, checked source hashes, and updated mug display references.
    - Home, contact, gallery, products, artist filtering/sorting, display-only fan art, persistent cart, and dispatch estimates implemented.
    - Original painting and made-to-order clay examples remain sample listings. The Beekeeper and Doctor Mug by Kay Pickett is deployed in 11, 15, and 20 oz sizes with published Printful prices and display mockups; checkout remains sandbox-only. Live-site browser verification passed on 2026-09-27.
