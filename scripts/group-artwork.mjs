@@ -8,7 +8,7 @@ const aliases = {
   'Pink haired woman abstract background': 'Princess Bubblegum’s realm',
   "Spirited away chihiro and haku": "Spirited Away Chihiro and Haku",
   "John bieniek baby turtles terrarium": "John Bieniek Baby Turtles terrarium",
-  "Howls moving castle couple wood plaque": "Howl’s Moving Castle couple wood plaque",
+  "Howls moving castle couple wood plaque": "Cute Couple wood plaque",
   "Howls moving castle": "Howl’s Moving Castle",
   "Lord of the rings needle felt figures": "Lord of the Rings needle felt figures",
   "Rick and morty character collage": "Rick and Morty character collage",
@@ -36,7 +36,7 @@ const aliases = {
 };
 const descriptions = {
   "Miniature sculptures Art 634 display": 'An overview of the miniature sculpture display at Art 634, including small colorful figures and the Baby Turtles glass terrarium. The two photographs show the display from different positions.',
-  "Howl’s Moving Castle couple wood plaque": 'A small painted wood plaque featuring a stylized couple inspired by Howl’s Moving Castle.',
+  "Cute Couple wood plaque": 'A small painted wood plaque featuring a cute, stylized couple.',
   'Memorial tattoo rainbow wings': 'A memorial tattoo concept built around a central letter and a pair of colorful wings. This is a design study from the studio archive.',
   'Farm animal sticker sketches': 'Black-and-white sketches of whimsical farm animals wearing hats, developed as sticker designs.',
   "Howl’s Moving Castle": 'An intricate painting of the wandering castle from Howl’s Moving Castle, with warm pink tones against a pale blue sky.',

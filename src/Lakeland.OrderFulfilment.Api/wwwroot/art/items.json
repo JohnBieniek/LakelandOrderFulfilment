@@ -168,14 +168,14 @@
     "label": "View 1"
   },
   {
-    "id": "work-d0545e9f4bffe7d1",
-    "title": "Howl’s Moving Castle couple wood plaque",
+    "id": "work-a769cd8be8641d3a",
+    "title": "Cute Couple wood plaque",
     "artist": "Kay Pickett",
     "medium": "Fan art",
-    "fanArt": true,
+    "fanArt": false,
     "productId": null,
     "isSample": false,
-    "description": "A small painted wood plaque featuring a stylized couple inspired by Howl’s Moving Castle. Fan art for appreciation only; not for sale.",
+    "description": "A small painted wood plaque featuring a cute, stylized couple.",
     "images": [
       {
         "image": "/art/display/howls-moving-castle-couple-wood-plaque-4088cd4b753e.webp",
