@@ -88,3 +88,5 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 .fandom-filters{margin:22px 0 16px}
 
 .site-header .brand{padding-top:10px}
+
+.footer-top[hidden]{display:none}

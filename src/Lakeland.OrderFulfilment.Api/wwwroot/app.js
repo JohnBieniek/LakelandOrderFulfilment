@@ -388,6 +388,7 @@ async function renderSuccess() {
   await poll();
 }
 function render() {
+  document.querySelector('.footer-top').hidden = location.pathname === '/';
   clearTimeout(successTimer);
   if (viewer.open) viewer.close();
   document.querySelectorAll('[data-nav]').forEach(link => { const active = link.dataset.nav === location.pathname; link.classList.toggle('active', active); if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); });
