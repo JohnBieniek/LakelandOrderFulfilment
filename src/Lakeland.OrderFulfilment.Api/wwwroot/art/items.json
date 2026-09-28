@@ -1538,19 +1538,19 @@
     "description": "A painted baby portrait shown next to the original reference photograph.",
     "images": [
       {
-        "image": "/art/display/custom-baby-portrait-with-reference-7bf3b2ed1b01.webp",
+        "image": "/art/display/custom-baby-portrait-with-reference-55e0b1e8225c.webp",
         "width": 1200,
-        "height": 1200,
+        "height": 877,
         "watermarked": true,
-        "displaySha256": "7bf3b2ed1b01db939f03d6584d767aed21b7bea77e06cddf241f2b91e46d719c",
+        "displaySha256": "55e0b1e8225cf3033a948c66e543945952ca362ed71d1f8842bb694752a676ba",
         "label": "View 1"
       }
     ],
-    "image": "/art/display/custom-baby-portrait-with-reference-7bf3b2ed1b01.webp",
+    "image": "/art/display/custom-baby-portrait-with-reference-55e0b1e8225c.webp",
     "width": 1200,
-    "height": 1200,
+    "height": 877,
     "watermarked": true,
-    "displaySha256": "7bf3b2ed1b01db939f03d6584d767aed21b7bea77e06cddf241f2b91e46d719c",
+    "displaySha256": "55e0b1e8225cf3033a948c66e543945952ca362ed71d1f8842bb694752a676ba",
     "label": "View 1",
     "fandoms": []
   },

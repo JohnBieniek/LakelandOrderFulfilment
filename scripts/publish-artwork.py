@@ -71,6 +71,8 @@ def prepare(source):
     # Split the reviewed owl collage into its original photographic panels.
     expanded = []
     for entry in entries:
+        if entry['title'] == 'Custom baby portrait with reference':
+            entry = dict(entry, crop=[0, 162 / 1200, 1, 1039 / 1200])
         if entry['title'] == 'Howl and sophie painted box lid':
             # Remove only the white collage margins around the photograph.
             entry = dict(entry, crop=[0, 136 / 1200, 1190 / 1200, 1040 / 1200])
