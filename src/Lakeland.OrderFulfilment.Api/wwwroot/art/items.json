@@ -867,6 +867,16 @@
         "watermarked": true,
         "displaySha256": "e5936365cbf73af1b85f0f562e42a31f69faadf66f31e0c1e9cc7ed721ea98ee",
         "label": "View 1"
+      },
+      {
+        "image": "/art/display/antlered-forest-spirit-redraw-e5936365cbf7.webp",
+        "width": 838,
+        "height": 1200,
+        "watermarked": true,
+        "displaySha256": "e5936365cbf73af1b85f0f562e42a31f69faadf66f31e0c1e9cc7ed721ea98ee",
+        "label": "Antlered Tundra Spirit video",
+        "type": "video",
+        "video": "/art/display/antlered-tundra-spirit.mp4"
       }
     ],
     "image": "/art/display/antlered-forest-spirit-redraw-e5936365cbf7.webp",

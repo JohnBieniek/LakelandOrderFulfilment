@@ -9,6 +9,7 @@ const gallery = JSON.parse(readFileSync(path.join(root, 'art/gallery.json'), 'ut
 const brandAssets = new Map([['/brand/whimsy-logo.png', '2a8865d6973a901ee8a9854944ed4484bdf174508db5bf9d5147fb097d65174d']]);
 const approved = new Map(gallery.map(w => [w.image, w]));
 const approvedVideos = new Map([['/art/display/completed-needle-felt-owl.mp4', '90484dc354d8ee9cce0d0f03e1737e50183398d222913dcd6f600e849e99b1e7']]);
+approvedVideos.set('/art/display/antlered-tundra-spirit.mp4', '8f4ffb8d0429343c73097281845d29981e67a4aaa17084810af52a1ee656cf2e');
 approvedVideos.set('/art/display/monstera-babe.mp4', 'dfa4d64a644dac8b6f4c224029c5c9dceb0776bbda483f859ca040d15bea8153');
 approvedVideos.set('/art/display/ghibli-character-collage-round.mp4', 'beb328b529f2625e9e1acbcb4ff963ceb313d5acf5e804ebc301189019d40281');
 approvedVideos.set('/art/display/bluey-fan-art-poster.mp4', '43c12c5a26c3e3d6a2aa0c7f23e6d20933d320d98b9972de1d7d16934e5eab10');

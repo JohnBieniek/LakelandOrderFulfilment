@@ -197,6 +197,8 @@ const fandomsByTitle = {
   ]
 };
 const owl = [...groups.values()].find(work => work.title === 'Needle felt owl');
+const tundra = [...groups.values()].find(work => work.title === 'Antlered Tundra Spirit');
+if (tundra) tundra.images.push({ ...tundra.images[0], type: 'video', video: '/art/display/antlered-tundra-spirit.mp4', label: 'Antlered Tundra Spirit video' });
 const monstera = [...groups.values()].find(work => work.title === 'Monstera babe');
 if (monstera) monstera.images.push({ ...monstera.images[0], type: 'video', video: '/art/display/monstera-babe.mp4', label: 'Monstera babe work-in-progress video' });
 const roundGhibli = [...groups.values()].find(work => work.title === 'Ghibli character collage - round');
