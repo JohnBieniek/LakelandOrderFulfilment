@@ -1,5 +1,48 @@
 [
   {
+    "id": "work-7526d0dbb6955e46",
+    "title": "Finished farm stickers",
+    "artist": "Kay Pickett",
+    "medium": "Sticker designs",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Three completed farm-animal sticker designs: a sheep, a pig, and a llama wearing colorful pointed hats.",
+    "images": [
+      {
+        "image": "/art/display/finished-farm-stickers-2a07a64776c5.webp",
+        "width": 291,
+        "height": 265,
+        "watermarked": true,
+        "displaySha256": "2a07a64776c53d895b7d18d75dec0bc8b076cd6eeddcf6c52a1843fd3048e71e",
+        "label": "Completed sheep sticker"
+      },
+      {
+        "image": "/art/display/finished-farm-stickers-1e3508fabf29.webp",
+        "width": 186,
+        "height": 129,
+        "watermarked": true,
+        "displaySha256": "1e3508fabf29e0e115e8f1902545a8598995c3b0f607f06dcc7f6c1dc4f649d0",
+        "label": "Completed pig sticker"
+      },
+      {
+        "image": "/art/display/finished-farm-stickers-dfb38e08d409.webp",
+        "width": 318,
+        "height": 318,
+        "watermarked": true,
+        "displaySha256": "dfb38e08d409fea212a9d0ebc5595448564d7a91b67b6c0cfc504cfa149dd168",
+        "label": "Completed llama sticker"
+      }
+    ],
+    "image": "/art/display/finished-farm-stickers-2a07a64776c5.webp",
+    "width": 291,
+    "height": 265,
+    "watermarked": true,
+    "displaySha256": "2a07a64776c53d895b7d18d75dec0bc8b076cd6eeddcf6c52a1843fd3048e71e",
+    "label": "Completed sheep sticker",
+    "fandoms": []
+  },
+  {
     "id": "work-8a2c7d0a6730855f",
     "title": "Monstera babe",
     "artist": "Kay Pickett",
@@ -337,33 +380,6 @@
     "height": 872,
     "watermarked": true,
     "displaySha256": "cf344594d64b1810cead1512f9801e251a5d16bb94f1f6ade02ec8013db57852",
-    "label": "View 1",
-    "fandoms": []
-  },
-  {
-    "id": "work-614ef562c9c02cec",
-    "title": "Farm animal sticker sketches",
-    "artist": "Kay Pickett",
-    "medium": "Sketches and designs",
-    "fanArt": false,
-    "productId": null,
-    "isSample": false,
-    "description": "Black-and-white sketches of whimsical farm animals wearing hats, developed as sticker designs.",
-    "images": [
-      {
-        "image": "/art/display/farm-animal-sticker-sketches-fc2e7909384a.webp",
-        "width": 959,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "fc2e7909384abbaa5a17f6942f507a56ae2780dac93f8c57ac9a2534d4932da2",
-        "label": "View 1"
-      }
-    ],
-    "image": "/art/display/farm-animal-sticker-sketches-fc2e7909384a.webp",
-    "width": 959,
-    "height": 1200,
-    "watermarked": true,
-    "displaySha256": "fc2e7909384abbaa5a17f6942f507a56ae2780dac93f8c57ac9a2534d4932da2",
     "label": "View 1",
     "fandoms": []
   },

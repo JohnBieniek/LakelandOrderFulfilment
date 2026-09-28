@@ -42,6 +42,7 @@ const aliases = {
   'Victor ohmbre collaboration in progress': 'Fantasy creatures collaboration'
 };
 const descriptions = {
+  'Finished farm stickers': 'Three completed farm-animal sticker designs: a sheep, a pig, and a llama wearing colorful pointed hats.',
   'Celestial blue hand painted plate': 'A hand-painted plate with a blue beetle, leafy patterns, stars, and moons against a dark background.',
   'Monstera babe': 'Monstera babe by Kay Pickett. Includes a work-in-progress video.',
   'Bluey fan art poster': 'A colorful Bluey fan-art poster. Includes a video of the artwork.',

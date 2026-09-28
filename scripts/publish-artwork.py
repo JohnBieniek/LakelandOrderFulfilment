@@ -40,6 +40,10 @@ def watermark(im, y=.76):
 
 def prepare(source):
     entries = []
+    for frame_index, label in [(1095, 'Completed sheep sticker'), (1486, 'Completed pig sticker'), (1799, 'Completed llama sticker')]:
+        entries.append(dict(file='Whimsy archive art/Art videos/finished-farm-stickers--2024-01-31--0515.mp4',
+                            title='Finished farm stickers', artist='Kay Pickett', medium='Sticker designs',
+                            fanArt=False, sculpture=False, frameIndex=frame_index, trimWhite=True, viewLabel=label))
     entries.append(dict(file='Whimsy archive art/Art videos/monstera-babe-work-in-progress--2023-12-06--0587.mp4',
                         title='Monstera babe', artist='Kay Pickett', medium='Paintings',
                         fanArt=False, sculpture=False, lastFrame=True))
@@ -102,7 +106,7 @@ def prepare(source):
     hashes = set()
     for entry in entries:
         # Reviewed visual duplicate of the retained 2024 archive image.
-        if entry['title'] in ('Miniature sculptures art 634 display', 'Self portrait blue background', 'Kettle of the vultures character concept', 'Art print display',
+        if entry['title'] in ('Farm animal sticker sketches', 'Miniature sculptures art 634 display', 'Self portrait blue background', 'Kettle of the vultures character concept', 'Art print display',
                               'Live painting fantasy collaboration', 'Fantasy creatures on purple canvas',
                               'Fantasy creatures coloring page collaboration', 'Victor ohmbre collaboration in progress'):
             excluded.append(entry['file'])
@@ -130,19 +134,23 @@ def prepare(source):
             raise ValueError('Source must remain within the private source folder.')
         original = file.read_bytes()
         digest = hashlib.sha256(original).hexdigest()
-        view_key = (digest, tuple(entry.get('crop', [])))
+        view_key = (digest, tuple(entry.get('crop', [])), entry.get('frameIndex'))
         if view_key in hashes:
             continue
         hashes.add(view_key)
-        if entry.get('lastFrame'):
+        if entry.get('lastFrame') or 'frameIndex' in entry:
             import cv2
             capture = cv2.VideoCapture(str(file))
             last = None
+            if 'frameIndex' in entry:
+                capture.set(cv2.CAP_PROP_POS_FRAMES, entry['frameIndex'])
             while True:
                 ok, frame = capture.read()
                 if not ok:
                     break
                 last = frame
+                if 'frameIndex' in entry:
+                    break
             capture.release()
             if last is None:
                 raise ValueError('Video contains no decodable frames.')
@@ -152,6 +160,10 @@ def prepare(source):
         with opened_image as opened:
             original_size = opened.size
             im = ImageOps.exif_transpose(opened).convert('RGBA')
+            if entry.get('trimWhite'):
+                bounds = im.convert('L').point(lambda value: 255 if value < 235 else 0).getbbox()
+                if bounds:
+                    im = im.crop(bounds)
             if entry.get('crop'):
                 x1, y1, x2, y2 = entry['crop']
                 im = im.crop((round(x1 * im.width), round(y1 * im.height),
