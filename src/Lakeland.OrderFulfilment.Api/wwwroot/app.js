@@ -212,6 +212,12 @@ function renderGallery() {
       otherWorks.splice(firstHoliday, 0, ...holidayCards);
       works.splice(0, works.length, ...otherWorks);
     }
+    const forestIndex = works.findIndex(w => w.title === 'Antlered forest spirit');
+    const tundraIndex = works.findIndex(w => w.title === 'Antlered Tundra Spirit');
+    if (forestIndex !== -1 && tundraIndex !== -1) {
+      const [tundra] = works.splice(tundraIndex, 1);
+      works.splice(works.findIndex(w => w.title === 'Antlered forest spirit') + 1, 0, tundra);
+    }
   }
   const fandom = new URLSearchParams(location.search).get('fandom') || '';
   const fandoms = [...new Set(catalog.gallery.filter(w => w.fanArt).flatMap(w => w.fandoms || ['Other']))].sort();

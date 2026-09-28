@@ -91,7 +91,8 @@ def prepare(source):
         if entry['title'] in ('Miniature sculptures art 634 display', 'Self portrait blue background', 'Kettle of the vultures character concept', 'Art print display'):
             excluded.append(entry['file'])
             continue
-        if Path(entry['file']).name == 'howls-moving-castle--2018-09-30--0700.jpg':
+        if Path(entry['file']).name in ('howls-moving-castle--2018-09-30--0700.jpg',
+                                       'antlered-forest-spirit-original--2019-04-19--0650.jpg'):
             excluded.append(entry['file'])
             continue
         # Artist-confirmed identification; preserve the fan-art classification on rebuild.

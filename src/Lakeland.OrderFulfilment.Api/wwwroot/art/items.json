@@ -717,14 +717,6 @@
         "watermarked": true,
         "displaySha256": "3c924ed9a067861085b9e2fdd49249e01928b1f0f31ff65a946064ee134dd9b6",
         "label": "View 1"
-      },
-      {
-        "image": "/art/display/antlered-forest-spirit-original-12233cf86e17.webp",
-        "width": 1198,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "12233cf86e17a3aeda807162a4ed7c330feff1aa4bdeb0c404183cff4b1d0142",
-        "label": "View 2"
       }
     ],
     "image": "/art/display/antlered-forest-spirit-original-3c924ed9a067.webp",
