@@ -202,7 +202,17 @@ function renderGallery() {
   const works = sorted(catalog.gallery);
   // Equal-width cards have comparable heights when their cover aspect ratios match.
   const gallerySort = new URLSearchParams(location.search).get('sort') || 'featured';
-  if (gallerySort === 'featured') works.sort((a, b) => (a.height / a.width) - (b.height / b.width));
+  if (gallerySort === 'featured') {
+    works.sort((a, b) => (a.height / a.width) - (b.height / b.width));
+    const holidayTitles = new Set(['Sarcastic holiday card collection', 'Happy holidays 2024 card', 'Ho ho holy crap Christmas tree card', 'Happy whatever blue Christmas tree card']);
+    const holidayCards = works.filter(w => holidayTitles.has(w.title));
+    const firstHoliday = works.findIndex(w => holidayTitles.has(w.title));
+    if (firstHoliday !== -1) {
+      const otherWorks = works.filter(w => !holidayTitles.has(w.title));
+      otherWorks.splice(firstHoliday, 0, ...holidayCards);
+      works.splice(0, works.length, ...otherWorks);
+    }
+  }
   const fandom = new URLSearchParams(location.search).get('fandom') || '';
   const fandoms = [...new Set(catalog.gallery.filter(w => w.fanArt).flatMap(w => w.fandoms || ['Other']))].sort();
   const originals = works.filter(w => !w.fanArt);
