@@ -72,6 +72,9 @@ def prepare(source):
     gallery, audit = [], []
     hashes = set()
     for entry in entries:
+        # Artist-confirmed identification; preserve the fan-art classification on rebuild.
+        if entry['title'] == 'Pink haired woman abstract background':
+            entry['fanArt'] = True
         file = (source / entry['file']).resolve()
         if not file.is_relative_to(source) or file.is_relative_to(PUBLIC):
             raise ValueError('Source must remain within the private source folder.')

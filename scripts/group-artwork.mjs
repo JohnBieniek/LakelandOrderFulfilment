@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Pink haired woman abstract background': 'Princess Bubblegum’s realm',
   "Spirited away chihiro and haku": "Spirited Away Chihiro and Haku",
   "John bieniek baby turtles terrarium": "John Bieniek Baby Turtles terrarium",
   "Howls moving castle couple wood plaque": "Howl’s Moving Castle couple wood plaque",
@@ -63,7 +64,7 @@ const descriptions = {
   'Adventure Time Princess Bubblegum': 'A pink-toned painting inspired by Princess Bubblegum from Adventure Time. Includes a framed presentation and an artwork view.',
   'Screaming sun mountain landscape': 'A wide mountain landscape with a expressive yellow sun rising between pale peaks beneath a purple sky.',
   "Jon and Aiden painted name plaques": 'Two dark painted name plaques with hand-lettered names, Jon and Aiden.',
-  'Pink haired woman abstract background': 'A pink-haired figure in profile beside a flowing, marbled field of blues, greens, and pinks.',
+  'Princess Bubblegum’s realm': 'Princess Bubblegum in profile beside a flowing, marbled realm of blues, greens, and pinks, inspired by Adventure Time.',
   'Red needle felt mushroom': 'A small needle-felt mushroom with a rounded red cap and pale stem.',
   'Beekeeper and doctor': 'A beekeeper and a plague doctor share a moment beneath blue flowers, with bees around them. Includes the painted piece and a clean-composition display view.',
   'Beekeeper and doctor mug': 'The Beekeeper and Doctor artwork shown on a white glossy mug. Browse mockups of the 11, 15, and 20 oz sizes, different angles, and lifestyle settings. These are design previews; ordering details are still being finalized.',
