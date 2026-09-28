@@ -335,33 +335,6 @@
     ]
   },
   {
-    "id": "work-4719eac101973856",
-    "title": "Self portrait blue background",
-    "artist": "Kay Pickett",
-    "medium": "Work in progress",
-    "fanArt": false,
-    "productId": null,
-    "isSample": false,
-    "description": "A self-portrait in progress, showing a pale profile against a circular blue background.",
-    "images": [
-      {
-        "image": "/art/display/self-portrait-blue-background-979e160b52c7.webp",
-        "width": 1002,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "979e160b52c7f8a40550e600aa42e581203852fdf82dacda95156ad2c37b0474",
-        "label": "View 1"
-      }
-    ],
-    "image": "/art/display/self-portrait-blue-background-979e160b52c7.webp",
-    "width": 1002,
-    "height": 1200,
-    "watermarked": true,
-    "displaySha256": "979e160b52c7f8a40550e600aa42e581203852fdf82dacda95156ad2c37b0474",
-    "label": "View 1",
-    "fandoms": []
-  },
-  {
     "id": "work-fbcdd4bdedd0cbda",
     "title": "Lord of the Rings needle felt figures",
     "artist": "Kay Pickett",
