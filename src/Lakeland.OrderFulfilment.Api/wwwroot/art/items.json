@@ -1227,19 +1227,19 @@
     "description": "A llama sends a cloud of purple and blue stars into the dark space above it.",
     "images": [
       {
-        "image": "/art/display/rabbit-breathing-galaxy-4a4991728fcd.webp",
+        "image": "/art/display/rabbit-breathing-galaxy-d35471cd7f8f.webp",
         "width": 1200,
         "height": 1137,
         "watermarked": true,
-        "displaySha256": "4a4991728fcdd86117578a076c3a07b555cd4cb810eb347a5c4b57969212b54b",
+        "displaySha256": "d35471cd7f8fb09ed2d5e9be104f5edf6ee69573e5bfb2982fcb83e757a4d780",
         "label": "View 1"
       }
     ],
-    "image": "/art/display/rabbit-breathing-galaxy-4a4991728fcd.webp",
+    "image": "/art/display/rabbit-breathing-galaxy-d35471cd7f8f.webp",
     "width": 1200,
     "height": 1137,
     "watermarked": true,
-    "displaySha256": "4a4991728fcdd86117578a076c3a07b555cd4cb810eb347a5c4b57969212b54b",
+    "displaySha256": "d35471cd7f8fb09ed2d5e9be104f5edf6ee69573e5bfb2982fcb83e757a4d780",
     "label": "View 1",
     "fandoms": []
   },

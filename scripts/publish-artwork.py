@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / 'src/Lakeland.OrderFulfilment.Api/wwwroot'
 OUTPUT = PUBLIC / 'art/display'
 
-def watermark(im):
+def watermark(im, y=.76):
     layer = Image.new('RGBA', im.size)
     draw = ImageDraw.Draw(layer)
     # One interior mark, matching the approved preview without regenerating art.
@@ -33,7 +33,7 @@ def watermark(im):
     if font is None:
         raise RuntimeError('Install Arial or DejaVuSans for the watermark.')
     label = 'LAKELAND FINE ARTS'
-    draw.text((im.width * .5, im.height * .76), label, anchor='mm',
+    draw.text((im.width * .5, im.height * y), label, anchor='mm',
               font=font, fill=(255,255,255,55),
               stroke_width=1, stroke_fill=(0,0,0,32))
     return Image.alpha_composite(im, layer)
@@ -129,7 +129,7 @@ def prepare(source):
             im = Image.alpha_composite(backdrop,im)
             marked = not entry.get('sculpture',False)
             if marked:
-                im = watermark(im)
+                im = watermark(im, y=.65 if entry['title'] == 'Rabbit breathing galaxy' else .76)
             slug = re.sub('[^a-z0-9]+','-',entry['title'].lower()).strip('-')[:90]
             # Content-address the derivative, not the private source.
             import io
