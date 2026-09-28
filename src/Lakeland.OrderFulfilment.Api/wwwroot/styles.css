@@ -65,3 +65,5 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 
 .brand{display:block;flex:0 0 auto;width:230px}.brand img,.footer-brand img{width:100%;height:auto;object-fit:contain}.footer-brand{display:block;width:min(230px,100%)}
 @media(max-width:700px){.brand{width:180px}}
+
+.website-partner{max-width:1440px;margin:28px auto 0;padding:28px 6%;font-size:14pt}
