@@ -1268,33 +1268,6 @@
     "fandoms": []
   },
   {
-    "id": "work-a45140d6e3e939b9",
-    "title": "Art print display",
-    "artist": "Kay Pickett",
-    "medium": "Exhibitions",
-    "fanArt": false,
-    "productId": null,
-    "isSample": false,
-    "description": "A photograph of several studio art prints arranged together, showing a mix of character pieces and imaginative paintings.",
-    "images": [
-      {
-        "image": "/art/display/art-print-display-135d1ff7afce.webp",
-        "width": 1200,
-        "height": 900,
-        "watermarked": true,
-        "displaySha256": "135d1ff7afce919c391e9f8d3d06b2298fa1eefff9699912416f6cb9ce01c6d9",
-        "label": "View 1"
-      }
-    ],
-    "image": "/art/display/art-print-display-135d1ff7afce.webp",
-    "width": 1200,
-    "height": 900,
-    "watermarked": true,
-    "displaySha256": "135d1ff7afce919c391e9f8d3d06b2298fa1eefff9699912416f6cb9ce01c6d9",
-    "label": "View 1",
-    "fandoms": []
-  },
-  {
     "id": "work-8dfd9eeb78c6597a",
     "title": "Howl and Sophie painted box lid",
     "artist": "Kay Pickett",

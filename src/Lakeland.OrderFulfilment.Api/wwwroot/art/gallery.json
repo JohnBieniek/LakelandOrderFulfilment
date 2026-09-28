@@ -980,20 +980,6 @@
     "displaySha256": "4a4991728fcdd86117578a076c3a07b555cd4cb810eb347a5c4b57969212b54b"
   },
   {
-    "id": "art-135d1ff7afce919c",
-    "title": "Art print display",
-    "artist": "Kay Pickett",
-    "medium": "Exhibitions",
-    "fanArt": false,
-    "productId": null,
-    "image": "/art/display/art-print-display-135d1ff7afce.webp",
-    "width": 1200,
-    "height": 900,
-    "watermarked": true,
-    "isSample": false,
-    "displaySha256": "135d1ff7afce919c391e9f8d3d06b2298fa1eefff9699912416f6cb9ce01c6d9"
-  },
-  {
     "id": "art-56aaa0c2df18cb92",
     "title": "Princess mononoke san",
     "artist": "Kay Pickett",
