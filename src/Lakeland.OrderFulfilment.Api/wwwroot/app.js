@@ -56,7 +56,7 @@ function intro(eyebrow, title, description, wide = false) {
 }
 function renderHome() {
   const painting = catalog.gallery.find(w => w.title === 'Katie and Gilbert watercolor portrait');
-  const sculpture = catalog.gallery.find(w => w.medium === 'Sculpture' && !w.fanArt);
+  const sculpture = catalog.gallery.find(w => w.title === 'The tallest');
   const mug = catalog.products.find(p => p.productType === 'mugs');
   const collections = [
     painting && ['/gallery?section=originals', painting.image, 'Original artwork', 'Explore the work from our studio.'],
