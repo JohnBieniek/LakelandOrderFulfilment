@@ -460,6 +460,17 @@ try {
   const artResponse = await fetch('/art/items.json');
   if (!artResponse.ok) throw new Error('The artwork gallery is temporarily unavailable. Please try again shortly.');
   catalog.gallery = await artResponse.json();
+  const mugArtwork = catalog.gallery.find(work => work.title === 'Beekeeper and doctor mug');
+  // Preserve the user's selected archive views 15, 16 and 20 by image identity.
+  const mugImageHashes = ['0b534664d6a0', 'b1d6b624a050', '51390d0eacf2'];
+  const mugImages = mugImageHashes.map(hash => mugArtwork?.images.find(view => view.displaySha256.startsWith(hash))).filter(Boolean);
+  if (mugImages.length === 3) {
+    for (const product of catalog.products.filter(p => p.productType === 'mugs')) {
+      product.images = mugImages.map((view, index) => ({ ...view, label: `Mug view ${index + 1}` }));
+      product.image = mugImages[0].image;
+    }
+  }
+  catalog.gallery = catalog.gallery.filter(work => work.title !== 'Beekeeper and doctor mug');
   const pawPals = catalog.gallery.find(work => work.id === 'work-513a45a0e19f8b4d');
   if (pawPals) catalog.products.push({ ...pawPals, id: 'paw-pals', name: 'Paw Pals phone holders', title: 'Paw Pals phone holders', kind: 'clay', productType: 'clay', price: 24, inquiryOnly: true, details: 'Made to order · 2-week turnaround', maxQuantity: 0, available: false });
   cart = cart.filter(item => item && typeof item.id === 'string' && Number.isInteger(item.quantity) && item.quantity > 0 && productFor(item.id) && !productFor(item.id).inquiryOnly).map(item => ({ id: item.id, quantity: Math.min(item.quantity, productFor(item.id).maxQuantity) }));
