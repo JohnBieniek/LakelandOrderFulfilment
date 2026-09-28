@@ -117,3 +117,4 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 .products-page>.shipping-note{margin-bottom:0;padding-bottom:0}
 
 @media(max-width:700px){.art-carousel>.art-view-count{grid-column:1/-1;grid-row:3;position:static;inset:auto;transform:none;display:block;padding:0 0 4px;font-size:11px;line-height:1.4}.art-carousel{row-gap:10px}}
+@media(max-width:700px){.contact-layout{padding-bottom:0}.contact-details p:last-child{margin-bottom:0}}
