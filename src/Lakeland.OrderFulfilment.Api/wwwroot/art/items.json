@@ -342,7 +342,7 @@
     "fanArt": true,
     "productId": null,
     "isSample": false,
-    "description": "A collection of small needle-felt characters inspired by The Lord of the Rings, photographed together from different angles. Fan art for appreciation only; not for sale.",
+    "description": "A collection of small needle-felt characters inspired by The Lord of the Rings, photographed together from different angles. Includes close-up views of Legolas. Fan art for appreciation only; not for sale.",
     "images": [
       {
         "image": "/art/display/lord-of-the-rings-needle-felt-figures-c3a3732d9ac7.webp",
@@ -375,6 +375,14 @@
         "watermarked": false,
         "displaySha256": "490d7a84f024843659067e02ee629ddeba4cf78abd9a308d4d213286c4b9e2cd",
         "label": "View 4"
+      },
+      {
+        "image": "/art/display/gandalf-needle-felt-figure-51d835f550f3.webp",
+        "width": 1200,
+        "height": 1200,
+        "watermarked": false,
+        "displaySha256": "51d835f550f37c56188a18bc5b45135f12217524d5ed3ffc762c0970f74b5d92",
+        "label": "Legolas Needle Felt Figure"
       }
     ],
     "image": "/art/display/lord-of-the-rings-needle-felt-figures-c3a3732d9ac7.webp",
@@ -1094,35 +1102,6 @@
     "displaySha256": "bd8e766d9a24d125235e65124f347194ea1ecae43d5b14d8838558049ab86c0f",
     "label": "View 4",
     "fandoms": []
-  },
-  {
-    "id": "work-bc659602112bb365",
-    "title": "Legolas Needle Felt Figure",
-    "artist": "Kay Pickett",
-    "medium": "Sculpture",
-    "fanArt": true,
-    "productId": null,
-    "isSample": false,
-    "description": "A needle-felt figure inspired by Legolas from The Lord of the Rings. Fan art for appreciation only; not for sale.",
-    "images": [
-      {
-        "image": "/art/display/gandalf-needle-felt-figure-51d835f550f3.webp",
-        "width": 1200,
-        "height": 1200,
-        "watermarked": false,
-        "displaySha256": "51d835f550f37c56188a18bc5b45135f12217524d5ed3ffc762c0970f74b5d92",
-        "label": "View 1"
-      }
-    ],
-    "image": "/art/display/gandalf-needle-felt-figure-51d835f550f3.webp",
-    "width": 1200,
-    "height": 1200,
-    "watermarked": false,
-    "displaySha256": "51d835f550f37c56188a18bc5b45135f12217524d5ed3ffc762c0970f74b5d92",
-    "label": "View 1",
-    "fandoms": [
-      "LOTR"
-    ]
   },
   {
     "id": "work-8054d36e676af404",

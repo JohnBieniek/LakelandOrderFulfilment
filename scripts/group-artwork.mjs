@@ -121,6 +121,17 @@ for (const image of images) {
     watermarked: image.watermarked, displaySha256: image.displaySha256,
     label: image.viewLabel || ((aliases[image.title] || image.title) === title ? `View ${group.images.length + 1}` : image.title) });
 }
+// Keep the Legolas close-ups as supporting views of the LOTR collection.
+const lotrFigures = [...groups.values()].find(work => work.title === 'Lord of the Rings needle felt figures');
+const legolasEntry = [...groups.entries()].find(([, work]) => work.title === 'Legolas Needle Felt Figure');
+if (lotrFigures && legolasEntry) {
+  for (const view of legolasEntry[1].images) {
+    if (!lotrFigures.images.some(existing => existing.displaySha256 === view.displaySha256))
+      lotrFigures.images.push({ ...view, label: 'Legolas Needle Felt Figure' });
+  }
+  lotrFigures.description += ' Includes close-up views of Legolas.';
+  groups.delete(legolasEntry[0]);
+}
 // Reviewed cover selection uses the original archive view order on every rebuild.
 const preferredCoverViews = { 'Fantasy creatures collaboration': 4, 'Banana peel slug': 2, 'Needle felt llamas': 2, 'Paw pal phone holders': 2 };
 for (const work of groups.values()) {
