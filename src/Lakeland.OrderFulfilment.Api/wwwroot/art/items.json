@@ -1,40 +1,5 @@
 [
   {
-    "id": "work-f4369d2510704d9b",
-    "title": "Miniature sculptures Art 634 display",
-    "artist": "Kay Pickett",
-    "medium": "Exhibitions",
-    "fanArt": false,
-    "productId": null,
-    "isSample": false,
-    "description": "An overview of the miniature sculpture display at Art 634, including small colorful figures and the Baby Turtles glass terrarium. The two photographs show the display from different positions.",
-    "images": [
-      {
-        "image": "/art/display/miniature-sculptures-art-634-display-c73744022772.webp",
-        "width": 675,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "c73744022772d0652cefa0a7000f51b2dfeff3aaf7550ab9ddbbbbe75ca007e6",
-        "label": "View 1"
-      },
-      {
-        "image": "/art/display/miniature-sculptures-art-634-display-158611bd3842.webp",
-        "width": 976,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "158611bd3842801614d61048d16b837e6bdef9bdd5a4569f1a3b4d3fd8b26718",
-        "label": "View 2"
-      }
-    ],
-    "image": "/art/display/miniature-sculptures-art-634-display-c73744022772.webp",
-    "width": 675,
-    "height": 1200,
-    "watermarked": true,
-    "displaySha256": "c73744022772d0652cefa0a7000f51b2dfeff3aaf7550ab9ddbbbbe75ca007e6",
-    "label": "View 1",
-    "fandoms": []
-  },
-  {
     "id": "work-3682ae474bec8e37",
     "title": "John Bieniek Baby Turtles terrarium",
     "artist": "John Bieniek",

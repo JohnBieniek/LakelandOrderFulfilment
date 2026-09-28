@@ -88,6 +88,9 @@ def prepare(source):
     hashes = set()
     for entry in entries:
         # Reviewed visual duplicate of the retained 2024 archive image.
+        if entry['title'] == 'Miniature sculptures art 634 display':
+            excluded.append(entry['file'])
+            continue
         if Path(entry['file']).name == 'howls-moving-castle--2018-09-30--0700.jpg':
             excluded.append(entry['file'])
             continue
