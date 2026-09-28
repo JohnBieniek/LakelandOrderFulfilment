@@ -89,18 +89,34 @@ function sorted(items) {
     }
   });
 }
+const mugSizes = [
+  { id: 'b7777777-7777-4777-8777-777777777777', label: '11 oz' },
+  { id: 'b8888888-8888-4888-8888-888888888888', label: '15 oz' },
+  { id: 'b9999999-9999-4999-8999-999999999999', label: '20 oz' }
+];
+let selectedMugId = mugSizes[0].id;
+function productListings() {
+  const variants = mugSizes.map(size => ({ ...size, product: productFor(size.id) })).filter(size => size.product);
+  const selected = variants.find(size => size.id === selectedMugId) || variants[0];
+  return catalog.products.flatMap(p => {
+    if (!mugSizes.some(size => size.id === p.id)) return [p];
+    if (p.id !== variants[0]?.id) return [];
+    return [{ ...selected.product, displayName: 'Beekeeper and Doctor Mug', sizeOptions: variants }];
+  });
+}
 function productCard(p) {
   if (p.inquiryOnly) return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">Handmade clay</span></div><div class="artist">${escape(p.artist)}</div><div class="product-title"><h3>${escape(p.name)}</h3></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">Made to order · 2-week turnaround</p><a class="button light" href="/contact?product=paw-pals">Contact us to order <span aria-hidden="true">+</span></a></article>`;
 
-  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · ${p.isSample ? 'Illustrative listing' : 'Published design'}</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p><div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
+  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · ${p.isSample ? 'Illustrative listing' : 'Published design'}</div><div class="product-title"><h3>${escape(p.displayName || p.name)}</h3><span class="price" aria-live="polite">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p>${p.sizeOptions ? `<div class="field"><label for="mug-size">Size</label><select id="mug-size">${p.sizeOptions.map(size => `<option value="${size.id}" ${size.id === p.id ? 'selected' : ''}>${size.label} - ${money(size.product.price)}</option>`).join('')}</select></div>` : ''}<div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
 }
 function renderProducts() {
   const requestedKind = new URLSearchParams(location.search).get('kind') || '';
   const kind = requestedKind === 'printful' ? 'mugs' : requestedKind;
   const categories = Object.entries(productTypes).filter(([value]) => catalog.products.some(p => categoryFor(p) === value));
-  const items = sorted(catalog.products.filter(p => !kind || categoryFor(p) === kind));
+  const items = sorted(productListings().filter(p => !kind || categoryFor(p) === kind));
   main.innerHTML = `<div class="wrap">${intro('The collection', 'Art to make your own.', 'Something for your walls, something for your shelves, something for your everyday. Find the piece that speaks to you!', true)}<div class="filters"><div class="tabs" aria-label="Product types">${[['', 'All pieces'], ...categories].map(([value, label]) => `<button class="tab ${kind === value ? 'selected' : ''}" data-kind="${value}" aria-pressed="${kind === value}">${label}</button>`).join('')}</div>${filterFields()}</div><p class="results-count" aria-live="polite">${items.length} ${items.length === 1 ? 'piece' : 'pieces'} to discover</p>${items.length ? `<div class="product-grid">${items.map(productCard).join('')}</div>` : '<div class="empty"><h2>No pieces found.</h2><p>Try another artist or explore all product types.</p><a class="button light" href="/products">Clear filters</a></div>'}<p class="shipping-note">A note on shipping: these are estimated <strong>dispatch dates</strong>, not arrival dates. Weekends are excluded; holidays, studio capacity, and destination may change timing. Clay is made after you order. Printful items ship separately.</p></div>`;
   bindFilters();
+  document.querySelector('#mug-size')?.addEventListener('change', event => { selectedMugId = event.target.value; renderProducts(); document.querySelector('#mug-size')?.focus({ preventScroll: true }); });
 }
 const viewIndices = new Map();
 const viewsFor = work => work.images?.length ? work.images : [{ image: work.image, width: 800, height: 900, label: 'View 1' }];
