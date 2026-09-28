@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Clay characters in hats': 'Christmas creatures',
   'Banana peel unicorn': 'Banana peel slug',
   'Rabbit breathing galaxy': 'Llama breathing galaxy',
   'Woman blowing butterflies': 'Blowing butterflies',
@@ -45,7 +46,7 @@ const descriptions = {
   "Howl’s Moving Castle": 'An intricate painting of the wandering castle from Howl’s Moving Castle, with warm pink tones against a pale blue sky.',
   'Self portrait blue background': 'A self-portrait in progress, showing a pale profile against a circular blue background.',
   'Archer acrylic panels': 'A series of acrylic character panels inspired by Archer. The photographs show the panels displayed together.',
-  'Clay characters in hats': 'A group of small, colorful clay characters wearing pointed hats, shown together on the work surface.',
+  'Christmas creatures': 'A group of small, colorful clay Christmas creatures wearing pointed hats, shown together on the work surface.',
   "Kettle of the Vultures character concept": 'A character concept drawing for The Kettle of the Vultures by E. Sorensen. This archive image shows the portrait in the drawing workspace.',
   'Happy holidays 2024 card': 'A holiday greeting card design combining handwritten-style lettering, a sprig of greenery, and a red ribbon, with a hopeful joke about 2024.',
   "Ho ho holy crap Christmas tree card": 'A row of illustrated green Christmas trees accompanies a tongue-in-cheek greeting about the year.',
