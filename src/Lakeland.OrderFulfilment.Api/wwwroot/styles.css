@@ -67,3 +67,11 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 @media(max-width:700px){.brand{width:180px}}
 
 .website-partner{max-width:1440px;margin:28px auto 0;padding:28px 6%;font-size:14pt}
+
+/* Show artwork at its own proportions, without added mats or frames. */
+.gallery-card img,.gallery-card:nth-child(3n+2) img,.product-image img,.collection img,.hero-art img,.cart-item img{height:auto;object-fit:contain;background:transparent;border:0;outline:0;box-shadow:none}
+.collection .image-wrap,.viewer-stage,.viewer-thumbnails button{background:transparent}
+.hero-art{padding:0}.hero-art:before{display:none}.hero-caption{position:static;margin-top:10px}
+.viewer-stage .viewer-image{width:auto;height:auto;max-width:100%;max-height:min(65dvh,680px)}
+.viewer-thumbnails button{padding:0}.viewer-thumbnails img{height:auto;max-height:64px}
+@media(max-width:700px){.viewer-stage .viewer-image{max-height:48dvh}}
