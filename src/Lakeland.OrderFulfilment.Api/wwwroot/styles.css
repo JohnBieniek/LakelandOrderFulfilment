@@ -84,3 +84,5 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 .site-header{position:sticky;top:0;z-index:20;background:var(--paper)}
 
 .hero-caption{color:var(--ink);background:transparent;text-shadow:none;box-shadow:none}
+
+.fandom-filters{margin:22px 0 16px}

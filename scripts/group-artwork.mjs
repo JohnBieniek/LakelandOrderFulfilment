@@ -121,7 +121,59 @@ for (const work of groups.values()) {
   const index = (preferredCoverViews[work.title] || 1) - 1;
   if (index > 0 && work.images[index]) work.images.unshift(...work.images.splice(index, 1));
 }
+const fandomsByTitle = {
+  "Howl’s Moving Castle": [
+    "Ghibli"
+  ],
+  "Labyrinth worm sculpture": [
+    "Labyrinth"
+  ],
+  "Lord of the Rings needle felt figures": [
+    "LOTR"
+  ],
+  "Archer acrylic panels": [
+    "Archer"
+  ],
+  "Rick and Morty character collage": [
+    "Rick and Morty"
+  ],
+  "Princess Mononoke San": [
+    "Ghibli"
+  ],
+  "Legolas Needle Felt Figure": [
+    "LOTR"
+  ],
+  "Claptrap Deadpool crossover sticker": [
+    "Borderlands",
+    "Deadpool"
+  ],
+  "Howl and Sophie painted box lid": [
+    "Ghibli"
+  ],
+  "Tina from Bob’s Burgers": [
+    "Bob’s Burgers"
+  ],
+  "Spirited Away Chihiro and Haku": [
+    "Ghibli"
+  ],
+  "Studio Ghibli character collage": [
+    "Ghibli"
+  ],
+  "Pearls Vision": [
+    "Steven Universe"
+  ],
+  "Screaming sun mountain landscape": [
+    "Rick and Morty"
+  ],
+  "Princess Bubblegum’s realm": [
+    "Adventure Time"
+  ],
+  "Totoro and Mei under galaxy sky": [
+    "Ghibli"
+  ]
+};
 const works = [...groups.values()].map(work => ({ ...work, ...work.images[0],
+  fandoms: work.fanArt ? (fandomsByTitle[work.title] || ['Other']) : [],
   description: work.description + (work.fanArt ? ' Fan art for appreciation only; not for sale.' : '') }));
 writeFileSync(new URL('items.json', base), JSON.stringify(works, null, 2) + '\n');
 console.log(`Consolidated ${images.length} image entries into ${works.length} items with ${works.reduce((n,w) => n+w.images.length,0)} distinct views.`);
