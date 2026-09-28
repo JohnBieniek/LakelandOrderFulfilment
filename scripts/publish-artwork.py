@@ -40,6 +40,9 @@ def watermark(im, y=.76):
 
 def prepare(source):
     entries = []
+    entries.append(dict(file='Whimsy archive art/Art videos/monstera-babe-work-in-progress--2023-12-06--0587.mp4',
+                        title='Monstera babe', artist='Kay Pickett', medium='Paintings',
+                        fanArt=False, sculpture=False, lastFrame=True))
     entries.append(dict(file='Whimsy archive art/Art videos/ghibli-composition-work-in-progress--2023-12-20--0569.mp4',
                         title='Ghibli character collage - round', artist='Kay Pickett', medium='Paintings',
                         fanArt=True, sculpture=False, lastFrame=True))

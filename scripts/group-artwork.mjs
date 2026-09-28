@@ -42,6 +42,7 @@ const aliases = {
   'Victor ohmbre collaboration in progress': 'Fantasy creatures collaboration'
 };
 const descriptions = {
+  'Monstera babe': 'Monstera babe by Kay Pickett. Includes a work-in-progress video.',
   'Bluey fan art poster': 'A colorful Bluey fan-art poster. Includes a video of the artwork.',
   "Miniature sculptures Art 634 display": 'An overview of the miniature sculpture display at Art 634, including small colorful figures and the Baby Turtles glass terrarium. The two photographs show the display from different positions.',
   "Cute Couple wood plaque": 'A small painted wood plaque featuring a cute, stylized couple.',
@@ -195,6 +196,8 @@ const fandomsByTitle = {
   ]
 };
 const owl = [...groups.values()].find(work => work.title === 'Needle felt owl');
+const monstera = [...groups.values()].find(work => work.title === 'Monstera babe');
+if (monstera) monstera.images.push({ ...monstera.images[0], type: 'video', video: '/art/display/monstera-babe.mp4', label: 'Monstera babe work-in-progress video' });
 const roundGhibli = [...groups.values()].find(work => work.title === 'Ghibli character collage - round');
 if (roundGhibli) roundGhibli.images.push({ ...roundGhibli.images[0], type: 'video', video: '/art/display/ghibli-character-collage-round.mp4', label: 'Round collage work-in-progress video' });
 const bluey = [...groups.values()].find(work => work.title === 'Bluey fan art poster');

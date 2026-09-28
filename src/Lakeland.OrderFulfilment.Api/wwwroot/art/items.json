@@ -1,5 +1,42 @@
 [
   {
+    "id": "work-8a2c7d0a6730855f",
+    "title": "Monstera babe",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Monstera babe by Kay Pickett. Includes a work-in-progress video.",
+    "images": [
+      {
+        "image": "/art/display/monstera-babe-1c8383f6698e.webp",
+        "width": 358,
+        "height": 518,
+        "watermarked": true,
+        "displaySha256": "1c8383f6698eb69ffe0ac523eb255873f0c92f28f268801e2789dfe744eb5c5e",
+        "label": "View 1"
+      },
+      {
+        "image": "/art/display/monstera-babe-1c8383f6698e.webp",
+        "width": 358,
+        "height": 518,
+        "watermarked": true,
+        "displaySha256": "1c8383f6698eb69ffe0ac523eb255873f0c92f28f268801e2789dfe744eb5c5e",
+        "label": "Monstera babe work-in-progress video",
+        "type": "video",
+        "video": "/art/display/monstera-babe.mp4"
+      }
+    ],
+    "image": "/art/display/monstera-babe-1c8383f6698e.webp",
+    "width": 358,
+    "height": 518,
+    "watermarked": true,
+    "displaySha256": "1c8383f6698eb69ffe0ac523eb255873f0c92f28f268801e2789dfe744eb5c5e",
+    "label": "View 1",
+    "fandoms": []
+  },
+  {
     "id": "work-7b09221debc0a464",
     "title": "Ghibli character collage - round",
     "artist": "Kay Pickett",
