@@ -84,6 +84,10 @@ def prepare(source):
     gallery, audit = [], []
     hashes = set()
     for entry in entries:
+        # Reviewed visual duplicate of the retained 2024 archive image.
+        if Path(entry['file']).name == 'howls-moving-castle--2018-09-30--0700.jpg':
+            excluded.append(entry['file'])
+            continue
         # Artist-confirmed identification; preserve the fan-art classification on rebuild.
         if entry['title'] == 'Pink haired woman abstract background':
             entry['fanArt'] = True

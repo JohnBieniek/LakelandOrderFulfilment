@@ -296,14 +296,6 @@
         "watermarked": true,
         "displaySha256": "5acd753f87edd1f1b9644635fe3fb49e1224c1f3f1ab44c4660316f927ccd2dc",
         "label": "View 1"
-      },
-      {
-        "image": "/art/display/howls-moving-castle-800ea19ee4af.webp",
-        "width": 1200,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "800ea19ee4afda3e473d30fca7500612b484098e149e030e1e3f3b73a0f5d70f",
-        "label": "View 2"
       }
     ],
     "image": "/art/display/howls-moving-castle-5acd753f87ed.webp",
