@@ -190,6 +190,8 @@ const fandomsByTitle = {
     "Ghibli"
   ]
 };
+const owl = [...groups.values()].find(work => work.title === 'Needle felt owl');
+if (owl) owl.images.push({ ...owl.images[0], type: 'video', video: '/art/display/completed-needle-felt-owl.mp4', label: 'Completed owl video' });
 const works = [...groups.values()].map(work => ({ ...work, ...work.images[0],
   fandoms: work.fanArt ? (fandomsByTitle[work.title] || ['Other']) : [],
   description: work.description + (work.fanArt ? ' Fan art for appreciation only; not for sale.' : '') }));

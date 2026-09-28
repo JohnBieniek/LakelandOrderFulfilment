@@ -1773,6 +1773,16 @@
         "watermarked": false,
         "displaySha256": "e1e0cde77d7726ab9b6fe85f53c48ae267d7feb78170c889b2e19b244a7eb722",
         "label": "Side view"
+      },
+      {
+        "image": "/art/display/needle-felt-owl-980d000ed881.webp",
+        "width": 600,
+        "height": 1200,
+        "watermarked": false,
+        "displaySha256": "980d000ed88150bb3d4dcda98d40b25fea6b603dc3034a29a842a7619a9e9ce0",
+        "label": "Completed owl video",
+        "type": "video",
+        "video": "/art/display/completed-needle-felt-owl.mp4"
       }
     ],
     "image": "/art/display/needle-felt-owl-980d000ed881.webp",

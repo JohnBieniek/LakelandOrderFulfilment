@@ -129,7 +129,7 @@ const chevron = direction => `<svg viewBox="0 0 24 24" aria-hidden="true"><path 
 function artworkImage(work) {
   const views = viewsFor(work), index = viewIndices.get(work.id) || 0, view = views[index];
   const title = work.title || work.name;
-  return `<div class="art-carousel" data-carousel="${escape(work.id)}"><button class="art-open" data-open-work="${escape(work.id)}" aria-label="Enlarge ${escape(title)}"><img src="${escape(view.image)}" alt="${escape(title)} \u00b7 ${escape(view.label)}" loading="lazy" width="${view.width}" height="${view.height}"></button>${views.length > 1 ? `<button class="art-arrow previous" data-cycle="-1" data-work="${escape(work.id)}" aria-label="Previous view of ${escape(title)}">${chevron(-1)}</button><button class="art-arrow next" data-cycle="1" data-work="${escape(work.id)}" aria-label="Next view of ${escape(title)}">${chevron(1)}</button><span class="art-view-count" aria-live="polite">${index + 1} / ${views.length}</span>` : ''}</div>`;
+  return `<div class="art-carousel" data-carousel="${escape(work.id)}"><button class="art-open" data-open-work="${escape(work.id)}" aria-label="Enlarge ${escape(title)}"><img src="${escape(view.image)}" alt="${escape(title)} \u00b7 ${escape(view.label)}" loading="lazy" width="${view.width}" height="${view.height}"></button>${views.length > 1 ? `<button class="art-arrow previous" data-cycle="-1" data-work="${escape(work.id)}" aria-label="Previous view of ${escape(title)}">${chevron(-1)}</button><button class="art-arrow next" data-cycle="1" data-work="${escape(work.id)}" aria-label="Next view of ${escape(title)}">${chevron(1)}</button><span class="art-view-count" aria-live="polite">${index + 1} / ${views.length}${view.type === 'video' ? ' · Play video' : ''}</span>` : ''}</div>`;
 }
 function fandomLabel(work) {
   if (!work.fanArt || !work.fandoms?.length) return '';
@@ -153,7 +153,7 @@ function syncCards(work) {
     img.src = view.image; img.alt = `${work.title || work.name} \u00b7 ${view.label}`;
     img.width = view.width; img.height = view.height;
     const count = card.querySelector('.art-view-count');
-    if (count) count.textContent = `${index + 1} / ${views.length}`;
+    if (count) count.textContent = `${index + 1} / ${views.length}${view.type === 'video' ? ' · Play video' : ''}`;
   });
 }
 function showView(index) {
@@ -161,6 +161,27 @@ function showView(index) {
   index = (index + views.length) % views.length;
   viewIndices.set(viewedWork.id, index);
   const image = viewer.querySelector('.viewer-image');
+  let video = viewer.querySelector('.viewer-video');
+  if (!video) {
+    video = document.createElement('video');
+    video.className = 'viewer-video';
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    image.after(video);
+  }
+  video.pause();
+  const isVideo = views[index].type === 'video';
+  image.hidden = isVideo;
+  video.hidden = !isVideo;
+  if (isVideo) {
+    video.src = views[index].video;
+    video.poster = views[index].image;
+    video.setAttribute('aria-label', views[index].label);
+  } else {
+    video.removeAttribute('src');
+    video.load();
+  }
   image.src = views[index].image;
   image.alt = `${viewedWork.title || viewedWork.name} \u00b7 ${views[index].label}`;
   viewer.querySelector('.viewer-counter').textContent = `${index + 1} / ${views.length} \u00b7 ${views[index].label}`;
@@ -173,12 +194,12 @@ function openArtwork(work) {
   if (!work) return;
   viewedWork = work;
   const views = viewsFor(work), title = work.title || work.name;
-  viewer.innerHTML = `<div class="viewer-toolbar"><span>Artwork details</span><button class="viewer-close" aria-label="Close artwork viewer" autofocus>Close &times;</button></div><div class="viewer-layout"><div class="viewer-media"><div class="viewer-stage"><img class="viewer-image" alt="">${views.length > 1 ? `<button class="art-arrow previous" data-view-step="-1" aria-label="Previous image">${chevron(-1)}</button><button class="art-arrow next" data-view-step="1" aria-label="Next image">${chevron(1)}</button>` : ''}</div><p class="viewer-counter" role="status"></p><div class="viewer-thumbnails" aria-label="Available views">${views.map((view, i) => `<button data-thumbnail="${i}" aria-label="Show view ${i + 1}: ${escape(view.label)}" aria-pressed="false"><img src="${escape(view.image)}" alt="" loading="lazy"><span>${i + 1}</span></button>`).join('')}</div></div><aside class="viewer-details"><span class="eyebrow">${escape(work.artist)}</span><h2 id="viewer-title">${escape(title)}</h2><p class="medium">${escape(work.medium || work.details || '')}</p>${fandomLabel(work)}<p id="viewer-description">${escape(work.description || `${title} from the studio archive.`)}</p>${pawPalPricing(work)}${work.inquiryOnly ? '<a class="button light" href="/contact?product=paw-pals">Contact us to order</a>' : work.fanArt ? '<span class="fan-tag">Fan art &middot; Not for sale</span>' : work.isSample ? '<p class="medium">Illustrative listing</p>' : '<p class="medium">Studio archive &middot; Gallery only</p>'}</aside></div>`;
+  viewer.innerHTML = `<div class="viewer-toolbar"><span>Artwork details</span><button class="viewer-close" aria-label="Close artwork viewer" autofocus>Close &times;</button></div><div class="viewer-layout"><div class="viewer-media"><div class="viewer-stage"><img class="viewer-image" alt=""><video class="viewer-video" controls playsinline preload="metadata" hidden></video>${views.length > 1 ? `<button class="art-arrow previous" data-view-step="-1" aria-label="Previous image">${chevron(-1)}</button><button class="art-arrow next" data-view-step="1" aria-label="Next image">${chevron(1)}</button>` : ''}</div><p class="viewer-counter" role="status"></p><div class="viewer-thumbnails" aria-label="Available views">${views.map((view, i) => `<button data-thumbnail="${i}" aria-label="Show view ${i + 1}: ${escape(view.label)}" aria-pressed="false"><img src="${escape(view.image)}" alt="" loading="lazy"><span>${view.type === 'video' ? 'Video' : i + 1}</span></button>`).join('')}</div></div><aside class="viewer-details"><span class="eyebrow">${escape(work.artist)}</span><h2 id="viewer-title">${escape(title)}</h2><p class="medium">${escape(work.medium || work.details || '')}</p>${fandomLabel(work)}<p id="viewer-description">${escape(work.description || `${title} from the studio archive.`)}</p>${pawPalPricing(work)}${work.inquiryOnly ? '<a class="button light" href="/contact?product=paw-pals">Contact us to order</a>' : work.fanArt ? '<span class="fan-tag">Fan art &middot; Not for sale</span>' : work.isSample ? '<p class="medium">Illustrative listing</p>' : '<p class="medium">Studio archive &middot; Gallery only</p>'}</aside></div>`;
   showView(viewIndices.get(work.id) || 0);
   viewer.showModal();
   document.body.classList.add('viewer-open');
 }
-viewer.addEventListener('close', () => { document.body.classList.remove('viewer-open'); viewedWork = null; });
+viewer.addEventListener('close', () => { viewer.querySelector('video')?.pause(); document.body.classList.remove('viewer-open'); viewedWork = null; });
 viewer.addEventListener('click', event => {
   if (event.target.closest('.viewer-close')) { viewer.close(); return; }
   const step = event.target.closest('[data-view-step]');
