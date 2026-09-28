@@ -77,3 +77,5 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 @media(max-width:700px){.viewer-stage .viewer-image{max-height:48dvh}}
 
 @media(max-width:700px){.footer-top>p{display:block;grid-column:1 / -1;grid-row:2}}
+
+.site-header{padding-top:0;padding-bottom:0;row-gap:0}
