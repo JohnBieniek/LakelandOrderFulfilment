@@ -71,6 +71,9 @@ def prepare(source):
     # Split the reviewed owl collage into its original photographic panels.
     expanded = []
     for entry in entries:
+        if entry['title'] == 'Howl and sophie painted box lid':
+            # Remove only the white collage margins around the photograph.
+            entry = dict(entry, crop=[0, 136 / 1200, 1190 / 1200, 1040 / 1200])
         if entry['title'] == 'Needle felt owl multiple views':
             for label, box in [('Front view', (4, 8, 596, 1192)),
                                ('Back view', (672, 8, 1141, 592)),

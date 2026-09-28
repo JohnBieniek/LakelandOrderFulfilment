@@ -1394,19 +1394,19 @@
     "description": "Howl and Sophie from Howl’s Moving Castle painted together on a circular box lid. Fan art for appreciation only; not for sale.",
     "images": [
       {
-        "image": "/art/display/howl-and-sophie-painted-box-lid-f12167f8aec3.webp",
+        "image": "/art/display/howl-and-sophie-painted-box-lid-70cb30d0df90.webp",
         "width": 1200,
-        "height": 1200,
+        "height": 912,
         "watermarked": true,
-        "displaySha256": "f12167f8aec3c8313fb4ca727454113d30f0fdf1a195b343cc9ae2b61fe8c28d",
+        "displaySha256": "70cb30d0df901c5c1a4dd5ecad43034f5d6cbbcb09fd67da6380e700fe742da6",
         "label": "View 1"
       }
     ],
-    "image": "/art/display/howl-and-sophie-painted-box-lid-f12167f8aec3.webp",
+    "image": "/art/display/howl-and-sophie-painted-box-lid-70cb30d0df90.webp",
     "width": 1200,
-    "height": 1200,
+    "height": 912,
     "watermarked": true,
-    "displaySha256": "f12167f8aec3c8313fb4ca727454113d30f0fdf1a195b343cc9ae2b61fe8c28d",
+    "displaySha256": "70cb30d0df901c5c1a4dd5ecad43034f5d6cbbcb09fd67da6380e700fe742da6",
     "label": "View 1",
     "fandoms": [
       "Ghibli"
