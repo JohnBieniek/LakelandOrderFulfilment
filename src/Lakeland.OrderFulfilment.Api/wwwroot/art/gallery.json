@@ -1,5 +1,19 @@
 [
   {
+    "id": "art-bb6ee01cb817372f",
+    "title": "Ghibli character collage - round",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": true,
+    "productId": null,
+    "image": "/art/display/ghibli-character-collage-round-bb6ee01cb817.webp",
+    "width": 498,
+    "height": 358,
+    "watermarked": true,
+    "isSample": false,
+    "displaySha256": "bb6ee01cb817372ff075df2e244b85075817b58b2bb42defd02f7c6d95838684"
+  },
+  {
     "id": "art-088f66363e650eb5",
     "title": "Bluey fan art poster",
     "artist": "Kay Pickett",

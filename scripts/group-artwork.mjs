@@ -22,7 +22,7 @@ const aliases = {
   "Katie and gilbert watercolor portrait": "Katie and Gilbert watercolor portrait",
   "Claptrap deadpool crossover sticker": "Claptrap Deadpool crossover sticker",
   "Howl and sophie painted box lid": "Howl and Sophie painted box lid",
-  "Studio ghibli character collage": "Studio Ghibli character collage",
+  "Studio ghibli character collage": "Ghibli character collage - square",
   "Jon and aiden painted name plaques": "Jon and Aiden - Rick and Morty style name plates",
   "Miniature sculptures art 634 display": "Miniature sculptures Art 634 display",
   "Kettle of the vultures character concept": "Kettle of the Vultures character concept",
@@ -69,7 +69,8 @@ const descriptions = {
   'Custom couple portrait with reference': 'A stylized painted couple portrait presented alongside the reference photograph used for the commission.',
   'Custom baby portrait with reference': 'A painted baby portrait shown next to the original reference photograph.',
   'Eat the earth watercolor': 'A watercolor portrait of a blonde figure with a small globe at her lips, titled Eat the Earth in the source post.',
-  "Studio Ghibli character collage": 'A colorful collage bringing together characters and scenes inspired by Studio Ghibli films.',
+  "Ghibli character collage - square": 'A square collage bringing together characters and scenes inspired by Studio Ghibli films.',
+  "Ghibli character collage - round": 'A round collage of characters inspired by Studio Ghibli films. Includes a work-in-progress video.',
   'Pearls Vision': 'A pink-toned painting inspired by Steven Universe. Includes a framed presentation and an artwork view.',
   'Screaming sun mountain landscape': 'A Rick and Morty-inspired mountain landscape featuring the screaming sun between pale peaks beneath a purple sky.',
   "Jon and Aiden - Rick and Morty style name plates": 'Painted name plates for Jon and Aiden, inspired by Rick and Morty.',
@@ -176,7 +177,8 @@ const fandomsByTitle = {
   "Spirited Away Chihiro and Haku": [
     "Ghibli"
   ],
-  "Studio Ghibli character collage": [
+  "Ghibli character collage - round": ["Ghibli"],
+  "Ghibli character collage - square": [
     "Ghibli"
   ],
   "Pearls Vision": [
@@ -193,6 +195,8 @@ const fandomsByTitle = {
   ]
 };
 const owl = [...groups.values()].find(work => work.title === 'Needle felt owl');
+const roundGhibli = [...groups.values()].find(work => work.title === 'Ghibli character collage - round');
+if (roundGhibli) roundGhibli.images.push({ ...roundGhibli.images[0], type: 'video', video: '/art/display/ghibli-character-collage-round.mp4', label: 'Round collage work-in-progress video' });
 const bluey = [...groups.values()].find(work => work.title === 'Bluey fan art poster');
 if (bluey) bluey.images.push({ ...bluey.images[0], type: 'video', video: '/art/display/bluey-fan-art-poster.mp4', label: 'Bluey poster video' });
 if (owl) owl.images.push({ ...owl.images[0], type: 'video', video: '/art/display/completed-needle-felt-owl.mp4', label: 'Completed owl video' });

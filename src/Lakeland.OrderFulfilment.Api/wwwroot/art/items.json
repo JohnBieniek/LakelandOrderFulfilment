@@ -1,5 +1,44 @@
 [
   {
+    "id": "work-7b09221debc0a464",
+    "title": "Ghibli character collage - round",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": true,
+    "productId": null,
+    "isSample": false,
+    "description": "A round collage of characters inspired by Studio Ghibli films. Includes a work-in-progress video. Fan art for appreciation only; not for sale.",
+    "images": [
+      {
+        "image": "/art/display/ghibli-character-collage-round-bb6ee01cb817.webp",
+        "width": 498,
+        "height": 358,
+        "watermarked": true,
+        "displaySha256": "bb6ee01cb817372ff075df2e244b85075817b58b2bb42defd02f7c6d95838684",
+        "label": "View 1"
+      },
+      {
+        "image": "/art/display/ghibli-character-collage-round-bb6ee01cb817.webp",
+        "width": 498,
+        "height": 358,
+        "watermarked": true,
+        "displaySha256": "bb6ee01cb817372ff075df2e244b85075817b58b2bb42defd02f7c6d95838684",
+        "label": "Round collage work-in-progress video",
+        "type": "video",
+        "video": "/art/display/ghibli-character-collage-round.mp4"
+      }
+    ],
+    "image": "/art/display/ghibli-character-collage-round-bb6ee01cb817.webp",
+    "width": 498,
+    "height": 358,
+    "watermarked": true,
+    "displaySha256": "bb6ee01cb817372ff075df2e244b85075817b58b2bb42defd02f7c6d95838684",
+    "label": "View 1",
+    "fandoms": [
+      "Ghibli"
+    ]
+  },
+  {
     "id": "work-f799d6ddfef99378",
     "title": "Bluey fan art poster",
     "artist": "Kay Pickett",
@@ -1600,14 +1639,14 @@
     "fandoms": []
   },
   {
-    "id": "work-c15c5f8816589f94",
-    "title": "Studio Ghibli character collage",
+    "id": "work-a5569893ecd09ae7",
+    "title": "Ghibli character collage - square",
     "artist": "Kay Pickett",
     "medium": "Fan art",
     "fanArt": true,
     "productId": null,
     "isSample": false,
-    "description": "A colorful collage bringing together characters and scenes inspired by Studio Ghibli films. Fan art for appreciation only; not for sale.",
+    "description": "A square collage bringing together characters and scenes inspired by Studio Ghibli films. Fan art for appreciation only; not for sale.",
     "images": [
       {
         "image": "/art/display/studio-ghibli-character-collage-a1572b63e85b.webp",
