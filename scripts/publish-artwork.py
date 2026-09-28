@@ -129,7 +129,8 @@ def prepare(source):
             im = Image.alpha_composite(backdrop,im)
             marked = not entry.get('sculpture',False)
             if marked:
-                im = watermark(im, y=.65 if entry['title'] == 'Rabbit breathing galaxy' else .76)
+                watermark_y = {'Rabbit breathing galaxy': .65, 'Memorial tattoo rainbow wings': .48}
+                im = watermark(im, y=watermark_y.get(entry['title'], .76))
             slug = re.sub('[^a-z0-9]+','-',entry['title'].lower()).strip('-')[:90]
             # Content-address the derivative, not the private source.
             import io
