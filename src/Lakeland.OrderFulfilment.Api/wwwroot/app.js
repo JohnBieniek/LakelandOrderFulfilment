@@ -74,7 +74,7 @@ function filterFields() {
   const artists = [...new Set([...catalog.products, ...catalog.gallery].map(p => p.artist))]
     .filter(artist => !['Studio painter', 'Studio sculptor'].includes(artist)).sort();
   const params = new URLSearchParams(location.search);
-  return `<div class="filter-fields"><label>Artist<select id="artist-filter" aria-label="Artist"><option value="">All artists</option>${artists.map(artist => `<option value="${escape(artist)}" ${params.get('artist') === artist ? 'selected' : ''}>${escape(artist)}</option>`).join('')}</select></label><label>Sort by<select id="sort-filter" aria-label="Sort by">${[['featured', 'Featured'], ['artist', 'Artist A–Z'], ['title', 'Title A–Z'], ...(location.pathname === '/products' ? [['price-low', 'Price: low to high'], ['price-high', 'Price: high to low']] : [])].map(([value, label]) => `<option value="${value}" ${params.get('sort') === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label></div>`;
+  return `<div class="filter-fields"><label>Artist<select id="artist-filter" aria-label="Artist"><option value="">All artists</option>${artists.map(artist => `<option value="${escape(artist)}" ${params.get('artist') === artist ? 'selected' : ''}>${escape(artist)}</option>`).join('')}</select></label><label>Sort by<select id="sort-filter" aria-label="Sort by">${[['featured', location.pathname === '/gallery' ? 'Similar heights' : 'Featured'], ['artist', 'Artist A–Z'], ['title', 'Title A–Z'], ...(location.pathname === '/products' ? [['price-low', 'Price: low to high'], ['price-high', 'Price: high to low']] : [])].map(([value, label]) => `<option value="${value}" ${params.get('sort') === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label></div>`;
 }
 function sorted(items) {
   const params = new URLSearchParams(location.search); const artist = params.get('artist');
@@ -200,6 +200,9 @@ document.addEventListener('click', event => {
 function renderGallery() {
   const selection = new URLSearchParams(location.search).get('section') || '';
   const works = sorted(catalog.gallery);
+  // Equal-width cards have comparable heights when their cover aspect ratios match.
+  const gallerySort = new URLSearchParams(location.search).get('sort') || 'featured';
+  if (gallerySort === 'featured') works.sort((a, b) => (a.height / a.width) - (b.height / b.width));
   const fandom = new URLSearchParams(location.search).get('fandom') || '';
   const fandoms = [...new Set(catalog.gallery.filter(w => w.fanArt).flatMap(w => w.fandoms || ['Other']))].sort();
   const originals = works.filter(w => !w.fanArt);

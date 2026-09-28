@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Rabbit breathing galaxy': 'Llama breathing galaxy',
   'Woman blowing butterflies': 'Blowing butterflies',
   'Gandalf needle felt figure': 'Legolas Needle Felt Figure',
   'Pink haired woman abstract background': 'Princess Bubblegum’s realm',
@@ -52,7 +53,7 @@ const descriptions = {
   'Legolas Needle Felt Figure': 'A needle-felt figure inspired by Legolas from The Lord of the Rings.',
   "Claptrap Deadpool crossover sticker": 'A crossover sticker illustration combining Claptrap’s robot form with a Deadpool-inspired design on a bright pink background.',
   'Needle felt llama': 'A small pale needle-felt llama with contrasting dark details and a purple saddle blanket. Includes two viewing angles.',
-  'Rabbit breathing galaxy': 'A rabbit sends a cloud of purple and blue stars into the dark space above it.',
+  'Llama breathing galaxy': 'A llama sends a cloud of purple and blue stars into the dark space above it.',
   'Art print display': 'A photograph of several studio art prints arranged together, showing a mix of character pieces and imaginative paintings.',
   "Howl and Sophie painted box lid": 'Howl and Sophie from Howl’s Moving Castle painted together on a circular box lid.',
   'Red orange mushrooms': 'Two brightly colored mushrooms with speckled caps stand against a blue-green background.',
