@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Woman blowing butterflies': 'Blowing butterflies',
   'Gandalf needle felt figure': 'Legolas Needle Felt Figure',
   'Pink haired woman abstract background': 'Princess Bubblegum’s realm',
   "Spirited away chihiro and haku": "Spirited Away Chihiro and Haku",
@@ -82,7 +83,7 @@ const descriptions = {
   'Banana peel unicorn': 'A playful little unicorn emerging from a yellow banana peel. The alternate photographs show its sculpted details from different sides.',
   'Needle felt owl': 'A small needle-felt owl with a rounded body, pale face, and warm brown markings. Browse the front, back, and side views.',
   'Sarcastic holiday card collection': 'A collection of illustrated holiday cards with playful, sarcastic greetings. Browse the group photographs to see the different designs.',
-  'Woman blowing butterflies': 'A woman blows pink butterflies from her hand against a soft blue and violet background.',
+  'Blowing butterflies': 'A woman blows pink butterflies from her hand against a soft blue and violet background.',
   'Mermaid mixed media': 'A floating mermaid with flowing hair and a pink-and-blue tail, created using a mixture of traditional and digital media.',
   "Katie and Gilbert watercolor portrait": 'A colorful watercolor portrait featuring red hair, glasses, flowers, and an animal companion.',
   'Space llama': 'A bright-eyed llama against a deep, star-filled purple sky.',
