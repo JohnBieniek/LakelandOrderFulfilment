@@ -55,7 +55,7 @@ function intro(eyebrow, title, description, wide = false) {
   return `<div class="page-intro${wide ? ' page-intro-wide' : ''}"><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p>${description}</p></div>`;
 }
 function renderHome() {
-  const painting = catalog.gallery.find(w => w.title === 'Galaxy hair woman profile');
+  const painting = catalog.gallery.find(w => w.title === 'Katie and Gilbert watercolor portrait');
   const sculpture = catalog.gallery.find(w => w.medium === 'Sculpture' && !w.fanArt);
   const mug = catalog.products.find(p => p.productType === 'mugs');
   const collections = [
