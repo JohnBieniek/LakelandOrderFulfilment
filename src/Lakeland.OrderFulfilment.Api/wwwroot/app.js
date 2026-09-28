@@ -83,13 +83,15 @@ function sorted(items) {
     switch (params.get('sort')) {
       case 'artist': return a.artist.localeCompare(b.artist) || (a.name || a.title).localeCompare(b.name || b.title);
       case 'title': return (a.name || a.title).localeCompare(b.name || b.title);
-      case 'price-low': return a.price - b.price;
-      case 'price-high': return b.price - a.price;
+      case 'price-low': return (a.price ?? Infinity) - (b.price ?? Infinity);
+      case 'price-high': return (b.price ?? -Infinity) - (a.price ?? -Infinity);
       default: return 0;
     }
   });
 }
 function productCard(p) {
+  if (p.inquiryOnly) return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">Handmade clay</span></div><div class="artist">${escape(p.artist)}</div><div class="product-title"><h3>${escape(p.name)}</h3></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">Made to order · 2-week turnaround</p><a class="button light" href="/contact?product=paw-pals">Contact us to order <span aria-hidden="true">+</span></a></article>`;
+
   return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · ${p.isSample ? 'Illustrative listing' : 'Published design'}</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p><div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
 }
 function renderProducts() {
@@ -146,7 +148,7 @@ function openArtwork(work) {
   if (!work) return;
   viewedWork = work;
   const views = viewsFor(work), title = work.title || work.name;
-  viewer.innerHTML = `<div class="viewer-toolbar"><span>Artwork details</span><button class="viewer-close" aria-label="Close artwork viewer" autofocus>Close &times;</button></div><div class="viewer-layout"><div class="viewer-media"><div class="viewer-stage"><img class="viewer-image" alt="">${views.length > 1 ? `<button class="art-arrow previous" data-view-step="-1" aria-label="Previous image">${chevron(-1)}</button><button class="art-arrow next" data-view-step="1" aria-label="Next image">${chevron(1)}</button>` : ''}</div><p class="viewer-counter" role="status"></p><div class="viewer-thumbnails" aria-label="Available views">${views.map((view, i) => `<button data-thumbnail="${i}" aria-label="Show view ${i + 1}: ${escape(view.label)}" aria-pressed="false"><img src="${escape(view.image)}" alt="" loading="lazy"><span>${i + 1}</span></button>`).join('')}</div></div><aside class="viewer-details"><span class="eyebrow">${escape(work.artist)}</span><h2 id="viewer-title">${escape(title)}</h2><p class="medium">${escape(work.medium || work.details || '')}</p><p id="viewer-description">${escape(work.description || `${title} from the studio archive.`)}</p>${work.fanArt ? '<span class="fan-tag">Fan art &middot; Not for sale</span>' : work.isSample ? '<p class="medium">Illustrative listing</p>' : '<p class="medium">Studio archive &middot; Gallery only</p>'}</aside></div>`;
+  viewer.innerHTML = `<div class="viewer-toolbar"><span>Artwork details</span><button class="viewer-close" aria-label="Close artwork viewer" autofocus>Close &times;</button></div><div class="viewer-layout"><div class="viewer-media"><div class="viewer-stage"><img class="viewer-image" alt="">${views.length > 1 ? `<button class="art-arrow previous" data-view-step="-1" aria-label="Previous image">${chevron(-1)}</button><button class="art-arrow next" data-view-step="1" aria-label="Next image">${chevron(1)}</button>` : ''}</div><p class="viewer-counter" role="status"></p><div class="viewer-thumbnails" aria-label="Available views">${views.map((view, i) => `<button data-thumbnail="${i}" aria-label="Show view ${i + 1}: ${escape(view.label)}" aria-pressed="false"><img src="${escape(view.image)}" alt="" loading="lazy"><span>${i + 1}</span></button>`).join('')}</div></div><aside class="viewer-details"><span class="eyebrow">${escape(work.artist)}</span><h2 id="viewer-title">${escape(title)}</h2><p class="medium">${escape(work.medium || work.details || '')}</p><p id="viewer-description">${escape(work.description || `${title} from the studio archive.`)}</p>${work.inquiryOnly ? '<a class="button light" href="/contact?product=paw-pals">Contact us to order</a>' : work.fanArt ? '<span class="fan-tag">Fan art &middot; Not for sale</span>' : work.isSample ? '<p class="medium">Illustrative listing</p>' : '<p class="medium">Studio archive &middot; Gallery only</p>'}</aside></div>`;
   showView(viewIndices.get(work.id) || 0);
   viewer.showModal();
   document.body.classList.add('viewer-open');
@@ -196,6 +198,7 @@ function bindFilters() {
 function renderContact() {
   main.innerHTML = `<div class="wrap">${intro('Let’s make a connection', 'Hello, art lover.', 'A question about a piece? An idea for a clay sculpture? Or just a hello? We’d love to hear from you.', true)}<div class="contact-layout"><div class="contact-details"><span class="eyebrow">A note to the studio</span><a href="mailto:contact@lakelandfinearts.com">contact@lakelandfinearts.com</a><h3>Something made for you.</h3><p>Our clay sculptures are made to order. If you have a particular character, color, or little detail in mind, let’s talk about what’s possible.</p><h3>About your order.</h3><p>Original paintings and clay pieces are packed by our studio. Print-on-demand pieces are made and shipped by Printful, so mixed orders may arrive in separate packages.</p><h3>Let’s talk art.</h3><p>Curious about our work or looking for something special? We’d love to hear what you have in mind.</p></div><form class="contact-form" id="contact-form"><div class="required-note">Required fields are marked with an asterisk (*).</div><h2>Send a little hello.</h2><div class="field"><label for="contact-name">Your name <span aria-hidden="true">*</span></label><input id="contact-name" name="name" autocomplete="name" maxlength="100" required aria-label="Your name" placeholder="Name"></div><div class="field"><label for="contact-email">Email address <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-label="Email address" placeholder="you@example.com"></div><div class="field"><label for="contact-message">Your message <span aria-hidden="true">*</span></label><textarea id="contact-message" name="message" maxlength="3000" required aria-label="Your message" placeholder="Tell us a little about it…"></textarea></div><button type="submit" class="button">Send message</button><p class="form-note">Your message will be emailed to Lakeland Fine Arts.</p><p id="contact-status" class="form-status" role="status" aria-live="polite" tabindex="-1"></p></form></div></div>`;
   const form = document.querySelector('#contact-form');
+  if (new URLSearchParams(location.search).get('product') === 'paw-pals') form.elements.message.value = 'I would like to order Paw Pals phone holders. Please send me pricing and availability.';
   const status = form.querySelector('#contact-status');
   const fields = [...form.querySelectorAll('input, textarea')];
   fields.forEach(field => field.addEventListener('input', () => {
@@ -385,7 +388,9 @@ try {
   const artResponse = await fetch('/art/items.json');
   if (!artResponse.ok) throw new Error('The artwork gallery is temporarily unavailable. Please try again shortly.');
   catalog.gallery = await artResponse.json();
-  cart = cart.filter(item => item && typeof item.id === 'string' && Number.isInteger(item.quantity) && item.quantity > 0 && productFor(item.id)).map(item => ({ id: item.id, quantity: Math.min(item.quantity, productFor(item.id).maxQuantity) }));
+  const pawPals = catalog.gallery.find(work => work.id === 'work-513a45a0e19f8b4d');
+  if (pawPals) catalog.products.push({ ...pawPals, id: 'paw-pals', name: 'Paw Pals phone holders', title: 'Paw Pals phone holders', kind: 'clay', productType: 'clay', price: null, inquiryOnly: true, details: 'Made to order · 2-week turnaround', maxQuantity: 0, available: false });
+  cart = cart.filter(item => item && typeof item.id === 'string' && Number.isInteger(item.quantity) && item.quantity > 0 && productFor(item.id) && !productFor(item.id).inquiryOnly).map(item => ({ id: item.id, quantity: Math.min(item.quantity, productFor(item.id).maxQuantity) }));
   cart = [...new Map(cart.map(item => [item.id, item])).values()];
   updateCart(); render();
 } catch (error) { main.innerHTML = `<div class="wrap"><div class="empty"><h2>We’ll be right back.</h2><p>${escape(error.message)}</p><a href="/" class="button light">Try again</a></div></div>`; }
