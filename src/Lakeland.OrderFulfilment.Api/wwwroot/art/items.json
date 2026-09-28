@@ -1076,6 +1076,14 @@
     "description": "A collaborative fantasy composition by Kay Pickett and Victor Ohmbre, featuring whimsical creatures and floating forms. Browse drawing, canvas, and painting-in-progress views.",
     "images": [
       {
+        "image": "/art/display/fantasy-creatures-on-purple-canvas-bd8e766d9a24.webp",
+        "width": 900,
+        "height": 1200,
+        "watermarked": true,
+        "displaySha256": "bd8e766d9a24d125235e65124f347194ea1ecae43d5b14d8838558049ab86c0f",
+        "label": "View 4"
+      },
+      {
         "image": "/art/display/live-painting-fantasy-collaboration-500ece75fa47.webp",
         "width": 584,
         "height": 1200,
@@ -1098,14 +1106,6 @@
         "watermarked": true,
         "displaySha256": "83734532d9af34b54bb420c456ee19663ecc7f867b9d2d199754d9950f543cb1",
         "label": "View 3"
-      },
-      {
-        "image": "/art/display/fantasy-creatures-on-purple-canvas-bd8e766d9a24.webp",
-        "width": 900,
-        "height": 1200,
-        "watermarked": true,
-        "displaySha256": "bd8e766d9a24d125235e65124f347194ea1ecae43d5b14d8838558049ab86c0f",
-        "label": "View 4"
       },
       {
         "image": "/art/display/fantasy-creatures-on-purple-canvas-ac752e88c4b6.webp",
@@ -1148,12 +1148,12 @@
         "label": "View 9"
       }
     ],
-    "image": "/art/display/live-painting-fantasy-collaboration-500ece75fa47.webp",
-    "width": 584,
+    "image": "/art/display/fantasy-creatures-on-purple-canvas-bd8e766d9a24.webp",
+    "width": 900,
     "height": 1200,
     "watermarked": true,
-    "displaySha256": "500ece75fa47f04e24289f9d4c7c662e7f9f0be9c00b9b9147cb968db2ff17e4",
-    "label": "View 1"
+    "displaySha256": "bd8e766d9a24d125235e65124f347194ea1ecae43d5b14d8838558049ab86c0f",
+    "label": "View 4"
   },
   {
     "id": "work-1ef09e985867436c",

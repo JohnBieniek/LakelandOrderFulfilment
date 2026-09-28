@@ -111,6 +111,12 @@ for (const image of images) {
     watermarked: image.watermarked, displaySha256: image.displaySha256,
     label: (aliases[image.title] || image.title) === title ? `View ${group.images.length + 1}` : image.title });
 }
+// Reviewed cover selection uses the original archive view order on every rebuild.
+const preferredCoverViews = { 'Fantasy creatures collaboration': 4 };
+for (const work of groups.values()) {
+  const index = (preferredCoverViews[work.title] || 1) - 1;
+  if (index > 0 && work.images[index]) work.images.unshift(...work.images.splice(index, 1));
+}
 const works = [...groups.values()].map(work => ({ ...work, ...work.images[0],
   description: work.description + (work.fanArt ? ' Fan art for appreciation only; not for sale.' : '') }));
 writeFileSync(new URL('items.json', base), JSON.stringify(works, null, 2) + '\n');
