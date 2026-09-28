@@ -85,7 +85,7 @@ const descriptions = {
   'Antlered forest spirit': 'An antlered figure surrounded by nature in warm tones.',
   'Antlered Tundra Spirit': 'An antlered spirit rendered in cool tones.',
   'Fantasy creatures collaboration': 'A collaborative fantasy composition by Kay Pickett and Victor Ohmbre, featuring whimsical creatures and floating forms. Browse drawing, canvas, and painting-in-progress views.',
-  'Labyrinth worm sculpture': 'A small sculpture inspired by the worm from Labyrinth, with blue hair and a red scarf. Alternate views show the character from different sides.',
+  'Labyrinth worm sculpture': '"Things are not always what they seem in this place. So you can\'t take anything for granted." A small sculpture inspired by the worm from Labyrinth, with blue hair and a red scarf. Alternate views show the character from different sides.',
   "Lord of the Rings needle felt figures": 'A collection of small needle-felt characters inspired by The Lord of the Rings, photographed together from different angles.',
   'Red and purple needle felt squids': 'Red and purple needle-felt squids with long, curling tentacles. Includes individual figures and views of the pair.',
   'Paw pal phone holders': 'Sculpted animal-paw phone holders, with pink paw pads and tiny claws. Browse the designs from different angles and see how they hold a phone.',
