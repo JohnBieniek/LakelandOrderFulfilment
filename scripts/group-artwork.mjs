@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const base = new URL('../src/Lakeland.OrderFulfilment.Api/wwwroot/art/', import.meta.url);
 const images = JSON.parse(readFileSync(new URL('gallery.json', base), 'utf8'));
 const aliases = {
+  'Red and purple needle felt squid': 'Red and purple needle felt squids',
   'Needle felt llama': 'Needle felt llamas',
   'Clay characters in hats': 'Christmas creatures',
   'Banana peel unicorn': 'Banana peel slug',
@@ -83,7 +84,7 @@ const descriptions = {
   'Fantasy creatures collaboration': 'A collaborative fantasy composition by Kay Pickett and Victor Ohmbre, featuring whimsical creatures and floating forms. Browse drawing, canvas, and painting-in-progress views.',
   'Labyrinth worm sculpture': 'A small sculpture inspired by the worm from Labyrinth, with blue hair and a red scarf. Alternate views show the character from different sides.',
   "Lord of the Rings needle felt figures": 'A collection of small needle-felt characters inspired by The Lord of the Rings, photographed together from different angles.',
-  'Red and purple needle felt squid': 'Red and purple needle-felt squid with long, curling tentacles. Includes individual figures and views of the pair.',
+  'Red and purple needle felt squids': 'Red and purple needle-felt squids with long, curling tentacles. Includes individual figures and views of the pair.',
   'Paw pal phone holders': 'Sculpted animal-paw phone holders, with pink paw pads and tiny claws. Browse the designs from different angles and see how they hold a phone.',
   'Banana peel slug': 'A playful little slug emerging from a yellow banana peel. The alternate photographs show its sculpted details from different sides.',
   'Needle felt owl': 'A small needle-felt owl with a rounded body, pale face, and warm brown markings. Browse the front, back, and side views.',
