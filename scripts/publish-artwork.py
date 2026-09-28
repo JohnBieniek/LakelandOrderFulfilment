@@ -40,10 +40,9 @@ def watermark(im, y=.76):
 
 def prepare(source):
     entries = []
-    for frame_index, label in [(1095, 'Completed sheep sticker'), (1486, 'Completed pig sticker'), (1799, 'Completed llama sticker')]:
-        entries.append(dict(file='Whimsy archive art/Art videos/finished-farm-stickers--2024-01-31--0515.mp4',
-                            title='Finished farm stickers', artist='Kay Pickett', medium='Sticker designs',
-                            fanArt=False, sculpture=False, frameIndex=frame_index, trimWhite=True, viewLabel=label))
+    entries.append(dict(file='Whimsy archive art/Art videos/finished-farm-stickers--2024-01-31--0515.mp4',
+                        title='Finished farm stickers', artist='Kay Pickett', medium='Sticker designs',
+                        fanArt=False, sculpture=False, compositeFrames=[1095, 1486, 1799]))
     entries.append(dict(file='Whimsy archive art/Art videos/monstera-babe-work-in-progress--2023-12-06--0587.mp4',
                         title='Monstera babe', artist='Kay Pickett', medium='Paintings',
                         fanArt=False, sculpture=False, lastFrame=True))
@@ -138,7 +137,25 @@ def prepare(source):
         if view_key in hashes:
             continue
         hashes.add(view_key)
-        if entry.get('lastFrame') or 'frameIndex' in entry:
+        if entry.get('compositeFrames'):
+            import cv2
+            capture = cv2.VideoCapture(str(file))
+            panels = []
+            for index in entry['compositeFrames']:
+                capture.set(cv2.CAP_PROP_POS_FRAMES, index)
+                ok, frame = capture.read()
+                if not ok:
+                    raise ValueError('Cannot decode sticker frame.')
+                panel = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                bounds = panel.convert('L').point(lambda value: 255 if value < 235 else 0).getbbox()
+                panels.append(panel.crop(bounds))
+            capture.release()
+            opened_image = Image.new('RGB', (sum(p.width for p in panels) + 32, max(p.height for p in panels)), 'white')
+            x = 0
+            for panel in panels:
+                opened_image.paste(panel, (x, (opened_image.height - panel.height) // 2))
+                x += panel.width + 16
+        elif entry.get('lastFrame') or 'frameIndex' in entry:
             import cv2
             capture = cv2.VideoCapture(str(file))
             last = None

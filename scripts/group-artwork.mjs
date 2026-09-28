@@ -198,6 +198,8 @@ const fandomsByTitle = {
   ]
 };
 const owl = [...groups.values()].find(work => work.title === 'Needle felt owl');
+const farmStickers = [...groups.values()].find(work => work.title === 'Finished farm stickers');
+if (farmStickers) farmStickers.images.push({ ...farmStickers.images[0], type: 'video', video: '/art/display/finished-farm-stickers.mp4', label: 'Finished farm stickers video' });
 const tundra = [...groups.values()].find(work => work.title === 'Antlered Tundra Spirit');
 if (tundra) tundra.images.push({ ...tundra.images[0], type: 'video', video: '/art/display/antlered-tundra-spirit.mp4', label: 'Antlered Tundra Spirit video' });
 const monstera = [...groups.values()].find(work => work.title === 'Monstera babe');

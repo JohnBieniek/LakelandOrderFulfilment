@@ -1,48 +1,17 @@
 [
   {
-    "id": "art-2a07a64776c53d89",
+    "id": "art-4568b612049c009c",
     "title": "Finished farm stickers",
     "artist": "Kay Pickett",
     "medium": "Sticker designs",
     "fanArt": false,
     "productId": null,
-    "image": "/art/display/finished-farm-stickers-2a07a64776c5.webp",
-    "width": 291,
-    "height": 265,
-    "watermarked": true,
-    "isSample": false,
-    "displaySha256": "2a07a64776c53d895b7d18d75dec0bc8b076cd6eeddcf6c52a1843fd3048e71e",
-    "viewLabel": "Completed sheep sticker"
-  },
-  {
-    "id": "art-1e3508fabf29e0e1",
-    "title": "Finished farm stickers",
-    "artist": "Kay Pickett",
-    "medium": "Sticker designs",
-    "fanArt": false,
-    "productId": null,
-    "image": "/art/display/finished-farm-stickers-1e3508fabf29.webp",
-    "width": 186,
-    "height": 129,
-    "watermarked": true,
-    "isSample": false,
-    "displaySha256": "1e3508fabf29e0e115e8f1902545a8598995c3b0f607f06dcc7f6c1dc4f649d0",
-    "viewLabel": "Completed pig sticker"
-  },
-  {
-    "id": "art-dfb38e08d409fea2",
-    "title": "Finished farm stickers",
-    "artist": "Kay Pickett",
-    "medium": "Sticker designs",
-    "fanArt": false,
-    "productId": null,
-    "image": "/art/display/finished-farm-stickers-dfb38e08d409.webp",
-    "width": 318,
+    "image": "/art/display/finished-farm-stickers-4568b612049c.webp",
+    "width": 827,
     "height": 318,
     "watermarked": true,
     "isSample": false,
-    "displaySha256": "dfb38e08d409fea212a9d0ebc5595448564d7a91b67b6c0cfc504cfa149dd168",
-    "viewLabel": "Completed llama sticker"
+    "displaySha256": "4568b612049c009cad3dab09695289c3bf7a0bf938f17e0f603b113481b14a9e"
   },
   {
     "id": "art-1c8383f6698eb69f",
