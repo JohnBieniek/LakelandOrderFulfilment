@@ -1700,14 +1700,14 @@
     "label": "View 1"
   },
   {
-    "id": "work-3cc40aa9d9488e8b",
+    "id": "work-c361ef3be69d50e1",
     "title": "Screaming sun mountain landscape",
     "artist": "Kay Pickett",
     "medium": "Paintings",
-    "fanArt": false,
+    "fanArt": true,
     "productId": null,
     "isSample": false,
-    "description": "A wide mountain landscape with a expressive yellow sun rising between pale peaks beneath a purple sky.",
+    "description": "A Rick and Morty-inspired mountain landscape featuring the screaming sun between pale peaks beneath a purple sky. Fan art for appreciation only; not for sale.",
     "images": [
       {
         "image": "/art/display/screaming-sun-mountain-landscape-f0b76d68684e.webp",

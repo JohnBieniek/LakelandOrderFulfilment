@@ -89,6 +89,8 @@ def prepare(source):
             excluded.append(entry['file'])
             continue
         # Artist-confirmed identification; preserve the fan-art classification on rebuild.
+        if entry['title'] == 'Screaming sun mountain landscape':
+            entry['fanArt'] = True
         if entry['title'] == 'Howls moving castle couple wood plaque':
             entry['fanArt'] = False
         if entry['title'] == 'Pink haired woman abstract background':

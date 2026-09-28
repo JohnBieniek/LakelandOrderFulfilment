@@ -63,7 +63,7 @@ const descriptions = {
   'Eat the earth watercolor': 'A watercolor portrait of a blonde figure with a small globe at her lips, titled Eat the Earth in the source post.',
   "Studio Ghibli character collage": 'A colorful collage bringing together characters and scenes inspired by Studio Ghibli films.',
   'Pearls Vision': 'A pink-toned painting inspired by Steven Universe. Includes a framed presentation and an artwork view.',
-  'Screaming sun mountain landscape': 'A wide mountain landscape with a expressive yellow sun rising between pale peaks beneath a purple sky.',
+  'Screaming sun mountain landscape': 'A Rick and Morty-inspired mountain landscape featuring the screaming sun between pale peaks beneath a purple sky.',
   "Jon and Aiden - Rick and Morty style name plates": 'Two dark painted name plaques with hand-lettered names, Jon and Aiden.',
   'Princess Bubblegum’s realm': 'Princess Bubblegum in profile beside a flowing, marbled realm of blues, greens, and pinks, inspired by Adventure Time.',
   'Red needle felt mushroom': 'A small needle-felt mushroom with a rounded red cap and pale stem.',
