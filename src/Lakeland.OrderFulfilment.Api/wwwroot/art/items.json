@@ -601,20 +601,20 @@
     "description": "A dense character collage inspired by Rick and Morty, shown in artwork and framed presentation views. Fan art for appreciation only; not for sale.",
     "images": [
       {
-        "image": "/art/display/rick-and-morty-character-collage-9232e8b331e9.webp",
-        "width": 691,
-        "height": 691,
-        "watermarked": true,
-        "displaySha256": "9232e8b331e9eeabf87d293cc8e2683657083babf8030093977c8906e840157e",
-        "label": "View 1"
-      },
-      {
         "image": "/art/display/rick-and-morty-character-collage-b6b4a80e9a2a.webp",
         "width": 960,
         "height": 720,
         "watermarked": true,
         "displaySha256": "b6b4a80e9a2a9c3b22afb423602b2d744eec221b049a1ce33ed5cfc226db75ac",
         "label": "View 2"
+      },
+      {
+        "image": "/art/display/rick-and-morty-character-collage-9232e8b331e9.webp",
+        "width": 691,
+        "height": 691,
+        "watermarked": true,
+        "displaySha256": "9232e8b331e9eeabf87d293cc8e2683657083babf8030093977c8906e840157e",
+        "label": "View 1"
       },
       {
         "image": "/art/display/rick-and-morty-character-collage-9ecf66f09e70.webp",
@@ -625,12 +625,12 @@
         "label": "View 3"
       }
     ],
-    "image": "/art/display/rick-and-morty-character-collage-9232e8b331e9.webp",
-    "width": 691,
-    "height": 691,
+    "image": "/art/display/rick-and-morty-character-collage-b6b4a80e9a2a.webp",
+    "width": 960,
+    "height": 720,
     "watermarked": true,
-    "displaySha256": "9232e8b331e9eeabf87d293cc8e2683657083babf8030093977c8906e840157e",
-    "label": "View 1",
+    "displaySha256": "b6b4a80e9a2a9c3b22afb423602b2d744eec221b049a1ce33ed5cfc226db75ac",
+    "label": "View 2",
     "fandoms": [
       "Rick and Morty"
     ]
