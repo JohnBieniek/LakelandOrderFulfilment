@@ -114,3 +114,4 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 @media(max-width:700px){.contact-layout .contact-form{grid-row:1}.contact-layout .contact-details{grid-row:2}}
 
 @media(max-width:700px){.site-header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:0}.site-header .brand{grid-column:2;grid-row:1;justify-self:center}.site-header .cart-link{grid-column:3;grid-row:1;justify-self:end;margin-left:0}.site-header nav{grid-column:1/-1;grid-row:2}}
+.products-page>.shipping-note{margin-bottom:0;padding-bottom:0}
