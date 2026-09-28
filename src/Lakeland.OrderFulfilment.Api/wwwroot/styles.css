@@ -110,3 +110,5 @@ footer,.footer-brand,.footer-brand span,.footer-top p,.footer-top>div,.footer-bo
 }
 
 @media(max-width:700px){.products-page .page-intro h1{font-size:clamp(26px,7.5vw,44px);letter-spacing:-1px;white-space:nowrap}}
+
+@media(max-width:700px){.contact-layout .contact-form{grid-row:1}.contact-layout .contact-details{grid-row:2}}
