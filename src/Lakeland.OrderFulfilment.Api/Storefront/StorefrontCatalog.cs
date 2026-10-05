@@ -16,7 +16,7 @@ public sealed record ShipEstimate(DateOnly Earliest, DateOnly Latest, string Des
 public sealed class StorefrontCatalog(TimeProvider clock)
 {
     // Published products only; artwork browsing uses the curated public gallery manifest.
-    public IReadOnlyList<ShopProduct> Products { get; } = [
+    public IReadOnlyList<ShopProduct> Products { get; init; } = [
         new(Guid.Parse("b7777777-7777-4777-8777-777777777777"), "Beekeeper and Doctor Mug / 11 oz", "Kay Pickett", "printful", 9.50m,
             "/art/display/beekeeper-and-doctor-white-glossy-mug-white-11-oz-cutting-board-229fc426acbf.webp", "Kay Pickett's Beekeeper and Doctor artwork on a white glossy mug.", "White glossy mug / 11 oz / Printed by Printful", 4, 8, false, "mugs"),
         new(Guid.Parse("b8888888-8888-4888-8888-888888888888"), "Beekeeper and Doctor Mug / 15 oz", "Kay Pickett", "printful", 12.50m,

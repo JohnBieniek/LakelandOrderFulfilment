@@ -15,7 +15,18 @@ namespace Lakeland.OrderFulfilment.Tests;
 
 public sealed class StorefrontTests
 {
-    private static readonly StorefrontCatalog Catalog = new(TimeProvider.System);
+    // Checkout behavior must not depend on which artworks the studio currently sells.
+    private static readonly StorefrontCatalog Catalog = new(TimeProvider.System)
+    {
+        Products = [
+            new(Guid.Parse("a1111111-1111-4111-8111-111111111111"), "Test original", "Test artist", "original", 100m,
+                "/test-original.svg", "Test original", "One of a kind", 1, 2),
+            new(Guid.Parse("a2222222-2222-4222-8222-222222222222"), "Test sculpture", "Test artist", "clay", 40m,
+                "/test-clay.svg", "Test sculpture", "Made to order", 10, 15),
+            new(Guid.Parse("a3333333-3333-4333-8333-333333333333"), "Test print", "Test artist", "printful", 15m,
+                "/test-print.svg", "Test print", "Printed to order", 4, 8)
+        ]
+    };
 
     [Fact]
     public void Ship_estimates_skip_weekends_and_distinguish_made_to_order()

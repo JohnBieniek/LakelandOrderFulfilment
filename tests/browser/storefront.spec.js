@@ -6,27 +6,32 @@ test('home and responsive navigation render without browser errors', async ({ pa
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Art that feels like you.' })).toBeVisible();
   await page.getByRole('link', { name: 'Find your piece' }).click();
-  await expect(page.locator('.product-card')).toHaveCount(8);
+  await expect(page.locator('.product-card')).toHaveCount(2);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('navigation')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
   expect(errors).toEqual([]);
 });
 
-test('products filter by artist and category and sort by price', async ({ page }) => {
+test('products filter by category and mug sizes update price', async ({ page }) => {
   await page.goto('/products');
-  await page.getByLabel('Artist', { exact: true }).selectOption('Studio sculptor');
+  await page.getByLabel('Artist', { exact: true }).selectOption('Kay Pickett');
   await expect(page.locator('.product-card')).toHaveCount(2);
   await page.getByLabel('Sort by').selectOption('price-low');
-  await expect(page.locator('.product-card h3').first()).toHaveText('Little woodland spirit');
-  await page.getByLabel('Artist', { exact: true }).selectOption('');
-  await page.getByRole('button', { name: 'Print on demand', exact: true }).click();
-  await expect(page.locator('.product-card')).toHaveCount(3);
-  await expect(page.locator('.product-card h3')).toHaveText(['Beekeeper and Doctor Mug / 11 oz', 'Beekeeper and Doctor Mug / 15 oz', 'Beekeeper and Doctor Mug / 20 oz']);
-  await expect(page.locator('.shipping')).toContainText(['Estimated ship date', 'Estimated ship date', 'Estimated ship date']);
-  await expect(page.locator('.product-card .price')).toHaveText(['$9.50', '$12.50', '$15.00']);
+  await expect(page.locator('.product-card h3').first()).toHaveText('Beekeeper and Doctor Mug');
+  await page.getByRole('button', { name: 'Mugs', exact: true }).click();
+  await expect(page.locator('.product-card')).toHaveCount(1);
+  await expect(page.locator('.shipping')).toContainText('Estimated ship date');
+  for (const [size, price] of [['11 oz', '$9.50'], ['15 oz', '$12.50'], ['20 oz', '$15.00']]) {
+    await page.getByLabel('Size', { exact: true }).selectOption({ label: `${size} - ${price}` });
+    await expect(page.locator('.product-card .price')).toHaveText(price);
+    await expect(page.getByRole('button', { name: `Add Beekeeper and Doctor Mug / ${size} to cart` })).toBeEnabled();
+  }
   for (const image of await page.locator('.product-card img').all())
     await expect.poll(() => image.evaluate(el => el.complete && el.naturalWidth > 0)).toBeTruthy();
+  await page.getByRole('button', { name: 'Handmade clay', exact: true }).click();
+  await expect(page.locator('.product-card h3')).toHaveText('Paw Pals phone holders');
+  await expect(page.getByRole('link', { name: 'Contact us to order' })).toBeVisible();
 });
 
 test('fan art is display-only and artist filters apply', async ({ page }) => {
@@ -39,23 +44,22 @@ test('fan art is display-only and artist filters apply', async ({ page }) => {
   await expect(page.locator('.fan-section .gallery-card')).toHaveCount(works.filter(w => w.fanArt && w.artist === 'Kay Pickett').length);
 });
 
-test('mixed cart persists, limits originals to one, and supports quantity and removal', async ({ page }) => {
+test('cart persists and supports quantity and removal', async ({ page }) => {
   await page.goto('/products');
-  await page.getByRole('button', { name: 'Add Where the water settles to cart' }).click();
-  await page.getByRole('button', { name: 'Add Where the water settles to cart' }).click();
-  await page.getByRole('button', { name: 'Add The quiet companion to cart' }).click();
+  await page.getByLabel('Size', { exact: true }).selectOption({ label: '15 oz - $12.50' });
+  await page.getByRole('button', { name: 'Add Beekeeper and Doctor Mug / 15 oz to cart' }).click();
+  await page.getByLabel('Size', { exact: true }).selectOption({ label: '11 oz - $9.50' });
   await page.getByRole('button', { name: 'Add Beekeeper and Doctor Mug / 11 oz to cart' }).click();
-  await page.getByRole('link', { name: 'Cart, 3 items', exact: true }).click();
-  await expect(page.locator('.cart-item')).toHaveCount(3);
-  await expect(page.getByRole('button', { name: 'Increase quantity of Where the water settles' })).toBeDisabled();
+  await page.getByRole('link', { name: 'Cart, 2 items', exact: true }).click();
+  await expect(page.locator('.cart-item')).toHaveCount(2);
   await page.getByRole('button', { name: 'Increase quantity of Beekeeper and Doctor Mug / 11 oz' }).click();
-  await expect(page.locator('#cart-count')).toHaveText('4');
+  await expect(page.locator('#cart-count')).toHaveText('3');
   await page.reload();
-  await expect(page.locator('#cart-count')).toHaveText('4');
+  await expect(page.locator('#cart-count')).toHaveText('3');
   await expect(page.locator('#checkout-button, #paypal-checkout-button')).toHaveCount(0);
   await expect(page.locator('.cart-summary')).toContainText('Test checkout is not available yet.');
-  await page.locator('.cart-item').filter({ hasText: 'The quiet companion' }).getByRole('button', { name: 'Remove' }).click();
-  await expect(page.locator('.cart-item')).toHaveCount(2);
+  await page.locator('.cart-item').filter({ hasText: 'Beekeeper and Doctor Mug / 15 oz' }).getByRole('button', { name: 'Remove' }).click();
+  await expect(page.locator('.cart-item')).toHaveCount(1);
 });
 
 test('direct page routes and contact form are usable', async ({ page, request }) => {
@@ -108,7 +112,7 @@ test('capture desktop and mobile previews', async ({ page }) => {
   await expect(page.locator('.hero-art img')).toBeVisible();
   await page.screenshot({ path: 'artifacts/beta-home-desktop.png', fullPage: true });
   await page.goto('/products');
-  await expect(page.locator('.product-card')).toHaveCount(8);
+  await expect(page.locator('.product-card')).toHaveCount(2);
   await page.screenshot({ path: 'artifacts/beta-products-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
@@ -135,28 +139,28 @@ test('real gallery serves approved display copies without original links', async
 
 test('alternate views consolidate into cards and open an accessible large viewer', async ({ page, request }) => {
   const items = await (await request.get('/art/items.json')).json();
-  const mug = items.find(w => w.title === 'Beekeeper and doctor mug');
-  expect(items.filter(w => w.title === mug.title)).toHaveLength(1);
-  expect(mug.images.length).toBeGreaterThan(3);
+  const work = items.find(w => w.title !== 'Beekeeper and doctor mug' && w.images.length > 3 && w.images.every(v => v.type !== 'video'));
+  expect(items.filter(w => w.title === work.title)).toHaveLength(1);
+  expect(work.images.length).toBeGreaterThan(3);
   await page.goto('/gallery');
-  await expect(page.locator('.gallery-card')).toHaveCount(items.length);
-  const card = page.locator('.gallery-card').filter({ has: page.getByRole('heading', { name: mug.title, exact: true }) });
-  const next = card.getByRole('button', { name: `Next view of ${mug.title}` });
+  await expect(page.locator('.gallery-card')).toHaveCount(items.filter(w => w.title !== 'Beekeeper and doctor mug').length);
+  const card = page.locator('.gallery-card').filter({ has: page.getByRole('heading', { name: work.title, exact: true }) });
+  const next = card.getByRole('button', { name: `Next view of ${work.title}` });
   await card.hover();
   await expect(next).toHaveCSS('opacity', '1');
   await next.click();
-  await expect(card.locator('img')).toHaveAttribute('src', mug.images[1].image);
-  const opener = card.getByRole('button', { name: `Enlarge ${mug.title}` });
+  await expect(card.locator('img')).toHaveAttribute('src', work.images[1].image);
+  const opener = card.getByRole('button', { name: `Enlarge ${work.title}` });
   await opener.click();
-  const dialog = page.getByRole('dialog', { name: mug.title });
+  const dialog = page.getByRole('dialog', { name: work.title });
   await expect(dialog).toBeVisible();
-  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', mug.images[1].image);
-  await expect(dialog.locator('#viewer-description')).toHaveText(mug.description);
-  await expect(dialog.locator('[data-thumbnail]')).toHaveCount(mug.images.length);
+  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', work.images[1].image);
+  await expect(dialog.locator('#viewer-description')).toHaveText(work.description);
+  await expect(dialog.locator('[data-thumbnail]')).toHaveCount(work.images.length);
   await dialog.locator('[data-thumbnail="2"]').click();
-  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', mug.images[2].image);
+  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', work.images[2].image);
   await page.keyboard.press('ArrowLeft');
-  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', mug.images[1].image);
+  await expect(dialog.locator('.viewer-image')).toHaveAttribute('src', work.images[1].image);
   await page.keyboard.press('Escape');
   await expect(dialog).not.toBeVisible();
   await expect(opener).toBeFocused();
