@@ -30,7 +30,7 @@ input::placeholder,textarea::placeholder{color:#70666b;opacity:1}
 .art-carousel .art-arrow{opacity:0;transition:opacity .15s}
 .art-carousel:hover .art-arrow,.art-carousel:focus-within .art-arrow{opacity:1}
 .art-arrow:hover{background:var(--red)}
-.art-view-count{position:absolute;bottom:10px;right:10px;padding:3px 9px;background:#171315df;color:#fff4ec;border-radius:3px;font-size:11px;pointer-events:none}
+.art-artist-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.art-artist-row .artist{min-width:0}.art-view-count{flex-shrink:0;margin-left:auto;text-align:right;color:var(--muted);font-size:11px;white-space:nowrap}
 .product-image .badge{pointer-events:none}
 body.viewer-open{overflow:hidden}
 .art-viewer{width:min(1440px,95vw);max-width:95vw;height:min(940px,94dvh);max-height:94dvh;margin:auto;padding:0;border:1px solid #8f7445;background:var(--paper);color:var(--ink);box-shadow:0 20px 90px #0008;overflow:auto}

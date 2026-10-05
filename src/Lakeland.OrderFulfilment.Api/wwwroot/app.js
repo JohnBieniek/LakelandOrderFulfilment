@@ -109,9 +109,9 @@ function pawPalPricing(work) {
   return '<div class="paw-pal-pricing"><p><strong>$24</strong> standard Paw Pal in an existing design/color.</p><p><strong>$30 to $35</strong> for custom colors, markings, a name, or small personalization.</p><p><strong>$20 each when buying 3+</strong>.</p></div>';
 }
 function productCard(p) {
-  if (p.inquiryOnly) return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">Handmade clay</span></div><div class="artist">${escape(p.artist)}</div><div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p>${pawPalPricing(p)}<p class="product-meta">Made to order · 2-week turnaround</p><a class="button light" href="/contact?product=paw-pals">Contact us to order <span aria-hidden="true">+</span></a></article>`;
+  if (p.inquiryOnly) return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">Handmade clay</span></div>${artistLine(p)}<div class="product-title"><h3>${escape(p.name)}</h3><span class="price">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p>${pawPalPricing(p)}<p class="product-meta">Made to order · 2-week turnaround</p><a class="button light" href="/contact?product=paw-pals">Contact us to order <span aria-hidden="true">+</span></a></article>`;
 
-  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div><div class="artist">${escape(p.artist)} · ${p.isSample ? 'Illustrative listing' : 'Published design'}</div><div class="product-title"><h3>${escape(p.displayName || p.name)}</h3><span class="price" aria-live="polite">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p>${p.sizeOptions ? `<div class="field"><label for="mug-size">Size</label><select id="mug-size">${p.sizeOptions.map(size => `<option value="${size.id}" ${size.id === p.id ? 'selected' : ''}>${size.label} - ${money(size.product.price)}</option>`).join('')}</select></div>` : ''}<div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
+  return `<article class="product-card" id="product-${p.id}"><div class="product-image">${artworkImage(p)}<span class="badge">${p.available ? kindName(p.kind) : 'Reserved / sold'}</span></div>${artistLine(p, ` &middot; ${p.isSample ? 'Illustrative listing' : 'Published design'}`)}<div class="product-title"><h3>${escape(p.displayName || p.name)}</h3><span class="price" aria-live="polite">${money(p.price)}</span></div><p class="product-description">${escape(p.description)}</p><p class="product-meta">${escape(p.details)}</p>${p.sizeOptions ? `<div class="field"><label for="mug-size">Size</label><select id="mug-size">${p.sizeOptions.map(size => `<option value="${size.id}" ${size.id === p.id ? 'selected' : ''}>${size.label} - ${money(size.product.price)}</option>`).join('')}</select></div>` : ''}<div class="shipping">Estimated ship date: ${estimate(p)}<small>${escape(p.estimate.description)}</small></div><button class="button light" data-add="${p.id}" ${p.available ? '' : 'disabled'} aria-label="Add ${escape(p.name)} to cart">${p.available ? 'Add to cart' : 'Unavailable'} <span aria-hidden="true">+</span></button></article>`;
 }
 function renderProducts() {
   const requestedKind = new URLSearchParams(location.search).get('kind') || '';
@@ -129,7 +129,11 @@ const chevron = direction => `<svg viewBox="0 0 24 24" aria-hidden="true"><path 
 function artworkImage(work) {
   const views = viewsFor(work), index = viewIndices.get(work.id) || 0, view = views[index];
   const title = work.title || work.name;
-  return `<div class="art-carousel" data-carousel="${escape(work.id)}"><button class="art-open" data-open-work="${escape(work.id)}" aria-label="Enlarge ${escape(title)}"><img src="${escape(view.image)}" alt="${escape(title)} \u00b7 ${escape(view.label)}" loading="lazy" width="${view.width}" height="${view.height}"></button>${views.length > 1 ? `<button class="art-arrow previous" data-cycle="-1" data-work="${escape(work.id)}" aria-label="Previous view of ${escape(title)}">${chevron(-1)}</button><button class="art-arrow next" data-cycle="1" data-work="${escape(work.id)}" aria-label="Next view of ${escape(title)}">${chevron(1)}</button><span class="art-view-count" aria-live="polite">${index + 1} / ${views.length}${view.type === 'video' ? ' · Play video' : ''}</span>` : ''}</div>`;
+  return `<div class="art-carousel" data-carousel="${escape(work.id)}"><button class="art-open" data-open-work="${escape(work.id)}" aria-label="Enlarge ${escape(title)}"><img src="${escape(view.image)}" alt="${escape(title)} \u00b7 ${escape(view.label)}" loading="lazy" width="${view.width}" height="${view.height}"></button>${views.length > 1 ? `<button class="art-arrow previous" data-cycle="-1" data-work="${escape(work.id)}" aria-label="Previous view of ${escape(title)}">${chevron(-1)}</button><button class="art-arrow next" data-cycle="1" data-work="${escape(work.id)}" aria-label="Next view of ${escape(title)}">${chevron(1)}</button>` : ''}</div>`;
+}
+function artistLine(work, detail = '') {
+  const views = viewsFor(work), index = viewIndices.get(work.id) || 0, view = views[index];
+  return `<div class="art-artist-row"><div class="artist">${escape(work.artist)}${detail}</div>${views.length > 1 ? `<span class="art-view-count" aria-live="polite">${index + 1} / ${views.length}${view.type === 'video' ? ' · Play video' : ''}</span>` : ''}</div>`;
 }
 function fandomLabel(work) {
   if (!work.fanArt || !work.fandoms?.length) return '';
@@ -137,7 +141,7 @@ function fandomLabel(work) {
   return '<p class="medium fandom-label">Fandom: ' + work.fandoms.map(name => escape(names[name] || name)).join(' / ') + '</p>';
 }
 function galleryCard(work) {
-  return `<article class="gallery-card">${artworkImage(work)}<div class="artist">${escape(work.artist)}</div><h3>${escape(work.title)}</h3><p class="medium">${escape(work.medium)}</p>${fandomLabel(work)}${work.fanArt ? '<span class="fan-tag">For appreciation. Not for sale.</span>' : '<span class="medium">Studio archive &middot; Gallery only</span>'}</article>`;
+  return `<article class="gallery-card">${artworkImage(work)}${artistLine(work)}<h3>${escape(work.title)}</h3><p class="medium">${escape(work.medium)}</p>${fandomLabel(work)}${work.fanArt ? '<span class="fan-tag">For appreciation. Not for sale.</span>' : '<span class="medium">Studio archive &middot; Gallery only</span>'}</article>`;
 }
 const viewer = document.createElement('dialog');
 viewer.className = 'art-viewer';
@@ -152,7 +156,7 @@ function syncCards(work) {
     const img = card.querySelector('img');
     img.src = view.image; img.alt = `${work.title || work.name} \u00b7 ${view.label}`;
     img.width = view.width; img.height = view.height;
-    const count = card.querySelector('.art-view-count');
+    const count = card.closest('article')?.querySelector('.art-view-count');
     if (count) count.textContent = `${index + 1} / ${views.length}${view.type === 'video' ? ' · Play video' : ''}`;
   });
 }
