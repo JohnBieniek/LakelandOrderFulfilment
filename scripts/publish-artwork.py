@@ -62,9 +62,10 @@ def prepare(source):
                 continue
             seen.add(file)
             cat = row['category']
-            # User confirmed this specific plate is original artwork by Kay Pickett.
+            # Removed from the public gallery at the studio's request.
             if int(row['archive_id']) == 789:
-                cat = 'Paintings'
+                excluded.append(str(file.relative_to(source)))
+                continue
             if cat in ['Reference art - attribution unconfirmed', 'Community art', 'Videos to identify', 'Art videos']:
                 excluded.append(str(file.relative_to(source)))
                 continue
@@ -81,6 +82,25 @@ def prepare(source):
         title = re.sub(r'-[a-f0-9]{10,}$','',file.stem).replace('-',' ')
         entries.append(dict(file=str(file.relative_to(source)),title='Beekeeper and doctor — '+title,artist='Kay Pickett',medium='Mug design mockup',fanArt=False,sculpture=False))
     extra = source / 'artwork.local.json'
+    # October 2026 additions; artist attribution confirmed by the studio.
+    new_photos = [
+        ('155209', 'Portrait in red, yellow and green', 'Kay Pickett', 'portrait-red-yellow-green'),
+        ('155344', 'Blue bloom abstract', 'Jeanee Salmon', 'blue-bloom-abstract'),
+        ('155355', 'Blue bloom abstract', 'Jeanee Salmon', 'blue-bloom-abstract'),
+        ('155528', 'Purple bloom abstract', 'Jeanee Salmon', 'purple-bloom-abstract'),
+        ('155553', 'Pink and green bloom abstract', 'Jeanee Salmon', 'pink-green-bloom-abstract'),
+        ('155856', 'Turquoise currents abstract', 'Jeanee Salmon', 'turquoise-currents-abstract'),
+        ('155945', 'Deep blue currents abstract', 'Jeanee Salmon', 'deep-blue-currents-abstract'),
+        ('160324', 'Warm earth abstract', 'Jeanee Salmon', 'warm-earth-abstract'),
+        ('160613', 'Folded colors abstract', 'Jeanee Salmon', 'folded-colors-abstract'),
+        ('160731', 'Violet swirls abstract', 'Jeanee Salmon', 'violet-swirls-abstract'),
+    ]
+    for stamp, title, artist, item_id in new_photos:
+        entries.append(dict(
+            file=f'firstpaintingattempts_cropped_oriented/20261004_{stamp}.jpg',
+            title=title, artist=artist, itemId=item_id, medium='Paintings',
+            fanArt=False, sculpture=False,
+            viewLabel='Alternate view' if stamp == '155355' else 'Main view'))
     if extra.exists():
         entries.extend(json.loads(extra.read_text(encoding='utf-8-sig')))
     # Split the reviewed owl collage into its original photographic panels.

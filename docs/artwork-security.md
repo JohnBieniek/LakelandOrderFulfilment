@@ -65,6 +65,8 @@ npm.cmd run deploy:cloudflare
 
 The script imports the extracted Whimsy manifest, top-level JPG/PNG files, and Beekeeper mug mockups. To add other work, create `artwork.local.json` inside the **external Lakeland art folder** using the example in the script docstring. Use `sculpture: true` only for sculpture-only photographs; the default applies a watermark. Inspect display copies before deployment.
 
+The October 4 additions also import the ten photos in `firstpaintingattempts_cropped_oriented`. The nine abstract photos are credited to Jeanee Salmon; the portrait is credited to Kay Pickett. The two blue-bloom photos are alternate views of one work. These entries use descriptive display titles and the same reduced-resolution, baked-in watermark policy as the existing paintings.
+
 The public manifest at `wwwroot/art/gallery.json` contains display metadata and derivative checksums only. The private source audit is in ignored `artifacts/art-publishing/private-source-manifest.json`; never publish it. Public display copies may be included with shared source, but the artwork remains separately copyrighted. The build checks that raster files are cataloged, checksums match, and non-sculpture entries require watermarks. These checks are guardrails against accidental inclusion, not an independent visual watermark detector or a security boundary against a malicious developer changing the manifest.
 
 Originals are never overwritten. Artwork removed from the manifest must also have its old display copy removed from `wwwroot/art/display` before deployment; the check rejects stale, uncataloged files. Re-running the publisher with changed watermark settings similarly requires reviewing and removing old derivatives. The script does not delete files automatically.

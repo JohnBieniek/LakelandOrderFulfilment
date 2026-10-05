@@ -1867,33 +1867,6 @@
     ]
   },
   {
-    "id": "work-3d92fe59c2a29c12",
-    "title": "Celestial blue hand painted plate",
-    "artist": "Kay Pickett",
-    "medium": "Paintings",
-    "fanArt": false,
-    "productId": null,
-    "isSample": false,
-    "description": "A hand-painted plate with a blue beetle, leafy patterns, stars, and moons against a dark background.",
-    "images": [
-      {
-        "image": "/art/display/celestial-blue-hand-painted-plate-e5b9159324e3.webp",
-        "width": 1200,
-        "height": 826,
-        "watermarked": true,
-        "displaySha256": "e5b9159324e3a5dea0ed09b906149411b7ce1c24e20c010d5905b2036889c4e8",
-        "label": "View 1"
-      }
-    ],
-    "image": "/art/display/celestial-blue-hand-painted-plate-e5b9159324e3.webp",
-    "width": 1200,
-    "height": 826,
-    "watermarked": true,
-    "displaySha256": "e5b9159324e3a5dea0ed09b906149411b7ce1c24e20c010d5905b2036889c4e8",
-    "label": "View 1",
-    "fandoms": []
-  },
-  {
     "id": "work-9bb73cb9a942be7c",
     "title": "Beekeeper and doctor mug",
     "artist": "Kay Pickett",
@@ -2686,6 +2659,257 @@
     "watermarked": true,
     "displaySha256": "229fc426acbf9cb6d2f42524c9f9da7410856d58a2fbfd7e4e6df8e96711ecc1",
     "label": "Beekeeper and doctor — white glossy mug white 11 oz cutting board",
+    "fandoms": []
+  },
+  {
+    "id": "work-2e82c9653a5a4e8e",
+    "title": "Portrait in red, yellow and green",
+    "artist": "Kay Pickett",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Portrait in red, yellow and green by Kay Pickett. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/portrait-in-red-yellow-and-green-911aecf5e1a9.webp",
+        "width": 1132,
+        "height": 1200,
+        "watermarked": true,
+        "displaySha256": "911aecf5e1a9c86e58755c11aedf2931e4c3f72f7cd1260e303bc2c30b503aa7",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/portrait-in-red-yellow-and-green-911aecf5e1a9.webp",
+    "width": 1132,
+    "height": 1200,
+    "watermarked": true,
+    "displaySha256": "911aecf5e1a9c86e58755c11aedf2931e4c3f72f7cd1260e303bc2c30b503aa7",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-2f218e1aedfe601b",
+    "title": "Blue bloom abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Blue bloom abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/blue-bloom-abstract-97dac6aad90c.webp",
+        "width": 1194,
+        "height": 1200,
+        "watermarked": true,
+        "displaySha256": "97dac6aad90cd72f34b0beae94b4c021def09fb1490885ecbb59a369962404d0",
+        "label": "Main view"
+      },
+      {
+        "image": "/art/display/blue-bloom-abstract-7eb925065182.webp",
+        "width": 1200,
+        "height": 1194,
+        "watermarked": true,
+        "displaySha256": "7eb925065182707d53adcb233341df6106f19c6d96d411d6c6499dd67a1effa2",
+        "label": "Alternate view"
+      }
+    ],
+    "image": "/art/display/blue-bloom-abstract-97dac6aad90c.webp",
+    "width": 1194,
+    "height": 1200,
+    "watermarked": true,
+    "displaySha256": "97dac6aad90cd72f34b0beae94b4c021def09fb1490885ecbb59a369962404d0",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-f1942c3db401df03",
+    "title": "Purple bloom abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Purple bloom abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/purple-bloom-abstract-34445670aeac.webp",
+        "width": 1200,
+        "height": 1194,
+        "watermarked": true,
+        "displaySha256": "34445670aeacb7ea7250c6c86a272c2441551b6b5c50abdc4df60c3adb950ef1",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/purple-bloom-abstract-34445670aeac.webp",
+    "width": 1200,
+    "height": 1194,
+    "watermarked": true,
+    "displaySha256": "34445670aeacb7ea7250c6c86a272c2441551b6b5c50abdc4df60c3adb950ef1",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-3c5004bcc3106f07",
+    "title": "Pink and green bloom abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Pink and green bloom abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/pink-and-green-bloom-abstract-6621d2068e1b.webp",
+        "width": 1192,
+        "height": 1200,
+        "watermarked": true,
+        "displaySha256": "6621d2068e1b8e97252a0b474545507c62078e6b71e83b3c1047d73c87c4d514",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/pink-and-green-bloom-abstract-6621d2068e1b.webp",
+    "width": 1192,
+    "height": 1200,
+    "watermarked": true,
+    "displaySha256": "6621d2068e1b8e97252a0b474545507c62078e6b71e83b3c1047d73c87c4d514",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-a90b3bf5a024607a",
+    "title": "Turquoise currents abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Turquoise currents abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/turquoise-currents-abstract-d7f980c7b503.webp",
+        "width": 1200,
+        "height": 897,
+        "watermarked": true,
+        "displaySha256": "d7f980c7b5036dcedc7707e8ce2fdac7dd54ca3bce37ebdc5ed6f0b5a7f8fb5f",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/turquoise-currents-abstract-d7f980c7b503.webp",
+    "width": 1200,
+    "height": 897,
+    "watermarked": true,
+    "displaySha256": "d7f980c7b5036dcedc7707e8ce2fdac7dd54ca3bce37ebdc5ed6f0b5a7f8fb5f",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-137f64b9f92b40bf",
+    "title": "Deep blue currents abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Deep blue currents abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/deep-blue-currents-abstract-04e9924f8e0d.webp",
+        "width": 1200,
+        "height": 936,
+        "watermarked": true,
+        "displaySha256": "04e9924f8e0d7ce3b2918b1700a905975692c5ce9db2618b138752f05716227d",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/deep-blue-currents-abstract-04e9924f8e0d.webp",
+    "width": 1200,
+    "height": 936,
+    "watermarked": true,
+    "displaySha256": "04e9924f8e0d7ce3b2918b1700a905975692c5ce9db2618b138752f05716227d",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-877817204c8db060",
+    "title": "Warm earth abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Warm earth abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/warm-earth-abstract-93ddb88e0809.webp",
+        "width": 1200,
+        "height": 1157,
+        "watermarked": true,
+        "displaySha256": "93ddb88e08096336372fff22f541c9a54465cacf5f4fc0621cf31f413c6190ca",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/warm-earth-abstract-93ddb88e0809.webp",
+    "width": 1200,
+    "height": 1157,
+    "watermarked": true,
+    "displaySha256": "93ddb88e08096336372fff22f541c9a54465cacf5f4fc0621cf31f413c6190ca",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-48c17779fedf5240",
+    "title": "Folded colors abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Folded colors abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/folded-colors-abstract-486a043e8153.webp",
+        "width": 1200,
+        "height": 773,
+        "watermarked": true,
+        "displaySha256": "486a043e815375fc2a8af450af44d9bb672951dcc9dbcc9875e511bd41e1ebf2",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/folded-colors-abstract-486a043e8153.webp",
+    "width": 1200,
+    "height": 773,
+    "watermarked": true,
+    "displaySha256": "486a043e815375fc2a8af450af44d9bb672951dcc9dbcc9875e511bd41e1ebf2",
+    "label": "Main view",
+    "fandoms": []
+  },
+  {
+    "id": "work-c5f292692fd7e9ef",
+    "title": "Violet swirls abstract",
+    "artist": "Jeanee Salmon",
+    "medium": "Paintings",
+    "fanArt": false,
+    "productId": null,
+    "isSample": false,
+    "description": "Violet swirls abstract by Jeanee Salmon. From the studio’s paintings collection.",
+    "images": [
+      {
+        "image": "/art/display/violet-swirls-abstract-ca83bd1f8de4.webp",
+        "width": 1200,
+        "height": 768,
+        "watermarked": true,
+        "displaySha256": "ca83bd1f8de498ca09b9dccf811993be787a543ebba0376ef9d0bedff7b236b3",
+        "label": "Main view"
+      }
+    ],
+    "image": "/art/display/violet-swirls-abstract-ca83bd1f8de4.webp",
+    "width": 1200,
+    "height": 768,
+    "watermarked": true,
+    "displaySha256": "ca83bd1f8de498ca09b9dccf811993be787a543ebba0376ef9d0bedff7b236b3",
+    "label": "Main view",
     "fandoms": []
   }
 ]
